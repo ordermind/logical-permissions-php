@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions;
 use Ordermind\LogicalPermissions\LogicalPermissionsInterface;
