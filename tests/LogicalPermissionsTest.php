@@ -149,31 +149,27 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   public function testCheckAccessNoBypassAccessArrayDeny() {
-    throw new Exception('Working on this test');
     $lp = new LogicalPermissions();
     $types = [
-      'role' => function($role, $context) {
-        return FALSE;
-      },
       'flag' => function($flag, $context) {
         if($flag === 'never_bypass') {
           return !empty($context['user']['never_bypass']); 
         }
-      }
+      },
     ];
     $lp->setTypes($types);
-    $permissions = [
-      'no_bypass' => [
-        'role' => 'admin',
-      ],
-    ];
-    $bypass_callback = function($context) {
-      return FALSE; 
+    $bypass_callback = function($context) { //Simulates that for example the user is a superuser with ability to bypass access
+      return TRUE; 
     };
     $lp->setBypassCallback($bypass_callback);
+    $permissions = [
+      'no_bypass' => [
+        'flag' => 'never_bypass',
+      ],
+    ];
     $user = [
       'id' => 1,
-      'roles' => ['hej'],
+      'never_bypass' => TRUE,
     ];
     $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
   }

@@ -60,6 +60,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       else if(is_array($permissions['no_bypass'])) {
         $allow_bypass = !$this->dispatch($permissions['no_bypass'], NULL, $context);
       }
+      unset($permissions['no_bypass']);
     }
     if($allow_bypass && $this->checkBypassAccess($context)) {
       $access = TRUE;
@@ -83,7 +84,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     $access = FALSE;
     $key = '';
     if(is_string($permissions)) {
-      $this->externalAccessCheck($permissions, $type, $context);
+      $access = $this->externalAccessCheck($permissions, $type, $context);
     }
     elseif(is_array($permissions)) {
       if(array_keys($permissions) === range(0, count($permissions) - 1)) { //Completely sequential array
