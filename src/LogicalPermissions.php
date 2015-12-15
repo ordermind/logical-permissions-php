@@ -44,7 +44,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
         $allow_bypass = !$this->dispatch($permissions); //LÄGG TILL ARGUMENT
       }
     }
-    if($allow_bypass && $this->checkBypassAccess() { //LÄGG TILL ARGUMENT
+    if($allow_bypass && $this->checkBypassAccess()) { //LÄGG TILL ARGUMENT
       $access = TRUE;
     }
     else {
@@ -70,7 +70,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     }
     elseif(is_array($permissions)) {
       if(array_keys($permissions) === range(0, count($permissions) - 1)) { //Completely sequential array
-        $access = this->processOR($permissions, $type); //LÄGG TILL ARGUMENT
+        $access = $this->processOR($permissions, $type); //LÄGG TILL ARGUMENT
       }
       else { //Associative array
         reset($permissions);
