@@ -10,9 +10,7 @@
         }
     ],
     "require": {},
-    "require-dev": {
-        "phpunit/phpunit": "4.0.*"
-    },
+    "require-dev": {},
     "autoload": {
         "psr-4": {
             "Ordermind\\LogicalPermissions\\": "src"

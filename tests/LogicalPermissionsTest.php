@@ -6,7 +6,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   public function testInit()
   {
     $lp = new LogicalPermissions;
-    $this->assertTrue($lp);
+    $this->assertTrue($lp->checkAccess([]));
   }
  
 } 
