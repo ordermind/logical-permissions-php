@@ -123,49 +123,59 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   
   public function testCheckAccessBypassAccessAllow() {
     $lp = new LogicalPermissions();
-    $bypass_callback = function($param1, $param2) {
+    $bypass_callback = function($context) {
       return TRUE;
     };
     $lp->setBypassCallback($bypass_callback);
-    $this->assertTrue($lp->checkAccess([], 'param1', 'param2'));
+    $this->assertTrue($lp->checkAccess([]));
   }
   
   public function testCheckAccessBypassAccessDeny() {
     $lp = new LogicalPermissions();
-    $bypass_callback = function($param1, $param2) {
+    $bypass_callback = function($context) {
       return FALSE;
     };
     $lp->setBypassCallback($bypass_callback);
-    $this->assertFalse($lp->checkAccess([], 'param1', 'param2'));
+    $this->assertFalse($lp->checkAccess([]));
   }
   
   public function testCheckAccessNoBypassAccessBooleanDeny() {
     $lp = new LogicalPermissions();
-    $bypass_callback = function($param1, $param2) {
+    $bypass_callback = function($context) {
       return TRUE; 
     };
     $lp->setBypassCallback($bypass_callback);
-    $this->assertFalse($lp->checkAccess(['no_bypass' => TRUE], 'param1', 'param2'));
+    $this->assertFalse($lp->checkAccess(['no_bypass' => TRUE]));
   }
   
   public function testCheckAccessNoBypassAccessArrayDeny() {
+    throw new Exception('Working on this test');
     $lp = new LogicalPermissions();
     $types = [
-      'test' => function() {
-        return false;
+      'role' => function($role, $context) {
+        return FALSE;
       },
+      'flag' => function($flag, $context) {
+        if($flag === 'never_bypass') {
+          return !empty($context['user']['never_bypass']); 
+        }
+      }
     ];
     $lp->setTypes($types);
     $permissions = [
       'no_bypass' => [
-        'test' => 'hej',
+        'role' => 'admin',
       ],
     ];
-    $bypass_callback = function($param1, $param2) {
-      return TRUE; 
+    $bypass_callback = function($context) {
+      return FALSE; 
     };
     $lp->setBypassCallback($bypass_callback);
-    $this->assertFalse($lp->checkAccess($permissions, 'param1', 'param2'));
+    $user = [
+      'id' => 1,
+      'roles' => ['hej'],
+    ];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
   }
   
   public function testCheckAccess() {

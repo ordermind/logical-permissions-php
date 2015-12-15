@@ -50,10 +50,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     return true;
   }
 
-  public function checkAccess(array $permissions) {
-    $args = func_get_args();
-    array_shift($args);
-
+  public function checkAccess(array $permissions, array $context = []) {
     $access = FALSE;
     $allow_bypass = TRUE;
     if(isset($permissions['no_bypass'])) {
@@ -61,36 +58,36 @@ class LogicalPermissions implements LogicalPermissionsInterface {
         $allow_bypass = !$permissions['no_bypass'];
       }
       else if(is_array($permissions['no_bypass'])) {
-        $allow_bypass = !$this->dispatch($permissions['no_bypass'], NULL, $args);
+        $allow_bypass = !$this->dispatch($permissions['no_bypass'], NULL, $context);
       }
     }
-    if($allow_bypass && $this->checkBypassAccess($args)) {
+    if($allow_bypass && $this->checkBypassAccess($context)) {
       $access = TRUE;
     }
     else {
-      $access = $this->dispatch($permissions, NULL, $args);
+      $access = $this->dispatch($permissions, NULL, $context);
     }
     return $access;
   }
   
-  protected function checkBypassAccess(array $args = []) {
+  protected function checkBypassAccess(array $context = []) {
     $bypass_access = FALSE;
     $bypass_callback = $this->getBypassCallback();
     if($bypass_callback) {
-      $bypass_access = call_user_func_array($bypass_callback, $args);
+      $bypass_access = $bypass_callback($context);
     }
     return $bypass_access;
   }
   
-  protected function dispatch($permissions, string $type = NULL, array $args = []) {
+  protected function dispatch($permissions, string $type = NULL, array $context = []) {
     $access = FALSE;
     $key = '';
     if(is_string($permissions)) {
-      $this->callMethod($permissions, $type, $args);
+      $this->externalAccessCheck($permissions, $type, $context);
     }
     elseif(is_array($permissions)) {
       if(array_keys($permissions) === range(0, count($permissions) - 1)) { //Completely sequential array
-        $access = $this->processOR($permissions, $type, $args);
+        $access = $this->processOR($permissions, $type, $context);
       }
       else { //Associative array
         reset($permissions);
@@ -100,37 +97,37 @@ class LogicalPermissions implements LogicalPermissionsInterface {
         }
         $value = current($permissions);
         if($key === 'AND') {
-          $access = $this->processAND($value, $type, $args);
+          $access = $this->processAND($value, $type, $context);
         }
         elseif($key === 'NAND') {
-          $access = $this->processNAND($value, $type, $args);
+          $access = $this->processNAND($value, $type, $context);
         }
         elseif($key === 'OR') {
-          $access = $this->processOR($value, $type, $args);
+          $access = $this->processOR($value, $type, $context);
         }
         elseif($key === 'NOR') {
-          $access = $this->processNOR($value, $type, $args);
+          $access = $this->processNOR($value, $type, $context);
         }
         elseif($key === 'XOR') {
-          $access = $this->processXOR($value, $type, $args);
+          $access = $this->processXOR($value, $type, $context);
         }
         elseif($key === 'NOT') {
-          $access = $this->processNOT($value, $type, $args);
+          $access = $this->processNOT($value, $type, $context);
         }
         else {
           $type = $key;
-          $access = $this->dispatch($value, $type, $args);
+          $access = $this->dispatch($value, $type, $context);
         }
       }
     }
     return $access;
   }
   
-  protected function processAND(array $permissions, string $type = NULL, array $args = []) {
+  protected function processAND(array $permissions, string $type = NULL, array $context = []) {
     $access = TRUE;
     if(array_keys($permissions) === range(0, count($permissions) - 1)) { //Completely sequential array
       foreach($permissions as $permission) {
-        $access = $access && $this->callMethod($permission, $type, $args);
+        $access = $access && $this->externalAccessCheck($permission, $type, $context);
         if(!$access) {
           break; 
         }
@@ -141,7 +138,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
         if(is_numeric($key)) {
           throw new PermissionArrayMixedTypesException($permissions);
         }
-        $access = $access && $this->dispatch($subpermissions, $type, $args);
+        $access = $access && $this->dispatch($subpermissions, $type, $context);
         if(!$access) {
           break; 
         }
@@ -150,16 +147,16 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     return $access;
   }
   
-  protected function processNAND(array $permissions, string $type = NULL, array $args = []) {
-    $access = !$this->processAND($permissions, $type, $args);
+  protected function processNAND(array $permissions, string $type = NULL, array $context = []) {
+    $access = !$this->processAND($permissions, $type, $context);
     return $access;
   }
   
-  protected function processOR(array $permissions, string $type = NULL, array $args = []) {
+  protected function processOR(array $permissions, string $type = NULL, array $context = []) {
     $access = FALSE;
     if(array_keys($permissions) === range(0, count($permissions) - 1)) { //Completely sequential array
       foreach($permissions as $permission) {
-        $access = $access || $this->callMethod($permission, $type, $args);
+        $access = $access || $this->externalAccessCheck($permission, $type, $context);
         if($access) {
           break; 
         }
@@ -170,7 +167,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
         if(is_numeric($key)) {
           throw new PermissionArrayMixedTypesException($permissions);
         }
-        $access = $access || $this->dispatch($subpermissions, $type, $args);
+        $access = $access || $this->dispatch($subpermissions, $type, $context);
         if($access) {
           break; 
         }
@@ -179,19 +176,19 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     return $access;
   }
   
-  protected function processNOR(array $permissions, string $type = NULL, array $args = []) {
-    $access = !$this->processOR($permissions, $type, $args);
+  protected function processNOR(array $permissions, string $type = NULL, array $context = []) {
+    $access = !$this->processOR($permissions, $type, $context);
     return $access;
   }
   
-  protected function processXOR(array $permissions, string $type = NULL, array $args = []) {
+  protected function processXOR(array $permissions, string $type = NULL, array $context = []) {
     $access = FALSE;
     $count_true = 0;
     $count_false = 0;
 
     if(array_keys($permissions) === range(0, count($permissions) - 1)) { //Completely sequential array
       foreach($permissions as $permission) {
-        $this_access = $this->callMethod($permission, $type, $args);
+        $this_access = $this->externalAccessCheck($permission, $type, $context);
         if($this_access) {
           $count_true++; 
         }
@@ -209,7 +206,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
         if(is_numeric($key)) {
           throw new PermissionArrayMixedTypesException($permissions);
         }
-        $this_access = $this->dispatch($subpermissions, $type, $args);
+        $this_access = $this->dispatch($subpermissions, $type, $context);
         if($this_access) {
           $count_true++; 
         }
@@ -225,26 +222,26 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     return $access;
   }
   
-  protected function processNOT($permissions, string $type = NULL, array $args = []) {
+  protected function processNOT($permissions, string $type = NULL, array $context = []) {
     $access = FALSE;
     if(is_string($permissions)) {
-      $access = !$this->callMethod($permissions, $type, $args);
+      $access = !$this->externalAccessCheck($permissions, $type, $context);
     }
     else if(is_array($permissions)) {
       if(count($permissions) != 1) {
         throw new Exception('A NOT permission must have exactly one child. Evaluated permissions: ' . print_r($permissions, TRUE));
       }
-      $access = !$this->dispatch($permissions, $type, $args);
+      $access = !$this->dispatch($permissions, $type, $context);
     }
     return $access;
   }
 
-  protected function callMethod(string $permission, string $type, array $args = []) {
+  protected function externalAccessCheck(string $permission, string $type, array $context = []) {
     $access = FALSE;
     $types = $this->getTypes();
     if(isset($types[$type])) {
       $callback = $types[$type];
-      $access = call_user_func_array($callback, array_merge([$permission], $args));
+      $access = $callback($permission, $context);
       return $access;
     }
     else {
