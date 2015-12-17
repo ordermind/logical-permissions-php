@@ -112,7 +112,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
           $access = $this->processNOT($value, $type, $context);
         }
         else {
-          if(!is_null($type) {
+          if(!is_null($type)) {
             throw new Exception("You cannot put a permission type as a descendant to another permission type. Existing type: $type. Evaluated permissions: " . print_r($value, true));
           }
           $type = $key;
