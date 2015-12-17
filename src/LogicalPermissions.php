@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions;
 use Ordermind\LogicalPermissions\LogicalPermissionsInterface;
-use Ordermind\LogicalPermissions\PermissionArrayMixedTypesException;
 
 class LogicalPermissions implements LogicalPermissionsInterface {
   protected $types = [];
@@ -93,9 +92,6 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       else { //Associative array
         reset($permissions);
         $key = key($permissions);
-        if(is_numeric($key)) {
-          throw new PermissionArrayMixedTypesException($permissions);
-        }
         $value = current($permissions);
         if($key === 'AND') {
           $access = $this->processAND($value, $type, $context);
@@ -116,6 +112,9 @@ class LogicalPermissions implements LogicalPermissionsInterface {
           $access = $this->processNOT($value, $type, $context);
         }
         else {
+          if(!is_null($type) {
+            throw new Exception("You cannot put a permission type as a descendant to another permission type. Existing type: $type. Evaluated permissions: " . print_r($value, true));
+          }
           $type = $key;
           $access = $this->dispatch($value, $type, $context);
         }
@@ -126,23 +125,10 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   
   protected function processAND(array $permissions, string $type = NULL, array $context = []) {
     $access = TRUE;
-    if(array_keys($permissions) === range(0, count($permissions) - 1)) { //Completely sequential array
-      foreach($permissions as $permission) {
-        $access = $access && $this->externalAccessCheck($permission, $type, $context);
-        if(!$access) {
-          break; 
-        }
-      }
-    }
-    else {
-      foreach($permissions as $key => $subpermissions) {
-        if(is_numeric($key)) {
-          throw new PermissionArrayMixedTypesException($permissions);
-        }
-        $access = $access && $this->dispatch($subpermissions, $type, $context);
-        if(!$access) {
-          break; 
-        }
+    foreach($permissions as $key => $subpermissions) {
+      $access = $access && $this->dispatch($subpermissions, $type, $context);
+      if(!$access) {
+        break; 
       }
     }
     return $access;
@@ -155,23 +141,10 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   
   protected function processOR(array $permissions, string $type = NULL, array $context = []) {
     $access = FALSE;
-    if(array_keys($permissions) === range(0, count($permissions) - 1)) { //Completely sequential array
-      foreach($permissions as $permission) {
-        $access = $access || $this->externalAccessCheck($permission, $type, $context);
-        if($access) {
-          break; 
-        }
-      }
-    }
-    else {
-      foreach($permissions as $key => $subpermissions) {
-        if(is_numeric($key)) {
-          throw new PermissionArrayMixedTypesException($permissions);
-        }
-        $access = $access || $this->dispatch($subpermissions, $type, $context);
-        if($access) {
-          break; 
-        }
+    foreach($permissions as $key => $subpermissions) {
+      $access = $access || $this->dispatch($subpermissions, $type, $context);
+      if($access) {
+        break; 
       }
     }
     return $access;
@@ -187,37 +160,17 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     $count_true = 0;
     $count_false = 0;
 
-    if(array_keys($permissions) === range(0, count($permissions) - 1)) { //Completely sequential array
-      foreach($permissions as $permission) {
-        $this_access = $this->externalAccessCheck($permission, $type, $context);
-        if($this_access) {
-          $count_true++; 
-        }
-        else {
-          $count_false++; 
-        }
-        if($count_true > 0 && $count_false > 0) {
-          $access = TRUE;
-          break;
-        }
+    foreach($permissions as $key => $subpermissions) {
+      $this_access = $this->dispatch($subpermissions, $type, $context);
+      if($this_access) {
+        $count_true++; 
       }
-    }
-    else {
-      foreach($permissions as $key => $subpermissions) {
-        if(is_numeric($key)) {
-          throw new PermissionArrayMixedTypesException($permissions);
-        }
-        $this_access = $this->dispatch($subpermissions, $type, $context);
-        if($this_access) {
-          $count_true++; 
-        }
-        else {
-          $count_false++; 
-        }
-        if($count_true > 0 && $count_false > 0) {
-          $access = TRUE;
-          break;
-        }
+      else {
+        $count_false++; 
+      }
+      if($count_true > 0 && $count_false > 0) {
+        $access = TRUE;
+        break;
       }
     }
     return $access;

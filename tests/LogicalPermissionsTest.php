@@ -158,7 +158,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       },
     ];
     $lp->setTypes($types);
-    $bypass_callback = function($context) { //Simulates that for example the user is a superuser with ability to bypass access
+    $bypass_callback = function($context) { //Simulates for example that the user is a superuser with ability to bypass access
       return TRUE; 
     };
     $lp->setBypassCallback($bypass_callback);
