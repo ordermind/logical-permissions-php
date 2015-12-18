@@ -79,7 +79,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       $access = TRUE;
     }
     else {
-      $access = $this->dispatch($permissions, NULL, $context);
+      $access = $this->processOR($permissions, NULL, $context);
     }
     return $access;
   }
@@ -147,7 +147,8 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   
   protected function processAND(array $permissions, string $type = NULL, array $context = []) {
     $access = TRUE;
-    foreach($permissions as $key => $subpermissions) {
+    foreach(array_keys($permissions) as $key) {
+      $subpermissions = [$key => $permissions[$key]];
       $access = $access && $this->dispatch($subpermissions, $type, $context);
       if(!$access) {
         break; 
@@ -163,7 +164,8 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   
   protected function processOR(array $permissions, string $type = NULL, array $context = []) {
     $access = FALSE;
-    foreach($permissions as $key => $subpermissions) {
+    foreach(array_keys($permissions) as $key) {
+      $subpermissions = [$key => $permissions[$key]];
       $access = $access || $this->dispatch($subpermissions, $type, $context);
       if($access) {
         break; 
@@ -182,7 +184,8 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     $count_true = 0;
     $count_false = 0;
 
-    foreach($permissions as $key => $subpermissions) {
+    foreach(array_keys($permissions) as $key) {
+      $subpermissions = [$key => $permissions[$key]];
       $this_access = $this->dispatch($subpermissions, $type, $context);
       if($this_access) {
         $count_true++; 
@@ -214,9 +217,8 @@ class LogicalPermissions implements LogicalPermissionsInterface {
 
   protected function externalAccessCheck(string $permission, string $type, array $context = []) {
     $access = FALSE;
-    $types = $this->getTypes();
-    if(isset($types[$type])) {
-      $callback = $types[$type];
+    if($this->typeExists($type)) {
+      $callback = $this->getTypeCallback($type);
       $access = $callback($permission, $context);
       return $access;
     }
