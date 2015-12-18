@@ -50,7 +50,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       return $types[$name];
     }
     else {
-      throw new \InvalidArgumentException("The permission type $type has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
+      throw new \InvalidArgumentException("The permission type $name has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
     }
   }
 
