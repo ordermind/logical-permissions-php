@@ -5,14 +5,6 @@ use Ordermind\LogicalPermissions\LogicalPermissions;
 class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   
   /*-----------LogicalPermissions::addType()-------------*/
-  
-  /**
-   * @expectedException InvalidArgumentException
-   */
-  public function testAddTypeParamNameMissing() {
-    $lp = new LogicalPermissions();
-    $lp->addType();
-  }
 
   /**
    * @expectedException InvalidArgumentException
@@ -29,15 +21,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->addType('', function(){});
   }
-  
-  /**
-   * @expectedException InvalidArgumentException
-   */
-  public function testAddTypeParamCallbackMissing() {
-    $lp = new LogicalPermissions();
-    $lp->addType('test');
-  }
-  
+
   /**
    * @expectedException InvalidArgumentException
    */
@@ -52,14 +36,6 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /*-------------LogicalPermissions::removeType()--------------*/
-  
-  /**
-   * @expectedException InvalidArgumentException
-   */
-  public function testRemoveTypeParamNameMissing() {
-    $lp = new LogicalPermissions();
-    $lp->removeType();
-  }
 
   /**
    * @expectedException InvalidArgumentException
@@ -93,14 +69,6 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   /**
    * @expectedException InvalidArgumentException
    */
-  public function testTypeExistsParamNameMissing() {
-    $lp = new LogicalPermissions();
-    $lp->typeExists();
-  }
-
-  /**
-   * @expectedException InvalidArgumentException
-   */
   public function testTypeExistsParamNameWrongType() {
     $lp = new LogicalPermissions();
     $lp->typeExists(0);
@@ -122,14 +90,6 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /*------------LogicalPermissions::getTypeCallback()---------------*/
-  
-  /**
-   * @expectedException InvalidArgumentException
-   */
-  public function testGetTypeCallbackParamNameMissing() {
-    $lp = new LogicalPermissions();
-    $lp->GetTypeCallback();
-  }
 
   /**
    * @expectedException InvalidArgumentException
@@ -173,15 +133,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /*------------LogicalPermissions::setTypes()---------------*/
-  
-  /**
-   * @expectedException InvalidArgumentException
-   */
-  public function testSetTypesParamTypesMissing() {
-    $lp = new LogicalPermissions();
-    $lp->setTypes();
-  }
-  
+
   /**
    * @expectedException InvalidArgumentException
    */
@@ -237,14 +189,6 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   /**
    * @expectedException InvalidArgumentException
    */
-  public function testSetBypassCallbackParamCallbackMissing() {
-    $lp = new LogicalPermissions();
-    $lp->setBypassCallback();
-  }
-
-  /**
-   * @expectedException InvalidArgumentException
-   */
   public function testSetBypassCallbackParamCallbackWrongType() {
     $lp = new LogicalPermissions();
     $lp->setBypassCallback('test');
@@ -259,14 +203,6 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   
   /*------------LogicalPermissions::checkAccess()---------------*/
   
-  /**
-   * @expectedException InvalidArgumentException
-   */
-  public function testCheckAccessParamPermissionsMissing() {
-    $lp = new LogicalPermissions();
-    $lp->checkAccess();
-  }
-
   /**
    * @expectedException InvalidArgumentException
    */
@@ -344,14 +280,6 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'flag' => 'testflag',
     ];
     $lp->checkAccess($permissions, []);
-  }
-  
-  /**
-   * @expectedException InvalidArgumentException
-   */
-  public function testCheckAccessParamContextMissing() {
-    $lp = new LogicalPermissions();
-    $lp->checkAccess([]);
   }
   
   /**
