@@ -28,7 +28,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     return isset($types[$name]);
   }
   
-  public function getType($name) {
+  public function getTypeCallback($name) {
     $types = $this->getTypes();
     return $types[$name]; 
   }
