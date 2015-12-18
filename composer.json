@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-
+      "php": ">=5.4.37"
     },
     "require-dev": {
 
