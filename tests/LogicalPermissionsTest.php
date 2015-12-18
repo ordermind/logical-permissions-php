@@ -336,7 +336,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /**
-   * @expectedException Exception
+   * @expectedException InvalidArgumentException
    */
   public function testCheckAccessParamPermissionsUnregisteredType() {
     $lp = new LogicalPermissions();
