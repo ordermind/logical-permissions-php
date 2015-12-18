@@ -73,7 +73,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   }
 
   public function setTypes($types) {
-    if(!is_array($name)) {
+    if(!is_array($types)) {
       throw new \InvalidArgumentException('The types parameter must be an array.'); 
     }
     foreach($types as $name => $callback) {
