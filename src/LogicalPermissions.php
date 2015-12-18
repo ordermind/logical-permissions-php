@@ -22,6 +22,16 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       return false;
     }
   }
+  
+  public function typeExists($name) {
+    $types = $this->getTypes();
+    return isset($types[$name]);
+  }
+  
+  public function getType($name) {
+    $types = $this->getTypes();
+    return $types[$name]; 
+  }
 
   public function getTypes() {
     return $this->types;
@@ -81,15 +91,11 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   
   protected function dispatch($permissions, string $type = NULL, array $context = []) {
     $access = FALSE;
-    $key = '';
-    if(is_string($permissions)) {
-      $access = $this->externalAccessCheck($permissions, $type, $context);
-    }
-    elseif(is_array($permissions)) {
-      if(array_keys($permissions) === range(0, count($permissions) - 1)) { //Completely sequential array
-        $access = $this->processOR($permissions, $type, $context);
+    if($permissions) {
+      if(is_string($permissions)) {
+        $access = $this->externalAccessCheck($permissions, $type, $context);
       }
-      else { //Associative array
+      elseif(is_array($permissions)) {
         reset($permissions);
         $key = key($permissions);
         $value = current($permissions);
@@ -112,12 +118,24 @@ class LogicalPermissions implements LogicalPermissionsInterface {
           $access = $this->processNOT($value, $type, $context);
         }
         else {
-          if(!is_null($type)) {
-            throw new Exception("You cannot put a permission type as a descendant to another permission type. Existing type: $type. Evaluated permissions: " . print_r($value, true));
+          if(!is_numeric($key)) {
+            if(is_null($type)) {
+              $type = $key;
+            }
+            else {
+              throw new \Exception("You cannot put a permission type as a descendant to another permission type. Existing type: $type. Evaluated permissions: " . print_r($value, true));
+            }
           }
-          $type = $key;
-          $access = $this->dispatch($value, $type, $context);
+          if(is_array($value)) {
+            $access = $this->processOR($value, $type, $context);
+          }
+          else {
+            $access = $this->dispatch($value, $type, $context);
+          }
         }
+      }
+      else {
+        throw new \TypeError("A permission must either be a string or an array. Evaluated permissions: " . print_r($permissions, true));
       }
     }
     return $access;

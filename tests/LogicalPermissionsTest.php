@@ -120,7 +120,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /*------------LogicalPermissions::checkAccess()---------------*/
-  
+
   public function testCheckAccessBypassAccessAllow() {
     $lp = new LogicalPermissions();
     $bypass_callback = function($context) {
@@ -129,7 +129,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp->setBypassCallback($bypass_callback);
     $this->assertTrue($lp->checkAccess([]));
   }
-  
+
   public function testCheckAccessBypassAccessDeny() {
     $lp = new LogicalPermissions();
     $bypass_callback = function($context) {
@@ -138,7 +138,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp->setBypassCallback($bypass_callback);
     $this->assertFalse($lp->checkAccess([]));
   }
-  
+
   public function testCheckAccessNoBypassAccessBooleanDeny() {
     $lp = new LogicalPermissions();
     $bypass_callback = function($context) {
@@ -147,7 +147,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp->setBypassCallback($bypass_callback);
     $this->assertFalse($lp->checkAccess(['no_bypass' => TRUE]));
   }
-  
+
   public function testCheckAccessNoBypassAccessArrayDeny() {
     $lp = new LogicalPermissions();
     $types = [
