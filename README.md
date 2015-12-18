@@ -7,7 +7,7 @@ This is a package that provides support for array-based permissions with logic g
 
 ### Installation
 
-`composer require ordermind:logical-permissions`
+`composer require ordermind/logical-permissions`
 
 ### Usage
 
