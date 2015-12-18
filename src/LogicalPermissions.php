@@ -46,7 +46,12 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       throw new \InvalidArgumentException('The name parameter cannot be empty.'); 
     }
     $types = $this->getTypes();
-    return $types[$name]; 
+    if($this->typeExists($name)) {
+      return $types[$name];
+    }
+    else {
+      throw new \InvalidArgumentException("The permission type $type has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
+    }
   }
 
   public function getTypes() {
@@ -238,7 +243,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       return $access;
     }
     else {
-      throw new \Exception("The permission type $type has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
+      throw new \InvalidArgumentException("The permission type $type has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
     }
   }
 }
