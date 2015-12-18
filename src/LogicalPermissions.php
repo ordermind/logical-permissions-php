@@ -1,7 +1,5 @@
 <?php
 
-require('TypeError.php');
-
 namespace Ordermind\LogicalPermissions;
 use Ordermind\LogicalPermissions\LogicalPermissionsInterface;
 
@@ -62,13 +60,13 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   public function setTypes(array $types) {
     foreach($types as $name => $callback) {
       if(!is_string($name)) {
-        throw new \TypeError("The \$types keys must be strings."); 
+        throw new \InvalidArgumentException("The \$types keys must be strings."); 
       }
       if(!$name) {
         throw new \InvalidArgumentException('The name for a type cannot be empty.'); 
       }
       if(!is_callable($callback)) {
-        throw new \TypeError("The \$types callbacks must be callables."); 
+        throw new \InvalidArgumentException("The \$types callbacks must be callables."); 
       }
     }
     $this->types = $types;
@@ -160,7 +158,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
         }
       }
       else {
-        throw new \TypeError("A permission must either be a string or an array. Evaluated permissions: " . print_r($permissions, true));
+        throw new \InvalidArgumentException("A permission must either be a string or an array. Evaluated permissions: " . print_r($permissions, true));
       }
     }
     return $access;
