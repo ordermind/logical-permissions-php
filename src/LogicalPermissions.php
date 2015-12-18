@@ -9,6 +9,9 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   protected $bypass_callback = NULL;
 
   public function addType(string $name, callable $callback) {
+    if(!$name) {
+      throw new \InvalidArgumentException('The name parameter cannot be empty.'); 
+    }
     $types = $this->getTypes();
     $types[$name] = $callback;
     $this->setTypes($types);
@@ -16,6 +19,9 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   }
 
   public function removeType(string $name) {
+    if(!$name) {
+      throw new \InvalidArgumentException('The name parameter cannot be empty.'); 
+    }
     $types = $this->getTypes();
     if(isset($types[$name])) {
       unset($types[$name]);
@@ -28,11 +34,17 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   }
   
   public function typeExists(string $name) {
+    if(!$name) {
+      throw new \InvalidArgumentException('The name parameter cannot be empty.'); 
+    }
     $types = $this->getTypes();
     return isset($types[$name]);
   }
   
   public function getTypeCallback(string $name) {
+    if(!$name) {
+      throw new \InvalidArgumentException('The name parameter cannot be empty.'); 
+    }
     $types = $this->getTypes();
     return $types[$name]; 
   }
@@ -45,6 +57,9 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     foreach($types as $name => $callback) {
       if(!is_string($name)) {
         throw new \TypeError("The \$types keys must be strings."); 
+      }
+      if(!$name) {
+        throw new \InvalidArgumentException('The name for a type cannot be empty.'); 
       }
       if(!is_callable($callback)) {
         throw new \TypeError("The \$types callbacks must be callables."); 
@@ -63,7 +78,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     return true;
   }
 
-  public function checkAccess(array $permissions, array $context = []) {
+  public function checkAccess(array $permissions, array $context) {
     $access = FALSE;
     $allow_bypass = TRUE;
     if(isset($permissions['no_bypass'])) {
@@ -84,7 +99,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     return $access;
   }
   
-  protected function checkBypassAccess(array $context = []) {
+  protected function checkBypassAccess(array $context) {
     $bypass_access = FALSE;
     $bypass_callback = $this->getBypassCallback();
     if($bypass_callback) {
@@ -93,7 +108,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     return $bypass_access;
   }
   
-  protected function dispatch($permissions, string $type = NULL, array $context = []) {
+  protected function dispatch($permissions, string $type = NULL, array $context) {
     $access = FALSE;
     if($permissions) {
       if(is_string($permissions)) {
@@ -145,7 +160,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     return $access;
   }
   
-  protected function processAND(array $permissions, string $type = NULL, array $context = []) {
+  protected function processAND(array $permissions, string $type = NULL, array $context) {
     $access = TRUE;
     foreach(array_keys($permissions) as $key) {
       $subpermissions = [$key => $permissions[$key]];
@@ -157,12 +172,12 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     return $access;
   }
   
-  protected function processNAND(array $permissions, string $type = NULL, array $context = []) {
+  protected function processNAND(array $permissions, string $type = NULL, array $context) {
     $access = !$this->processAND($permissions, $type, $context);
     return $access;
   }
   
-  protected function processOR(array $permissions, string $type = NULL, array $context = []) {
+  protected function processOR(array $permissions, string $type = NULL, array $context) {
     $access = FALSE;
     foreach(array_keys($permissions) as $key) {
       $subpermissions = [$key => $permissions[$key]];
@@ -174,12 +189,12 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     return $access;
   }
   
-  protected function processNOR(array $permissions, string $type = NULL, array $context = []) {
+  protected function processNOR(array $permissions, string $type = NULL, array $context) {
     $access = !$this->processOR($permissions, $type, $context);
     return $access;
   }
   
-  protected function processXOR(array $permissions, string $type = NULL, array $context = []) {
+  protected function processXOR(array $permissions, string $type = NULL, array $context) {
     $access = FALSE;
     $count_true = 0;
     $count_false = 0;
@@ -201,21 +216,21 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     return $access;
   }
   
-  protected function processNOT($permissions, string $type = NULL, array $context = []) {
+  protected function processNOT($permissions, string $type = NULL, array $context) {
     $access = FALSE;
     if(is_string($permissions)) {
       $access = !$this->externalAccessCheck($permissions, $type, $context);
     }
     else if(is_array($permissions)) {
       if(count($permissions) != 1) {
-        throw new Exception('A NOT permission must have exactly one child. Evaluated permissions: ' . print_r($permissions, TRUE));
+        throw new \Exception('A NOT permission must have exactly one child. Evaluated permissions: ' . print_r($permissions, TRUE));
       }
       $access = !$this->dispatch($permissions, $type, $context);
     }
     return $access;
   }
 
-  protected function externalAccessCheck(string $permission, string $type, array $context = []) {
+  protected function externalAccessCheck(string $permission, string $type, array $context) {
     $access = FALSE;
     if($this->typeExists($type)) {
       $callback = $this->getTypeCallback($type);
@@ -223,7 +238,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       return $access;
     }
     else {
-      throw new Exception("The permission type $type has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
+      throw new \Exception("The permission type $type has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
     }
   }
 }

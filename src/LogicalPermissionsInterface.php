@@ -12,6 +12,6 @@ interface LogicalPermissionsInterface {
   public function setTypes(array $types);
   public function getBypassCallback();
   public function setBypassCallback(callable $callback);
-  public function checkAccess(array $permissions, array $context = []);
+  public function checkAccess(array $permissions, array $context);
 }
 

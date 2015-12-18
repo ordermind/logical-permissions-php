@@ -6,6 +6,14 @@ use Ordermind\LogicalPermissions\LogicalPermissions;
 class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   
   /*-----------LogicalPermissions::addType()-------------*/
+  
+  /**
+   * @expectedException TypeError
+   */
+  public function testAddTypeParamNameMissing() {
+    $lp = new LogicalPermissions();
+    $lp->addType();
+  }
 
   /**
    * @expectedException TypeError
@@ -13,6 +21,22 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   public function testAddTypeParamNameWrongType() {
     $lp = new LogicalPermissions();
     $lp->addType(0, function(){});
+  }
+  
+  /**
+   * @expectedException InvalidArgumentException
+   */
+  public function testAddTypeParamNameEmpty() {
+    $lp = new LogicalPermissions();
+    $lp->addType('', function(){});
+  }
+  
+  /**
+   * @expectedException TypeError
+   */
+  public function testAddTypeParamCallbackMissing() {
+    $lp = new LogicalPermissions();
+    $lp->addType('test');
   }
   
   /**
@@ -33,9 +57,25 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   /**
    * @expectedException TypeError
    */
+  public function testRemoveTypeParamNameMissing() {
+    $lp = new LogicalPermissions();
+    $lp->removeType();
+  }
+
+  /**
+   * @expectedException TypeError
+   */
   public function testRemoveTypeParamNameWrongType() {
     $lp = new LogicalPermissions();
     $lp->removeType(0);
+  }
+  
+  /**
+   * @expectedException InvalidArgumentException
+   */
+  public function testRemoveTypeParamNameEmpty() {
+    $lp = new LogicalPermissions();
+    $lp->removeType('');
   }
   
   public function testRemoveTypeParamNameDoesntExist() {
@@ -50,13 +90,29 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /*------------LogicalPermissions::typeExists()---------------*/
-  
+
+  /**
+   * @expectedException TypeError
+   */
+  public function testTypeExistsParamNameMissing() {
+    $lp = new LogicalPermissions();
+    $lp->typeExists();
+  }
+
   /**
    * @expectedException TypeError
    */
   public function testTypeExistsParamNameWrongType() {
     $lp = new LogicalPermissions();
     $lp->typeExists(0);
+  }
+  
+  /**
+   * @expectedException InvalidArgumentException
+   */
+  public function testTypeExistsParamNameEmpty() {
+    $lp = new LogicalPermissions();
+    $lp->typeExists('');
   }
   
   public function testTypeExists() {
@@ -71,9 +127,25 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   /**
    * @expectedException TypeError
    */
+  public function testGetTypeCallbackParamNameMissing() {
+    $lp = new LogicalPermissions();
+    $lp->GetTypeCallback();
+  }
+
+  /**
+   * @expectedException TypeError
+   */
   public function testGetTypeCallbackParamNameWrongType() {
     $lp = new LogicalPermissions();
     $lp->getTypeCallback(0);
+  }
+  
+  /**
+   * @expectedException InvalidArgumentException
+   */
+  public function testGetTypeCallbackParamNameEmpty() {
+    $lp = new LogicalPermissions();
+    $lp->GetTypeCallback('');
   }
   
   public function testGetTypeCallback() {
@@ -99,6 +171,14 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   /**
    * @expectedException TypeError
    */
+  public function testSetTypesParamTypesMissing() {
+    $lp = new LogicalPermissions();
+    $lp->setTypes();
+  }
+  
+  /**
+   * @expectedException TypeError
+   */
   public function testSetTypesParamTypesWrongType() {
     $lp = new LogicalPermissions();
     $types = 55;
@@ -111,6 +191,15 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   public function testSetTypesParamNameWrongType() {
     $lp = new LogicalPermissions();
     $types = [function(){}];
+    $lp->setTypes($types);
+  }
+  
+  /**
+   * @expectedException InvalidArgumentException
+   */
+  public function testSetTypesParamNameEmpty() {
+    $lp = new LogicalPermissions();
+    $types = ['' => function(){}];
     $lp->setTypes($types);
   }
   
@@ -142,6 +231,14 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   /**
    * @expectedException TypeError
    */
+  public function testSetBypassCallbackParamCallbackMissing() {
+    $lp = new LogicalPermissions();
+    $lp->setBypassCallback();
+  }
+
+  /**
+   * @expectedException TypeError
+   */
   public function testSetBypassCallbackParamCallbackWrongType() {
     $lp = new LogicalPermissions();
     $lp->setBypassCallback('test');
@@ -155,6 +252,109 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /*------------LogicalPermissions::checkAccess()---------------*/
+  
+  /**
+   * @expectedException TypeError
+   */
+  public function testCheckAccessParamPermissionsMissing() {
+    $lp = new LogicalPermissions();
+    $lp->checkAccess();
+  }
+
+  /**
+   * @expectedException TypeError
+   */
+  public function testCheckAccessParamPermissionsWrongType() {
+    $lp = new LogicalPermissions();
+    $lp->checkAccess(0, []);
+  }
+  
+  /**
+   * @expectedException TypeError
+   */
+  public function testCheckAccessParamPermissionsWrongPermissionType() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'flag' => function($flag, $context) {
+        if($flag === 'never_bypass') {
+          return !empty($context['user']['never_bypass']); 
+        }
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'flag' => TRUE,
+    ];
+    $lp->checkAccess($permissions, []);
+  }
+
+  public function testCheckAccessParamPermissionsNestedTypes() {
+    $lp = new LogicalPermissions();
+    
+    //Directly nested
+    $permissions = [
+      'flag' => [
+        'flag' => 'testflag',
+      ],
+    ];
+    
+    $caught = FALSE;
+    try {
+      $lp->checkAccess($permissions, []);
+    }
+    catch(Exception $e) {
+      $this->assertEquals(get_class($e), 'Exception'); 
+      $caught = TRUE;
+    }
+    $this->assertTrue($caught);
+    
+    //Indirectly nested
+    $permissions = [
+      'flag' => [
+        'OR' => [
+          'flag' => 'testflag',
+        ],
+      ],
+    ];
+    
+    $caught = FALSE;
+    try {
+      $lp->checkAccess($permissions, []);
+    }
+    catch(Exception $e) {
+      $this->assertEquals(get_class($e), 'Exception'); 
+      $caught = TRUE;
+    }
+    $this->assertTrue($caught);
+  }
+  
+  /**
+   * @expectedException Exception
+   */
+  public function testCheckAccessParamPermissionsUnregisteredType() {
+    $lp = new LogicalPermissions();
+    
+    $permissions = [
+      'flag' => 'testflag',
+    ];
+    $lp->checkAccess($permissions, []);
+  }
+  
+  /**
+   * @expectedException TypeError
+   */
+  public function testCheckAccessParamContextMissing() {
+    $lp = new LogicalPermissions();
+    $lp->checkAccess([]);
+  }
+  
+  /**
+   * @expectedException TypeError
+   */
+  public function testCheckAccessParamContextWrongType() {
+    $lp = new LogicalPermissions();
+    $lp->checkAccess([], 0);
+  }
 
   public function testCheckAccessBypassAccessAllow() {
     $lp = new LogicalPermissions();
@@ -162,7 +362,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       return TRUE;
     };
     $lp->setBypassCallback($bypass_callback);
-    $this->assertTrue($lp->checkAccess([]));
+    $this->assertTrue($lp->checkAccess([], []));
   }
 
   public function testCheckAccessBypassAccessDeny() {
@@ -171,7 +371,16 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       return FALSE;
     };
     $lp->setBypassCallback($bypass_callback);
-    $this->assertFalse($lp->checkAccess([]));
+    $this->assertFalse($lp->checkAccess([], []));
+  }
+  
+  public function testCheckAccessNoBypassAccessBooleanAllow() {
+    $lp = new LogicalPermissions();
+    $bypass_callback = function($context) {
+      return TRUE; 
+    };
+    $lp->setBypassCallback($bypass_callback);
+    $this->assertTrue($lp->checkAccess(['no_bypass' => FALSE], []));
   }
 
   public function testCheckAccessNoBypassAccessBooleanDeny() {
@@ -180,7 +389,33 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       return TRUE; 
     };
     $lp->setBypassCallback($bypass_callback);
-    $this->assertFalse($lp->checkAccess(['no_bypass' => TRUE]));
+    $this->assertFalse($lp->checkAccess(['no_bypass' => TRUE], []));
+  }
+  
+  public function testCheckAccessNoBypassAccessArrayAllow() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'flag' => function($flag, $context) {
+        if($flag === 'never_bypass') {
+          return !empty($context['user']['never_bypass']); 
+        }
+      },
+    ];
+    $lp->setTypes($types);
+    $bypass_callback = function($context) { //Simulates for example that the user is a superuser with ability to bypass access
+      return TRUE;
+    };
+    $lp->setBypassCallback($bypass_callback);
+    $permissions = [
+      'no_bypass' => [
+        'flag' => 'never_bypass',
+      ],
+    ];
+    $user = [
+      'id' => 1,
+      'never_bypass' => FALSE,
+    ];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
   }
 
   public function testCheckAccessNoBypassAccessArrayDeny() {
@@ -209,71 +444,576 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
   }
   
-  public function testCheckAccess() {
+  public function testCheckAccessSingleItemAllow() {
     $lp = new LogicalPermissions();
-    //$this->assertTrue($lp->checkAccess([]));
-    
-    /*
-    it('should test bypass_access allow', function () {
-      var user = {bypass_access: TRUE};
-      var permissions = {role: "admin"};
-      expect(OrdermindLogicalPermissions.checkAccess(permissions, user)).toBe(TRUE);
-    });
-    it('should test bypass_access deny', function () {
-      var user = {bypass_access: FALSE};
-      var permissions = {role: "admin"};
-      expect(OrdermindLogicalPermissions.checkAccess(permissions, user)).toBe(FALSE);
-    });
-    it('should test no_bypass boolean allow', function () {
-      var user = {bypass_access: TRUE};
-      var permissions = {role: ["admin"], no_bypass: FALSE};
-      expect(OrdermindLogicalPermissions.checkAccess(permissions, user)).toBe(TRUE);
-    });
-    it('should test no_bypass boolean deny', function () {
-      var user = {bypass_access: TRUE};
-      var permissions = {role: ["admin"], no_bypass: TRUE};
-      expect(OrdermindLogicalPermissions.checkAccess(permissions, user)).toBe(FALSE);
-    });
-    it('should test no_bypass object allow', function () {
-      var user = {bypass_access: TRUE};
-      var permissions = {role: ["admin"], no_bypass: {role: "superadmin"}};
-      expect(OrdermindLogicalPermissions.checkAccess(permissions, user)).toBe(TRUE);
-    });
-    it('should test no_bypass object deny', function () {
-      var user = {roles: ["superadmin"], bypass_access: TRUE};
-      var permissions = {role: ["admin"], no_bypass: {role: "superadmin"}};
-      expect(OrdermindLogicalPermissions.checkAccess(permissions, user)).toBe(FALSE);
-    });
-    it('should test single role allow', function () {
-      var user = {_id: "user1", roles: ["editor", "sales"]};
-      var permissions = {role: "sales"};
-      expect(OrdermindLogicalPermissions.checkAccess(permissions, user)).toBe(TRUE);
-    });
-    it('should test single role deny', function () {
-      var user = {_id: "user1", roles: ["editor", "admin"]};
-      var permissions = {role: "sales"};
-      expect(OrdermindLogicalPermissions.checkAccess(permissions, user)).toBe(FALSE);
-    });
-    it('should test multiple roles shorthand allow', function () {
-      var user = {_id: "user1", roles: ["editor", "sales"]};
-      var permissions = {role: ["admin", "sales"]};
-      expect(OrdermindLogicalPermissions.checkAccess(permissions, user)).toBe(TRUE);
-    });
-    it('should test multiple roles shorthand deny', function () {
-      var user = {_id: "user1", roles: ["editor"]};
-      var permissions = {role: ["admin", "sales"]};
-      expect(OrdermindLogicalPermissions.checkAccess(permissions, user)).toBe(FALSE);
-    });
-    it('should test flag has_account allow', function () {
-      var user = {_id: "user1", roles: ["editor", "admin"]};
-      var permissions = {flag: "has_account"};
-      expect(OrdermindLogicalPermissions.checkAccess(permissions, user)).toBe(TRUE);
-    });
-    it('should test flag has_account deny', function () {
-      var user = null;
-      var permissions = {flag: "has_account"};
-      expect(OrdermindLogicalPermissions.checkAccess(permissions, user)).toBe(FALSE);
-    });
-    */
+    $types = [
+      'flag' => function($flag, $context) {
+        $access = FALSE;
+        if($flag === 'testflag') {
+          $access = !empty($context['user']['testflag']);
+        }
+        return $access;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'no_bypass' => [
+        'flag' => 'never_bypass',
+      ],
+      'flag' => 'testflag',
+    ];
+    $user = [
+      'id' => 1,
+      'testflag' => TRUE,
+    ];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+  }
+  
+  public function testCheckAccessSingleItemDeny() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'flag' => function($flag, $context) {
+        $access = FALSE;
+        if($flag === 'testflag') {
+          $access = !empty($context['user']['testflag']);
+        }
+        return $access;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'no_bypass' => [
+        'flag' => 'never_bypass',
+      ],
+      'flag' => 'testflag',
+    ];
+    $user = [
+      'id' => 1,
+    ];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+  }
+
+  public function testCheckAccessMultipleTypesShorthandOR() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'flag' => function($flag, $context) {
+        $access = FALSE;
+        if($flag === 'testflag') {
+          $access = !empty($context['user']['testflag']);
+        }
+        return $access;
+      },
+      'role' => function($role, $context) {
+        $access = FALSE;
+        if(!empty($context['user']['roles'])) {
+          $access = in_array($role, $context['user']['roles']); 
+        }
+        return $access;
+      },
+      'misc' => function($item, $context) {
+        $access = FALSE;
+        $access = !empty($context['user'][$item]);
+        return $access;
+      }
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'no_bypass' => [
+        'flag' => 'never_bypass',
+      ],
+      'flag' => 'testflag',
+      'role' => 'admin',
+      'misc' => 'test',
+    ];
+    $user = [
+      'id' => 1,
+    ];
+    //OR truth table
+    //0 0 0
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    //0 0 1
+    $user['test'] = TRUE;
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //0 1 0
+    $user['test'] = FALSE;
+    $user['roles'] = ['admin'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //0 1 1
+    $user['test'] = TRUE;
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //1 0 0
+    $user = [
+      'id' => 1,
+      'testflag' => TRUE,
+    ];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //1 0 1
+    $user['test'] = TRUE;
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //1 1 0
+    $user['test'] = FALSE;
+    $user['roles'] = ['admin'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //1 1 1
+    $user['test'] = TRUE;
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+  }
+
+  public function testCheckAccessMultipleItemsShorthandOR() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'role' => function($role, $context) {
+        $access = FALSE;
+        if(!empty($context['user']['roles'])) {
+          $access = in_array($role, $context['user']['roles']); 
+        }
+        return $access;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'role' => ['admin', 'editor'],
+    ];
+    $user = [
+      'id' => 1,
+    ];
+    //OR truth table
+    //0 0
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    $user['roles'] = [];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    //0 1
+    $user['roles'] = ['editor'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //1 0
+    $user['roles'] = ['admin'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //1 1
+    $user['roles'] = ['editor', 'admin'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+  }
+
+  public function testCheckAccessMultipleItemsAND() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'role' => function($role, $context) {
+        $access = FALSE;
+        if(!empty($context['user']['roles'])) {
+          $access = in_array($role, $context['user']['roles']); 
+        }
+        return $access;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'role' => [
+        'AND' => [
+          'admin', 
+          'editor',
+          'writer',
+        ],
+      ],
+    ];
+    $user = [
+      'id' => 1,
+    ];
+    //AND truth table
+    //0 0 0
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    $user['roles'] = [];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    //0 0 1
+    $user['roles'] = ['writer'];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    //0 1 0
+    $user['roles'] = ['editor'];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    //0 1 1
+    $user['roles'] = ['editor', 'writer'];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    //1 0 0
+    $user['roles'] = ['admin'];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    //1 0 1
+    $user['roles'] = ['admin', 'writer'];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    //1 1 0
+    $user['roles'] = ['admin', 'editor'];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    //1 1 1
+    $user['roles'] = ['admin', 'editor', 'writer'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+  }
+  
+  public function testCheckAccessMultipleItemsNAND() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'role' => function($role, $context) {
+        $access = FALSE;
+        if(!empty($context['user']['roles'])) {
+          $access = in_array($role, $context['user']['roles']); 
+        }
+        return $access;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'role' => [
+        'NAND' => [
+          'admin', 
+          'editor',
+          'writer',
+        ],
+      ],
+    ];
+    $user = [
+      'id' => 1,
+    ];
+    //NAND truth table
+    //0 0 0
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    $user['roles'] = [];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //0 0 1
+    $user['roles'] = ['writer'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //0 1 0
+    $user['roles'] = ['editor'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //0 1 1
+    $user['roles'] = ['editor', 'writer'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //1 0 0
+    $user['roles'] = ['admin'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //1 0 1
+    $user['roles'] = ['admin', 'writer'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //1 1 0
+    $user['roles'] = ['admin', 'editor'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //1 1 1
+    $user['roles'] = ['admin', 'editor', 'writer'];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+  }
+  
+  public function testCheckAccessMultipleItemsOR() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'role' => function($role, $context) {
+        $access = FALSE;
+        if(!empty($context['user']['roles'])) {
+          $access = in_array($role, $context['user']['roles']); 
+        }
+        return $access;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'role' => [
+        'OR' => [
+          'admin', 
+          'editor',
+          'writer',
+        ],
+      ],
+    ];
+    $user = [
+      'id' => 1,
+    ];
+    //OR truth table
+    //0 0 0
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    $user['roles'] = [];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    //0 0 1
+    $user['roles'] = ['writer'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //0 1 0
+    $user['roles'] = ['editor'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //0 1 1
+    $user['roles'] = ['editor', 'writer'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //1 0 0
+    $user['roles'] = ['admin'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //1 0 1
+    $user['roles'] = ['admin', 'writer'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //1 1 0
+    $user['roles'] = ['admin', 'editor'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //1 1 1
+    $user['roles'] = ['admin', 'editor', 'writer'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+  }
+  
+  public function testCheckAccessMultipleItemsNOR() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'role' => function($role, $context) {
+        $access = FALSE;
+        if(!empty($context['user']['roles'])) {
+          $access = in_array($role, $context['user']['roles']); 
+        }
+        return $access;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'role' => [
+        'NOR' => [
+          'admin', 
+          'editor',
+          'writer',
+        ],
+      ],
+    ];
+    $user = [
+      'id' => 1,
+    ];
+    //NOR truth table
+    //0 0 0
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    $user['roles'] = [];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //0 0 1
+    $user['roles'] = ['writer'];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    //0 1 0
+    $user['roles'] = ['editor'];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    //0 1 1
+    $user['roles'] = ['editor', 'writer'];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    //1 0 0
+    $user['roles'] = ['admin'];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    //1 0 1
+    $user['roles'] = ['admin', 'writer'];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    //1 1 0
+    $user['roles'] = ['admin', 'editor'];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    //1 1 1
+    $user['roles'] = ['admin', 'editor', 'writer'];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+  }
+  
+  public function testCheckAccessMultipleItemsXOR() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'role' => function($role, $context) {
+        $access = FALSE;
+        if(!empty($context['user']['roles'])) {
+          $access = in_array($role, $context['user']['roles']); 
+        }
+        return $access;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'role' => [
+        'XOR' => [
+          'admin', 
+          'editor',
+          'writer',
+        ],
+      ],
+    ];
+    $user = [
+      'id' => 1,
+    ];
+    //XOR truth table
+    //0 0 0
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    $user['roles'] = [];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    //0 0 1
+    $user['roles'] = ['writer'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //0 1 0
+    $user['roles'] = ['editor'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //0 1 1
+    $user['roles'] = ['editor', 'writer'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //1 0 0
+    $user['roles'] = ['admin'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //1 0 1
+    $user['roles'] = ['admin', 'writer'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //1 1 0
+    $user['roles'] = ['admin', 'editor'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    //1 1 1
+    $user['roles'] = ['admin', 'editor', 'writer'];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+  }
+  
+  /**
+   * @expectedException Exception
+   */
+  public function testCheckAccessMultipleItemsNOT() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'role' => function($role, $context) {
+        $access = FALSE;
+        if(!empty($context['user']['roles'])) {
+          $access = in_array($role, $context['user']['roles']); 
+        }
+        return $access;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'role' => [
+        'NOT' => [
+          'admin', 
+          'editor',
+          'writer',
+        ],
+      ],
+    ];
+    $lp->checkAccess($permissions, []);
+  }
+  
+  public function testCheckAccessSingleItemNOTString() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'role' => function($role, $context) {
+        $access = FALSE;
+        if(!empty($context['user']['roles'])) {
+          $access = in_array($role, $context['user']['roles']); 
+        }
+        return $access;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'role' => [
+        'NOT' => 'admin',
+      ],
+    ];
+    $user = [
+      'id' => 1,
+      'roles' => ['admin', 'editor'],
+    ];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    unset($user['roles']);
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    $user['roles'] = ['editor'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+  }
+  
+  public function testCheckAccessSingleItemNOTArray() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'role' => function($role, $context) {
+        $access = FALSE;
+        if(!empty($context['user']['roles'])) {
+          $access = in_array($role, $context['user']['roles']); 
+        }
+        return $access;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'role' => [
+        'NOT' => [
+          'admin',
+        ],
+      ],
+    ];
+    $user = [
+      'id' => 1,
+      'roles' => ['admin', 'editor'],
+    ];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    unset($user['roles']);
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    $user['roles'] = ['editor'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+  }
+  
+  public function testCheckAccessNestedLogic() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'role' => function($role, $context) {
+        $access = FALSE;
+        if(!empty($context['user']['roles'])) {
+          $access = in_array($role, $context['user']['roles']); 
+        }
+        return $access;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'role' => [
+        'OR' => [
+          'NOT' => [
+            'AND' => [
+              'admin',
+              'editor',
+            ],
+          ],
+        ],
+      ],
+    ];
+    $user = [
+      'id' => 1,
+      'roles' => ['admin', 'editor'],
+    ];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    unset($user['roles']);
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    $user['roles'] = ['editor'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+  }
+  
+  public function testCheckAccessShorthandORMixedNumericStringKeys() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'role' => function($role, $context) {
+        $access = FALSE;
+        if(!empty($context['user']['roles'])) {
+          $access = in_array($role, $context['user']['roles']); 
+        }
+        return $access;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'role' => [
+        'admin',
+        'AND' => [
+          'editor',
+          'writer',
+          'OR' => [
+            'role1',
+            'role2',
+          ],
+        ],
+      ],
+    ];
+    $user = [
+      'id' => 1,
+      'roles' => ['admin'],
+    ];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    unset($user['roles']);
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    $user['roles'] = ['editor'];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    $user['roles'] = ['editor', 'writer'];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    $user['roles'] = ['editor', 'writer', 'role1'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    $user['roles'] = ['editor', 'writer', 'role2'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    $user['roles'] = ['admin', 'writer'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
   }
 } 
