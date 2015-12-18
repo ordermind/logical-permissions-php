@@ -51,6 +51,14 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   
   /*------------LogicalPermissions::typeExists()---------------*/
   
+  /**
+   * @expectedException TypeError
+   */
+  public function testTypeExistsParamNameWrongType() {
+    $lp = new LogicalPermissions();
+    $lp->typeExists(0);
+  }
+  
   public function testTypeExists() {
     $lp = new LogicalPermissions();
     $this->assertFalse($lp->typeExists('test'));
@@ -59,6 +67,14 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /*------------LogicalPermissions::getTypeCallback()---------------*/
+  
+  /**
+   * @expectedException TypeError
+   */
+  public function testGetTypeCallbackParamNameWrongType() {
+    $lp = new LogicalPermissions();
+    $lp->getTypeCallback(0);
+  }
   
   public function testGetTypeCallback() {
     $lp = new LogicalPermissions();

@@ -9,13 +9,17 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   protected $bypass_callback = NULL;
 
   public function addType(string $name, callable $callback) {
-    $this->types[$name] = $callback;
+    $types = $this->getTypes();
+    $types[$name] = $callback;
+    $this->setTypes($types);
     return true;
   }
 
   public function removeType(string $name) {
-    if(isset($this->types[$name])) {
-      unset($this->types[$name]);
+    $types = $this->getTypes();
+    if(isset($types[$name])) {
+      unset($types[$name]);
+      $this->setTypes($types);
       return true;
     }
     else {
@@ -23,12 +27,12 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     }
   }
   
-  public function typeExists($name) {
+  public function typeExists(string $name) {
     $types = $this->getTypes();
     return isset($types[$name]);
   }
   
-  public function getTypeCallback($name) {
+  public function getTypeCallback(string $name) {
     $types = $this->getTypes();
     return $types[$name]; 
   }
