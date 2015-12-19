@@ -169,7 +169,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
               $type = $key;
             }
             else {
-              throw new \Exception("You cannot put a permission type as a descendant to another permission type. Existing type: $type. Evaluated permissions: " . print_r($value, TRUE));
+              throw new \InvalidArgumentException("You cannot put a permission type as a descendant to another permission type. Existing type: $type. Evaluated permissions: " . print_r($value, TRUE));
             }
           }
           if(is_array($value)) {
@@ -188,6 +188,9 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   }
   
   protected function processAND($permissions, $type = NULL, $context) {
+    if(!is_array($permissions)) {
+      throw new \InvalidArgumentException("The value of an AND gate must be an array. Current value: " . print_r($permissions, TRUE));
+    }
     $access = TRUE;
     foreach(array_keys($permissions) as $key) {
       $subpermissions = [$key => $permissions[$key]];
@@ -200,11 +203,17 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   }
   
   protected function processNAND($permissions, $type = NULL, $context) {
+    if(!is_array($permissions)) {
+      throw new \InvalidArgumentException("The value of a NAND gate must be an array. Current value: " . print_r($permissions, TRUE));
+    }
     $access = !$this->processAND($permissions, $type, $context);
     return $access;
   }
   
   protected function processOR($permissions, $type = NULL, $context) {
+    if(!is_array($permissions)) {
+      throw new \InvalidArgumentException("The value of an OR gate must be an array. Current value: " . print_r($permissions, TRUE));
+    }
     $access = FALSE;
     foreach(array_keys($permissions) as $key) {
       $subpermissions = [$key => $permissions[$key]];
@@ -217,11 +226,20 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   }
   
   protected function processNOR($permissions, $type = NULL, $context) {
+    if(!is_array($permissions)) {
+      throw new \InvalidArgumentException("The value of a NOR gate must be an array. Current value: " . print_r($permissions, TRUE));
+    }
     $access = !$this->processOR($permissions, $type, $context);
     return $access;
   }
   
   protected function processXOR($permissions, $type = NULL, $context) {
+    if(!is_array($permissions)) {
+      throw new \InvalidArgumentException("The value of an XOR gate must be an array. Current value: " . print_r($permissions, TRUE));
+    }
+    if(count($permissions) < 2) {
+     throw new \InvalidArgumentException("The value array of an XOR gate must contain a minimum of two elements. Current value: " . print_r($permissions, TRUE));
+    }
     $access = FALSE;
     $count_true = 0;
     $count_false = 0;
@@ -244,16 +262,16 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   }
   
   protected function processNOT($permissions, $type = NULL, $context) {
+    if(!is_array($permissions) && !is_string($permissions)) {
+      throw new \InvalidArgumentException("The value of a NOT gate must either be an array or a string. Current value: " . print_r($permissions, TRUE));
+    }
     $access = FALSE;
-    if(is_string($permissions)) {
-      $access = !$this->externalAccessCheck($permissions, $type, $context);
-    }
-    else if(is_array($permissions)) {
+    if(is_array($permissions)) {
       if(count($permissions) != 1) {
-        throw new \Exception('A NOT permission must have exactly one child. Evaluated permissions: ' . print_r($permissions, TRUE));
+        throw new \InvalidArgumentException('A NOT permission must have exactly one child in the value array. Current value: ' . print_r($permissions, TRUE));
       }
-      $access = !$this->dispatch($permissions, $type, $context);
     }
+    $access = !$this->dispatch($permissions, $type, $context);
     return $access;
   }
 

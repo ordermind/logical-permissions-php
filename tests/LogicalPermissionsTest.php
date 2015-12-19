@@ -250,7 +250,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       $lp->checkAccess($permissions, []);
     }
     catch(Exception $e) {
-      $this->assertEquals(get_class($e), 'Exception'); 
+      $this->assertEquals(get_class($e), 'InvalidArgumentException'); 
       $caught = TRUE;
     }
     $this->assertTrue($caught);
@@ -269,7 +269,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       $lp->checkAccess($permissions, []);
     }
     catch(Exception $e) {
-      $this->assertEquals(get_class($e), 'Exception'); 
+      $this->assertEquals(get_class($e), 'InvalidArgumentException'); 
       $caught = TRUE;
     }
     $this->assertTrue($caught);
@@ -532,6 +532,33 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
   }
 
+  /**
+   * @expectedException InvalidArgumentException
+   */
+  public function testCheckAccessANDWrongValueType() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'role' => function($role, $context) {
+        $access = FALSE;
+        if(!empty($context['user']['roles'])) {
+          $access = in_array($role, $context['user']['roles']); 
+        }
+        return $access;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'role' => [
+        'AND' => 'admin',
+      ],
+    ];
+    $user = [
+      'id' => 1,
+      'roles' => ['admin'],
+    ];
+    $lp->checkAccess($permissions, ['user' => $user]);
+  }
+
   public function testCheckAccessMultipleItemsAND() {
     $lp = new LogicalPermissions();
     $types = [
@@ -582,6 +609,33 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     //1 1 1
     $user['roles'] = ['admin', 'editor', 'writer'];
     $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+  }
+  
+  /**
+   * @expectedException InvalidArgumentException
+   */
+  public function testCheckAccessNANDWrongValueType() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'role' => function($role, $context) {
+        $access = FALSE;
+        if(!empty($context['user']['roles'])) {
+          $access = in_array($role, $context['user']['roles']); 
+        }
+        return $access;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'role' => [
+        'NAND' => 'admin',
+      ],
+    ];
+    $user = [
+      'id' => 1,
+      'roles' => ['admin'],
+    ];
+    $lp->checkAccess($permissions, ['user' => $user]);
   }
   
   public function testCheckAccessMultipleItemsNAND() {
@@ -636,6 +690,33 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
   }
   
+  /**
+   * @expectedException InvalidArgumentException
+   */
+  public function testCheckAccessORWrongValueType() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'role' => function($role, $context) {
+        $access = FALSE;
+        if(!empty($context['user']['roles'])) {
+          $access = in_array($role, $context['user']['roles']); 
+        }
+        return $access;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'role' => [
+        'OR' => 'admin',
+      ],
+    ];
+    $user = [
+      'id' => 1,
+      'roles' => ['admin'],
+    ];
+    $lp->checkAccess($permissions, ['user' => $user]);
+  }
+  
   public function testCheckAccessMultipleItemsOR() {
     $lp = new LogicalPermissions();
     $types = [
@@ -688,6 +769,33 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
   }
   
+  /**
+   * @expectedException InvalidArgumentException
+   */
+  public function testCheckAccessNORWrongValueType() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'role' => function($role, $context) {
+        $access = FALSE;
+        if(!empty($context['user']['roles'])) {
+          $access = in_array($role, $context['user']['roles']); 
+        }
+        return $access;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'role' => [
+        'NOR' => 'admin',
+      ],
+    ];
+    $user = [
+      'id' => 1,
+      'roles' => ['admin'],
+    ];
+    $lp->checkAccess($permissions, ['user' => $user]);
+  }
+  
   public function testCheckAccessMultipleItemsNOR() {
     $lp = new LogicalPermissions();
     $types = [
@@ -738,6 +846,60 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     //1 1 1
     $user['roles'] = ['admin', 'editor', 'writer'];
     $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+  }
+  
+  /**
+   * @expectedException InvalidArgumentException
+   */
+  public function testCheckAccessXORWrongValueType() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'role' => function($role, $context) {
+        $access = FALSE;
+        if(!empty($context['user']['roles'])) {
+          $access = in_array($role, $context['user']['roles']); 
+        }
+        return $access;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'role' => [
+        'XOR' => 'admin',
+      ],
+    ];
+    $user = [
+      'id' => 1,
+      'roles' => ['admin'],
+    ];
+    $lp->checkAccess($permissions, ['user' => $user]);
+  }
+  
+  /**
+   * @expectedException InvalidArgumentException
+   */
+  public function testCheckAccessXORTooFewElements() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'role' => function($role, $context) {
+        $access = FALSE;
+        if(!empty($context['user']['roles'])) {
+          $access = in_array($role, $context['user']['roles']); 
+        }
+        return $access;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'role' => [
+        'XOR' => ['admin'],
+      ],
+    ];
+    $user = [
+      'id' => 1,
+      'roles' => ['admin'],
+    ];
+    $lp->checkAccess($permissions, ['user' => $user]);
   }
   
   public function testCheckAccessMultipleItemsXOR() {
@@ -793,7 +955,34 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /**
-   * @expectedException Exception
+   * @expectedException InvalidArgumentException
+   */
+  public function testCheckAccessNOTWrongValueType() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'role' => function($role, $context) {
+        $access = FALSE;
+        if(!empty($context['user']['roles'])) {
+          $access = in_array($role, $context['user']['roles']); 
+        }
+        return $access;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'role' => [
+        'NOT' => TRUE,
+      ],
+    ];
+    $user = [
+      'id' => 1,
+      'roles' => ['admin'],
+    ];
+    $lp->checkAccess($permissions, ['user' => $user]);
+  }
+  
+  /**
+   * @expectedException InvalidArgumentException
    */
   public function testCheckAccessMultipleItemsNOT() {
     $lp = new LogicalPermissions();
@@ -896,6 +1085,43 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
             'AND' => [
               'admin',
               'editor',
+            ],
+          ],
+        ],
+      ],
+    ];
+    $user = [
+      'id' => 1,
+      'roles' => ['admin', 'editor'],
+    ];
+    $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+    unset($user['roles']);
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+    $user['roles'] = ['editor'];
+    $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
+  }
+  
+  public function testCheckAccessLogicGateFirst() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'role' => function($role, $context) {
+        $access = FALSE;
+        if(!empty($context['user']['roles'])) {
+          $access = in_array($role, $context['user']['roles']); 
+        }
+        return $access;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'AND' => [
+        'role' => [
+          'OR' => [
+            'NOT' => [
+              'AND' => [
+                'admin',
+                'editor',
+              ],
             ],
           ],
         ],
