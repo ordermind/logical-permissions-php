@@ -191,6 +191,9 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(!is_array($permissions)) {
       throw new \InvalidArgumentException("The value of an AND gate must be an array. Current value: " . print_r($permissions, TRUE));
     }
+    if(count($permissions) < 1) {
+      throw new \InvalidArgumentException("The value array of an AND gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
+    }
     $access = TRUE;
     foreach(array_keys($permissions) as $key) {
       $subpermissions = [$key => $permissions[$key]];
@@ -206,6 +209,9 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(!is_array($permissions)) {
       throw new \InvalidArgumentException("The value of a NAND gate must be an array. Current value: " . print_r($permissions, TRUE));
     }
+    if(count($permissions) < 1) {
+      throw new \InvalidArgumentException("The value array of a NAND gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
+    }
     $access = !$this->processAND($permissions, $type, $context);
     return $access;
   }
@@ -213,6 +219,9 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   protected function processOR($permissions, $type = NULL, $context) {
     if(!is_array($permissions)) {
       throw new \InvalidArgumentException("The value of an OR gate must be an array. Current value: " . print_r($permissions, TRUE));
+    }
+    if(count($permissions) < 1) {
+      throw new \InvalidArgumentException("The value array of an OR gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
     }
     $access = FALSE;
     foreach(array_keys($permissions) as $key) {
@@ -228,6 +237,9 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   protected function processNOR($permissions, $type = NULL, $context) {
     if(!is_array($permissions)) {
       throw new \InvalidArgumentException("The value of a NOR gate must be an array. Current value: " . print_r($permissions, TRUE));
+    }
+    if(count($permissions) < 1) {
+      throw new \InvalidArgumentException("The value array of a NOR gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
     }
     $access = !$this->processOR($permissions, $type, $context);
     return $access;
@@ -269,6 +281,11 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(is_array($permissions)) {
       if(count($permissions) != 1) {
         throw new \InvalidArgumentException('A NOT permission must have exactly one child in the value array. Current value: ' . print_r($permissions, TRUE));
+      }
+    }
+    elseif(is_string($permissions)) {
+      if(!$permissions) {
+        throw new \InvalidArgumentException('A NOT permission cannot have an empty string as its value.');
       }
     }
     $access = !$this->dispatch($permissions, $type, $context);
