@@ -11,7 +11,7 @@ This is a package that provides support for array-based permissions with logic g
 
 ### Usage
 
-The main api method is `LogicalPermissions::checkAccess()`, which checks the access for a **permission tree**. A permission tree is a bundle of permissions that apply to a specific action. Let's say for example that you want to restrict access for updating a user. You'd like only users with the role "admin" to be able to update any user, but users should also be able to update their own user data (or at least some of it). With the structure this package provides, these conditions could be expressed elegantly in a permission tree as such:
+The main api method is [`LogicalPermissions::checkAccess()`](#checkaccess), which checks the access for a **permission tree**. A permission tree is a bundle of permissions that apply to a specific action. Let's say for example that you want to restrict access for updating a user. You'd like only users with the role "admin" to be able to update any user, but users should also be able to update their own user data (or at least some of it). With the structure this package provides, these conditions could be expressed elegantly in a permission tree as such:
 
 ```php
 [
@@ -22,10 +22,10 @@ The main api method is `LogicalPermissions::checkAccess()`, which checks the acc
 ]
 ```
 
-In this example `role` and `flag` are the evaluated permission types. For this example to work you will need to register the permission types 'role' and 'flag' so that the class knows which callbacks are responsible for evaluating the respective permission types. You can do that with `LogicalPermissions::addType()`.
+In this example `role` and `flag` are the evaluated permission types. For this example to work you will need to register the permission types 'role' and 'flag' so that the class knows which callbacks are responsible for evaluating the respective permission types. You can do that with [`LogicalPermissions::addType()`](#addtype).
 
 ### Bypassing permissions
-This packages also supports rules for bypassing permissions completely for superusers. In order to use this functionality you need to register a callback with `LogicalPermissions::setBypassCallback()`. The registered callback will run on every permission check and if it returns `TRUE`, access will automatically be granted. If you want to make exceptions you can do so by adding `'no_bypass' => TRUE` to the first level of a permission tree. You can even use permissions as conditions for `no_bypass`.
+This packages also supports rules for bypassing permissions completely for superusers. In order to use this functionality you need to register a callback with [`LogicalPermissions::setBypassCallback()`](#setbypasscallback). The registered callback will run on every permission check and if it returns `TRUE`, access will automatically be granted. If you want to make exceptions you can do so by adding `'no_bypass' => TRUE` to the first level of a permission tree. You can even use permissions as conditions for `no_bypass`.
 
 Examples: 
 
@@ -49,7 +49,7 @@ Examples:
 
 ## Logic gates
 
-Currently supported logic gates are AND, NAND, OR, NOR, XOR and NOT. You can put logic gates anywhere in a permission tree and nest them to your heart's content. All logic gates support only an array as their value, except the NOT gate which has special rules. If an array of values does not have a logic gate as their key, an OR gate will be assumed.
+Currently supported logic gates are [AND](#and), [NAND](#nand), [OR](#or), [NOR](#nor), [XOR](#xor) and [NOT](#not). You can put logic gates anywhere in a permission tree and nest them to your heart's content. All logic gates support only an array as their value, except the NOT gate which has special rules. If an array of values does not have a logic gate as their key, an OR gate will be assumed.
 
 ### AND
 
