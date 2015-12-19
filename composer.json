@@ -1,6 +1,6 @@
 {
-    "name": "ordermind/LogicalPermissions",
-    "version": "0.9.0",
+    "name": "ordermind/logical-permissions",
+    "version": "1.0.0",
     "description": "",
     "keywords": ["permissions"],
     "authors": [
