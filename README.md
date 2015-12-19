@@ -262,7 +262,3 @@ LogicalPermissions::checkAccess( array $permissions, array $context )
 | `$context` | **array** | A context array that could for example contain the evaluated user and document. |
 
 
-
-
----
-
