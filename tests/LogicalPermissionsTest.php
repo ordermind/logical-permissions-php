@@ -32,7 +32,8 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   
   public function testAddType() {
     $lp = new LogicalPermissions();
-    $this->assertTrue($lp->addType('test', function(){}));
+    $lp->addType('test', function(){});
+    $this->assertTrue($lp->typeExists('test'));
   }
   
   /*-------------LogicalPermissions::removeType()--------------*/
@@ -53,15 +54,19 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp->removeType('');
   }
   
+  /**
+   * @expectedException InvalidArgumentException
+   */
   public function testRemoveTypeParamNameDoesntExist() {
     $lp = new LogicalPermissions();
-    $this->assertFalse($lp->removeType('test'));
+    $lp->removeType('test');
   }
   
   public function testRemoveType() {
     $lp = new LogicalPermissions();
     $lp->addType('test', function() {});
-    $this->assertTrue($lp->removeType('test'));
+    $lp->removeType('test');
+    $this->assertFalse($lp->typeExists('test'));
   }
   
   /*------------LogicalPermissions::typeExists()---------------*/
@@ -173,7 +178,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   public function testSetTypes() {
     $lp = new LogicalPermissions();
     $types = ['test' => function(){}];
-    $this->assertTrue($lp->setTypes($types));
+    $lp->setTypes($types);
     $this->assertEquals($lp->getTypes(), $types);
   }
   
@@ -197,7 +202,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   public function testSetBypassCallback() {
     $lp = new LogicalPermissions();
     $callback = function(){};
-    $this->assertTrue($lp->setBypassCallback($callback));
+    $lp->setBypassCallback($callback);
     $this->assertEquals($lp->getBypassCallback(), $callback);
   }
   

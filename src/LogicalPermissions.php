@@ -20,7 +20,6 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     $types = $this->getTypes();
     $types[$name] = $callback;
     $this->setTypes($types);
-    return true;
   }
 
   public function removeType($name) {
@@ -34,10 +33,9 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(isset($types[$name])) {
       unset($types[$name]);
       $this->setTypes($types);
-      return true;
     }
     else {
-      return false;
+      throw new \InvalidArgumentException("The permission type $name has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
     }
   }
   
@@ -88,7 +86,6 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       }
     }
     $this->types = $types;
-    return true;
   }
 
   public function getBypassCallback() {
@@ -100,7 +97,6 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       throw new \InvalidArgumentException('The callback parameter must be a callable data type.'); 
     }
     $this->bypass_callback = $callback;
-    return true;
   }
 
   public function checkAccess($permissions, $context) {
@@ -173,7 +169,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
               $type = $key;
             }
             else {
-              throw new \Exception("You cannot put a permission type as a descendant to another permission type. Existing type: $type. Evaluated permissions: " . print_r($value, true));
+              throw new \Exception("You cannot put a permission type as a descendant to another permission type. Existing type: $type. Evaluated permissions: " . print_r($value, TRUE));
             }
           }
           if(is_array($value)) {
@@ -185,7 +181,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
         }
       }
       else {
-        throw new \InvalidArgumentException("A permission must either be a string or an array. Evaluated permissions: " . print_r($permissions, true));
+        throw new \InvalidArgumentException("A permission must either be a string or an array. Evaluated permissions: " . print_r($permissions, TRUE));
       }
     }
     return $access;
