@@ -15,7 +15,7 @@ The main api method is `LogicalPermissions::checkAccess()`, which checks the acc
 
 ```php
 [
-  'OR': [
+  'OR' => [
     'role' => 'admin',
     'flag' => 'is_author',
   ],
