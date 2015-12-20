@@ -1,0 +1,10 @@
+*
+!/.gitignore
+!/composer.json
+!/.travis.yml
+!/README.md
+!/src
+!/src/*
+!/phpunit.xml
+!/tests
+!/tests/*
