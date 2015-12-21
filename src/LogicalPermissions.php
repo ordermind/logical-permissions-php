@@ -29,8 +29,8 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(!$name) {
       throw new \InvalidArgumentException('The name parameter cannot be empty.'); 
     }
-    $types = $this->getTypes();
-    if(isset($types[$name])) {
+    if($this->typeExists($name)) {
+      $types = $this->getTypes();
       unset($types[$name]);
       $this->setTypes($types);
     }
@@ -57,8 +57,8 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(!$name) {
       throw new \InvalidArgumentException('The name parameter cannot be empty.'); 
     }
-    $types = $this->getTypes();
     if($this->typeExists($name)) {
+      $types = $this->getTypes();
       return $types[$name];
     }
     else {
