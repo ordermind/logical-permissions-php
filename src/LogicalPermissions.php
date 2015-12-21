@@ -8,11 +8,11 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   protected $bypass_callback = NULL;
 
   public function addType($name, $callback) {
-    if(!$name) {
-      throw new \InvalidArgumentException('The name parameter cannot be empty.'); 
-    }
     if(!is_string($name)) {
       throw new \InvalidArgumentException('The name parameter must be a string.'); 
+    }
+    if(!$name) {
+      throw new \InvalidArgumentException('The name parameter cannot be empty.'); 
     }
     if(!is_callable($callback)) {
       throw new \InvalidArgumentException('The callback parameter must be a callable data type.'); 
@@ -23,11 +23,11 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   }
 
   public function removeType($name) {
-    if(!$name) {
-      throw new \InvalidArgumentException('The name parameter cannot be empty.'); 
-    }
     if(!is_string($name)) {
       throw new \InvalidArgumentException('The name parameter must be a string.'); 
+    }
+    if(!$name) {
+      throw new \InvalidArgumentException('The name parameter cannot be empty.'); 
     }
     $types = $this->getTypes();
     if(isset($types[$name])) {
@@ -40,22 +40,22 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   }
   
   public function typeExists($name) {
-    if(!$name) {
-      throw new \InvalidArgumentException('The name parameter cannot be empty.'); 
-    }
     if(!is_string($name)) {
       throw new \InvalidArgumentException('The name parameter must be a string.'); 
+    }
+    if(!$name) {
+      throw new \InvalidArgumentException('The name parameter cannot be empty.'); 
     }
     $types = $this->getTypes();
     return isset($types[$name]);
   }
   
   public function getTypeCallback($name) {
-    if(!$name) {
-      throw new \InvalidArgumentException('The name parameter cannot be empty.'); 
-    }
     if(!is_string($name)) {
       throw new \InvalidArgumentException('The name parameter must be a string.'); 
+    }
+    if(!$name) {
+      throw new \InvalidArgumentException('The name parameter cannot be empty.'); 
     }
     $types = $this->getTypes();
     if($this->typeExists($name)) {
