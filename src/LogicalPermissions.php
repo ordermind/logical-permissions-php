@@ -22,6 +22,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(!is_callable($callback)) {
       throw new InvalidArgumentTypeException('The callback parameter must be a callable data type.'); 
     }
+
     $types = $this->getTypes();
     $types[$name] = $callback;
     $this->setTypes($types);
@@ -34,14 +35,13 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(!$name) {
       throw new InvalidArgumentValueException('The name parameter cannot be empty.'); 
     }
-    if($this->typeExists($name)) {
-      $types = $this->getTypes();
-      unset($types[$name]);
-      $this->setTypes($types);
-    }
-    else {
+    if(!$this->typeExists($name)) {
       throw new PermissionTypeNotRegisteredException("The permission type \"$name\" has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
     }
+
+    $types = $this->getTypes();
+    unset($types[$name]);
+    $this->setTypes($types);
   }
   
   public function typeExists($name) {
@@ -51,6 +51,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(!$name) {
       throw new InvalidArgumentValueException('The name parameter cannot be empty.'); 
     }
+
     $types = $this->getTypes();
     return isset($types[$name]);
   }
@@ -62,13 +63,12 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(!$name) {
       throw new InvalidArgumentValueException('The name parameter cannot be empty.'); 
     }
-    if($this->typeExists($name)) {
-      $types = $this->getTypes();
-      return $types[$name];
-    }
-    else {
+    if(!$this->typeExists($name)) {
       throw new PermissionTypeNotRegisteredException("The permission type $name has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
     }
+
+    $types = $this->getTypes();
+    return $types[$name];
   }
 
   public function getTypes() {
@@ -90,6 +90,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
         throw new InvalidArgumentValueException("The \$types callbacks must be callables."); 
       }
     }
+
     $this->types = $types;
   }
 
@@ -101,6 +102,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(!is_callable($callback)) {
       throw new InvalidArgumentTypeException('The callback parameter must be a callable data type.'); 
     }
+
     $this->bypass_callback = $callback;
   }
 
@@ -111,6 +113,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(!is_array($context)) {
       throw new InvalidArgumentTypeException('The context parameter must be an array.'); 
     }
+
     $access = FALSE;
     $allow_bypass = TRUE;
     if(isset($permissions['no_bypass'])) {
@@ -199,6 +202,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(count($permissions) < 1) {
       throw new InvalidValueForLogicGate("The value array of an AND gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
     }
+
     $access = TRUE;
     foreach(array_keys($permissions) as $key) {
       $subpermissions = [$key => $permissions[$key]];
@@ -217,6 +221,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(count($permissions) < 1) {
       throw new InvalidValueForLogicGate("The value array of a NAND gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
     }
+
     $access = !$this->processAND($permissions, $type, $context);
     return $access;
   }
@@ -228,6 +233,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(count($permissions) < 1) {
       throw new InvalidValueForLogicGate("The value array of an OR gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
     }
+
     $access = FALSE;
     foreach(array_keys($permissions) as $key) {
       $subpermissions = [$key => $permissions[$key]];
@@ -246,6 +252,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(count($permissions) < 1) {
       throw new InvalidValueForLogicGate("The value array of a NOR gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
     }
+
     $access = !$this->processOR($permissions, $type, $context);
     return $access;
   }
@@ -257,6 +264,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(count($permissions) < 2) {
      throw new InvalidValueForLogicGate("The value array of an XOR gate must contain a minimum of two elements. Current value: " . print_r($permissions, TRUE));
     }
+
     $access = FALSE;
     $count_true = 0;
     $count_false = 0;
@@ -282,7 +290,6 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(!is_array($permissions) && !is_string($permissions)) {
       throw new InvalidValueForLogicGate("The value of a NOT gate must either be an array or a string. Current value: " . print_r($permissions, TRUE));
     }
-    $access = FALSE;
     if(is_array($permissions)) {
       if(count($permissions) != 1) {
         throw new InvalidValueForLogicGate('A NOT permission must have exactly one child in the value array. Current value: ' . print_r($permissions, TRUE));
@@ -293,19 +300,18 @@ class LogicalPermissions implements LogicalPermissionsInterface {
         throw new InvalidValueForLogicGate('A NOT permission cannot have an empty string as its value.');
       }
     }
+
     $access = !$this->dispatch($permissions, $type, $context);
     return $access;
   }
 
   protected function externalAccessCheck($permission, $type, $context) {
-    $access = FALSE;
-    if($this->typeExists($type)) {
-      $callback = $this->getTypeCallback($type);
-      $access = $callback($permission, $context);
-      return $access;
-    }
-    else {
+    if(!$this->typeExists($type)) {
       throw new PermissionTypeNotRegisteredException("The permission type $type has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
     }
+
+    $callback = $this->getTypeCallback($type);
+    $access = $callback($permission, $context);
+    return $access;
   }
 }
