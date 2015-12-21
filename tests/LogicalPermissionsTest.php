@@ -124,7 +124,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $callback = function(){};
     $lp->addType('test', $callback);
-    $this->assertTrue($lp->getTypeCallback('test') === $callback);
+    $this->assertSame($lp->getTypeCallback('test'), $callback);
   }
   
   /*------------LogicalPermissions::getTypes()---------------*/
