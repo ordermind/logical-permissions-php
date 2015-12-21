@@ -1,7 +1,12 @@
 <?php
 
 namespace Ordermind\LogicalPermissions;
-use Ordermind\LogicalPermissions\LogicalPermissionsInterface;
+
+use Ordermind\LogicalPermissions\Interfaces\LogicalPermissionsInterface;
+use Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException;
+use Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException;
+use Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGate;
+use Ordermind\LogicalPermissions\Exceptions\PermissionTypeNotRegisteredException;
 
 class LogicalPermissions implements LogicalPermissionsInterface {
   protected $types = [];
@@ -9,13 +14,13 @@ class LogicalPermissions implements LogicalPermissionsInterface {
 
   public function addType($name, $callback) {
     if(!is_string($name)) {
-      throw new \InvalidArgumentException('The name parameter must be a string.'); 
+      throw new InvalidArgumentTypeException('The name parameter must be a string.'); 
     }
     if(!$name) {
-      throw new \InvalidArgumentException('The name parameter cannot be empty.'); 
+      throw new InvalidArgumentValueException('The name parameter cannot be empty.'); 
     }
     if(!is_callable($callback)) {
-      throw new \InvalidArgumentException('The callback parameter must be a callable data type.'); 
+      throw new InvalidArgumentTypeException('The callback parameter must be a callable data type.'); 
     }
     $types = $this->getTypes();
     $types[$name] = $callback;
@@ -24,10 +29,10 @@ class LogicalPermissions implements LogicalPermissionsInterface {
 
   public function removeType($name) {
     if(!is_string($name)) {
-      throw new \InvalidArgumentException('The name parameter must be a string.'); 
+      throw new InvalidArgumentTypeException('The name parameter must be a string.'); 
     }
     if(!$name) {
-      throw new \InvalidArgumentException('The name parameter cannot be empty.'); 
+      throw new InvalidArgumentValueException('The name parameter cannot be empty.'); 
     }
     if($this->typeExists($name)) {
       $types = $this->getTypes();
@@ -35,16 +40,16 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       $this->setTypes($types);
     }
     else {
-      throw new \InvalidArgumentException("The permission type $name has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
+      throw new PermissionTypeNotRegisteredException("The permission type \"$name\" has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
     }
   }
   
   public function typeExists($name) {
     if(!is_string($name)) {
-      throw new \InvalidArgumentException('The name parameter must be a string.'); 
+      throw new InvalidArgumentTypeException('The name parameter must be a string.'); 
     }
     if(!$name) {
-      throw new \InvalidArgumentException('The name parameter cannot be empty.'); 
+      throw new InvalidArgumentValueException('The name parameter cannot be empty.'); 
     }
     $types = $this->getTypes();
     return isset($types[$name]);
@@ -52,17 +57,17 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   
   public function getTypeCallback($name) {
     if(!is_string($name)) {
-      throw new \InvalidArgumentException('The name parameter must be a string.'); 
+      throw new InvalidArgumentTypeException('The name parameter must be a string.'); 
     }
     if(!$name) {
-      throw new \InvalidArgumentException('The name parameter cannot be empty.'); 
+      throw new InvalidArgumentValueException('The name parameter cannot be empty.'); 
     }
     if($this->typeExists($name)) {
       $types = $this->getTypes();
       return $types[$name];
     }
     else {
-      throw new \InvalidArgumentException("The permission type $name has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
+      throw new PermissionTypeNotRegisteredException("The permission type $name has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
     }
   }
 
@@ -72,17 +77,17 @@ class LogicalPermissions implements LogicalPermissionsInterface {
 
   public function setTypes($types) {
     if(!is_array($types)) {
-      throw new \InvalidArgumentException('The types parameter must be an array.');
+      throw new InvalidArgumentTypeException('The types parameter must be an array.');
     }
     foreach($types as $name => $callback) {
       if(!is_string($name)) {
-        throw new \InvalidArgumentException("The \$types keys must be strings."); 
+        throw new InvalidArgumentValueException("The \$types keys must be strings."); 
       }
       if(!$name) {
-        throw new \InvalidArgumentException('The name for a type cannot be empty.'); 
+        throw new InvalidArgumentValueException('The name for a type cannot be empty.'); 
       }
       if(!is_callable($callback)) {
-        throw new \InvalidArgumentException("The \$types callbacks must be callables."); 
+        throw new InvalidArgumentValueException("The \$types callbacks must be callables."); 
       }
     }
     $this->types = $types;
@@ -94,17 +99,17 @@ class LogicalPermissions implements LogicalPermissionsInterface {
 
   public function setBypassCallback($callback) {
     if(!is_callable($callback)) {
-      throw new \InvalidArgumentException('The callback parameter must be a callable data type.'); 
+      throw new InvalidArgumentTypeException('The callback parameter must be a callable data type.'); 
     }
     $this->bypass_callback = $callback;
   }
 
   public function checkAccess($permissions, $context) {
     if(!is_array($permissions)) {
-      throw new \InvalidArgumentException('The permissions parameter must be an array.'); 
+      throw new InvalidArgumentTypeException('The permissions parameter must be an array.'); 
     }
     if(!is_array($context)) {
-      throw new \InvalidArgumentException('The context parameter must be an array.'); 
+      throw new InvalidArgumentTypeException('The context parameter must be an array.'); 
     }
     $access = FALSE;
     $allow_bypass = TRUE;
@@ -169,7 +174,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
               $type = $key;
             }
             else {
-              throw new \InvalidArgumentException("You cannot put a permission type as a descendant to another permission type. Existing type: $type. Evaluated permissions: " . print_r($value, TRUE));
+              throw new InvalidArgumentValueException("You cannot put a permission type as a descendant to another permission type. Existing type: $type. Evaluated permissions: " . print_r($value, TRUE));
             }
           }
           if(is_array($value)) {
@@ -181,7 +186,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
         }
       }
       else {
-        throw new \InvalidArgumentException("A permission must either be a string or an array. Evaluated permissions: " . print_r($permissions, TRUE));
+        throw new InvalidArgumentTypeException("A permission must either be a string or an array. Evaluated permissions: " . print_r($permissions, TRUE));
       }
     }
     return $access;
@@ -189,10 +194,10 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   
   protected function processAND($permissions, $type = NULL, $context) {
     if(!is_array($permissions)) {
-      throw new \InvalidArgumentException("The value of an AND gate must be an array. Current value: " . print_r($permissions, TRUE));
+      throw new InvalidValueForLogicGate("The value of an AND gate must be an array. Current value: " . print_r($permissions, TRUE));
     }
     if(count($permissions) < 1) {
-      throw new \InvalidArgumentException("The value array of an AND gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
+      throw new InvalidValueForLogicGate("The value array of an AND gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
     }
     $access = TRUE;
     foreach(array_keys($permissions) as $key) {
@@ -207,10 +212,10 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   
   protected function processNAND($permissions, $type = NULL, $context) {
     if(!is_array($permissions)) {
-      throw new \InvalidArgumentException("The value of a NAND gate must be an array. Current value: " . print_r($permissions, TRUE));
+      throw new InvalidValueForLogicGate("The value of a NAND gate must be an array. Current value: " . print_r($permissions, TRUE));
     }
     if(count($permissions) < 1) {
-      throw new \InvalidArgumentException("The value array of a NAND gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
+      throw new InvalidValueForLogicGate("The value array of a NAND gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
     }
     $access = !$this->processAND($permissions, $type, $context);
     return $access;
@@ -218,10 +223,10 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   
   protected function processOR($permissions, $type = NULL, $context) {
     if(!is_array($permissions)) {
-      throw new \InvalidArgumentException("The value of an OR gate must be an array. Current value: " . print_r($permissions, TRUE));
+      throw new InvalidValueForLogicGate("The value of an OR gate must be an array. Current value: " . print_r($permissions, TRUE));
     }
     if(count($permissions) < 1) {
-      throw new \InvalidArgumentException("The value array of an OR gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
+      throw new InvalidValueForLogicGate("The value array of an OR gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
     }
     $access = FALSE;
     foreach(array_keys($permissions) as $key) {
@@ -236,10 +241,10 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   
   protected function processNOR($permissions, $type = NULL, $context) {
     if(!is_array($permissions)) {
-      throw new \InvalidArgumentException("The value of a NOR gate must be an array. Current value: " . print_r($permissions, TRUE));
+      throw new InvalidValueForLogicGate("The value of a NOR gate must be an array. Current value: " . print_r($permissions, TRUE));
     }
     if(count($permissions) < 1) {
-      throw new \InvalidArgumentException("The value array of a NOR gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
+      throw new InvalidValueForLogicGate("The value array of a NOR gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
     }
     $access = !$this->processOR($permissions, $type, $context);
     return $access;
@@ -247,10 +252,10 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   
   protected function processXOR($permissions, $type = NULL, $context) {
     if(!is_array($permissions)) {
-      throw new \InvalidArgumentException("The value of an XOR gate must be an array. Current value: " . print_r($permissions, TRUE));
+      throw new InvalidValueForLogicGate("The value of an XOR gate must be an array. Current value: " . print_r($permissions, TRUE));
     }
     if(count($permissions) < 2) {
-     throw new \InvalidArgumentException("The value array of an XOR gate must contain a minimum of two elements. Current value: " . print_r($permissions, TRUE));
+     throw new InvalidValueForLogicGate("The value array of an XOR gate must contain a minimum of two elements. Current value: " . print_r($permissions, TRUE));
     }
     $access = FALSE;
     $count_true = 0;
@@ -275,17 +280,17 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   
   protected function processNOT($permissions, $type = NULL, $context) {
     if(!is_array($permissions) && !is_string($permissions)) {
-      throw new \InvalidArgumentException("The value of a NOT gate must either be an array or a string. Current value: " . print_r($permissions, TRUE));
+      throw new InvalidValueForLogicGate("The value of a NOT gate must either be an array or a string. Current value: " . print_r($permissions, TRUE));
     }
     $access = FALSE;
     if(is_array($permissions)) {
       if(count($permissions) != 1) {
-        throw new \InvalidArgumentException('A NOT permission must have exactly one child in the value array. Current value: ' . print_r($permissions, TRUE));
+        throw new InvalidValueForLogicGate('A NOT permission must have exactly one child in the value array. Current value: ' . print_r($permissions, TRUE));
       }
     }
     elseif(is_string($permissions)) {
       if(!$permissions) {
-        throw new \InvalidArgumentException('A NOT permission cannot have an empty string as its value.');
+        throw new InvalidValueForLogicGate('A NOT permission cannot have an empty string as its value.');
       }
     }
     $access = !$this->dispatch($permissions, $type, $context);
@@ -300,7 +305,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       return $access;
     }
     else {
-      throw new \InvalidArgumentException("The permission type $type has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
+      throw new PermissionTypeNotRegisteredException("The permission type $type has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
     }
   }
 }
