@@ -206,7 +206,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $callback = function(){};
     $lp->setBypassCallback($callback);
-    $this->assertEquals($lp->getBypassCallback(), $callback);
+    $this->assertSame($lp->getBypassCallback(), $callback);
   }
   
   /*------------LogicalPermissions::checkAccess()---------------*/
