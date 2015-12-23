@@ -137,7 +137,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   protected function checkBypassAccess($context) {
     $bypass_access = FALSE;
     $bypass_callback = $this->getBypassCallback();
-    if($bypass_callback) {
+    if(is_callable($bypass_callback)) {
       $bypass_access = $bypass_callback($context);
     }
     return $bypass_access;
@@ -310,8 +310,11 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       throw new PermissionTypeNotRegisteredException("The permission type $type has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
     }
 
+    $access = false;
     $callback = $this->getTypeCallback($type);
-    $access = $callback($permission, $context);
+    if(is_callable($callback)) {
+      $access = $callback($permission, $context);
+    }
     return $access;
   }
 }
