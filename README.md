@@ -422,7 +422,7 @@ LogicalPermissions::setBypassCallback( callable $callback )
 Check access for a permission tree.
 
 ```php
-LogicalPermissions::checkAccess( array $permissions, array $context )
+LogicalPermissions::checkAccess( array $permissions, array $context ): boolean
 ```
 
 
@@ -434,5 +434,10 @@ LogicalPermissions::checkAccess( array $permissions, array $context )
 |-----------|------|-------------|
 | `$permissions` | **array** | The permission tree to be evaluated. |
 | `$context` | **array** | A context array that could for example contain the evaluated user and document. |
+
+
+**Return Value:**
+
+Access.
 
 

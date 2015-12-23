@@ -59,7 +59,7 @@ interface LogicalPermissionsInterface {
   * Check access for a permission tree.
   * @param array $permissions The permission tree to be evaluated.
   * @param array $context A context array that could for example contain the evaluated user and document.
-  * @returns bool Access.
+  * @return bool Access.
   */
   public function checkAccess($permissions, $context);
 
