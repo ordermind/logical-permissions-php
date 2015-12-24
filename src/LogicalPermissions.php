@@ -129,7 +129,9 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       $access = TRUE;
     }
     else {
-      $access = $this->processOR($permissions, NULL, $context);
+      if($permissions) {
+        $access = $this->processOR($permissions, NULL, $context);
+      }
     }
     return $access;
   }
@@ -177,7 +179,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
               $type = $key;
             }
             else {
-              throw new InvalidArgumentValueException("You cannot put a permission type as a descendant to another permission type. Existing type: $type. Evaluated permissions: " . print_r($value, TRUE));
+              throw new InvalidArgumentValueException("You cannot put a permission type as a descendant to another permission type. Existing type: $type. Evaluated permissions: " . print_r($permissions, TRUE));
             }
           }
           if(is_array($value)) {

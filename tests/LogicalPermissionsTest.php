@@ -224,14 +224,6 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
    */
   public function testCheckAccessParamPermissionsWrongPermissionType() {
     $lp = new LogicalPermissions();
-    $types = [
-      'flag' => function($flag, $context) {
-        if($flag === 'never_bypass') {
-          return !empty($context['user']['never_bypass']); 
-        }
-      },
-    ];
-    $lp->setTypes($types);
     $permissions = [
       'flag' => TRUE,
     ];
@@ -297,6 +289,18 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->checkAccess([], 0);
   }
+  
+  public function testCheckAccessCheckContextPassing() {
+    $lp = new LogicalPermissions();
+    $user = ['id' => 1];
+    $bypass_callback = function($context) use ($user) {
+      $this->assertTrue(isset($context['user']));
+      $this->assertEquals($context['user'], $user);
+      return TRUE;
+    };
+    $lp->setBypassCallback($bypass_callback);
+    $lp->checkAccess([], ['user' => $user]);
+  }
 
   public function testCheckAccessBypassAccessAllow() {
     $lp = new LogicalPermissions();
@@ -309,21 +313,11 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
 
   public function testCheckAccessBypassAccessDeny() {
     $lp = new LogicalPermissions();
-    $types = [
-      'flag' => function($flag, $context) {
-        $access = FALSE;
-        if($flag === 'testflag') {
-          $access = !empty($context['user']['testflag']);
-        }
-        return $access;
-      },
-    ];
-    $lp->setTypes($types);
     $bypass_callback = function($context) {
       return FALSE;
     };
     $lp->setBypassCallback($bypass_callback);
-    $this->assertFalse($lp->checkAccess(['flag' => 'testflag'], []));
+    $this->assertFalse($lp->checkAccess([], []));
   }
   
   public function testCheckAccessNoBypassAccessBooleanAllow() {
@@ -337,21 +331,11 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
 
   public function testCheckAccessNoBypassAccessBooleanDeny() {
     $lp = new LogicalPermissions();
-    $types = [
-      'flag' => function($flag, $context) {
-        $access = FALSE;
-        if($flag === 'testflag') {
-          $access = !empty($context['user']['testflag']);
-        }
-        return $access;
-      },
-    ];
-    $lp->setTypes($types);
     $bypass_callback = function($context) {
       return TRUE; 
     };
     $lp->setBypassCallback($bypass_callback);
-    $this->assertFalse($lp->checkAccess(['no_bypass' => TRUE, 'flag' => 'testflag'], []));
+    $this->assertFalse($lp->checkAccess(['no_bypass' => TRUE], []));
   }
   
   public function testCheckAccessNoBypassAccessArrayAllow() {
@@ -387,9 +371,6 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
         if($flag === 'never_bypass') {
           return !empty($context['user']['never_bypass']); 
         }
-        elseif($flag === 'testflag') {
-          $access = !empty($context['user']['testflag']);
-        }
       },
     ];
     $lp->setTypes($types);
@@ -401,7 +382,6 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'no_bypass' => [
         'flag' => 'never_bypass',
       ],
-      'flag' => 'testflag',
     ];
     $user = [
       'id' => 1,
@@ -448,9 +428,6 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     ];
     $lp->setTypes($types);
     $permissions = [
-      'no_bypass' => [
-        'flag' => 'never_bypass',
-      ],
       'flag' => 'testflag',
     ];
     $user = [
