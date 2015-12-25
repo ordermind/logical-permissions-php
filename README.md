@@ -137,7 +137,7 @@ In other words, this permission tree:
   'role' => ['editor', 'sales'],
 ]
 ```
-is interpreted exactly as this permission tree:
+is interpreted exactly the same way as this permission tree:
 ```php
 [
   'role' => [
