@@ -49,7 +49,7 @@ Examples:
 
 ## Logic gates
 
-Currently supported logic gates are [AND](#and), [NAND](#nand), [OR](#or), [NOR](#nor), [XOR](#xor) and [NOT](#not). You can put logic gates anywhere in a permission tree and nest them to your heart's content. All logic gates support only an array as their value, except the NOT gate which has special rules. If an array of values does not have a logic gate as their key, an OR gate will be assumed.
+Currently supported logic gates are [AND](#and), [NAND](#nand), [OR](#or), [NOR](#nor), [XOR](#xor) and [NOT](#not). You can put logic gates anywhere in a permission tree and nest them to your heart's content. All logic gates support only an array as their value, except the NOT gate which has special rules. If an array of values does not have a logic gate as its key, an OR gate will be assumed.
 
 ### AND
 
@@ -125,6 +125,27 @@ Examples:
   ],
 ]
 ```
+
+### Shorthand OR
+
+As previously mentioned, any array of values that doesn't have a logic gate as its key is interpreted as belonging to an OR gate.
+
+In other words, this permission tree:
+
+```php
+[
+  'role' => ['editor', 'sales'],
+]
+```
+is interpreted exactly as this permission tree:
+```php
+[
+  'role' => [
+    'OR' => ['editor', 'sales'],
+  ],
+]
+```
+
 
 ### NOR
 
