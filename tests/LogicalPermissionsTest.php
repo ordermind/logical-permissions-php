@@ -134,10 +134,9 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($lp->getTypes(), []);
     $callback = function(){};
     $lp->addType('test', $callback);
-    foreach($lp->getTypes() as $name => $func) {
-      $this->assertEquals($name, 'test');
-      $this->assertSame($func, $callback);
-    }
+    $types = $lp->getTypes();
+    $this->assertEquals($types, ['test' => $callback]);
+    $this->assertSame($types['test'], $callback);
   }
   
   /*------------LogicalPermissions::setTypes()---------------*/
@@ -180,9 +179,11 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   
   public function testSetTypes() {
     $lp = new LogicalPermissions();
-    $types = ['test' => function(){}];
-    $lp->setTypes($types);
-    $this->assertEquals($lp->getTypes(), $types);
+    $callback = function(){};
+    $lp->setTypes(['test' => $callback]);
+    $types = $lp->getTypes();
+    $this->assertEquals($types, ['test' => $callback]);
+    $this->assertSame($types['test'], $callback);
   }
   
   /*------------LogicalPermissions::getBypassCallback()---------------*/
