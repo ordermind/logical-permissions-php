@@ -537,7 +537,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGate
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
   public function testCheckAccessANDWrongValueType() {
     $lp = new LogicalPermissions();
@@ -564,7 +564,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGate
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
   public function testCheckAccessANDTooFewElements() {
     $lp = new LogicalPermissions();
@@ -643,7 +643,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGate
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
   public function testCheckAccessNANDWrongValueType() {
     $lp = new LogicalPermissions();
@@ -670,7 +670,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGate
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
   public function testCheckAccessNANDTooFewElements() {
     $lp = new LogicalPermissions();
@@ -749,7 +749,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGate
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
   public function testCheckAccessORWrongValueType() {
     $lp = new LogicalPermissions();
@@ -776,7 +776,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGate
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
   public function testCheckAccessORTooFewElements() {
     $lp = new LogicalPermissions();
@@ -855,7 +855,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGate
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
   public function testCheckAccessNORWrongValueType() {
     $lp = new LogicalPermissions();
@@ -882,7 +882,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGate
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
   public function testCheckAccessNORTooFewElements() {
     $lp = new LogicalPermissions();
@@ -961,7 +961,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGate
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
   public function testCheckAccessXORWrongValueType() {
     $lp = new LogicalPermissions();
@@ -988,7 +988,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGate
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
   public function testCheckAccessXORTooFewElements() {
     $lp = new LogicalPermissions();
@@ -1067,7 +1067,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGate
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
   public function testCheckAccessNOTWrongValueType() {
     $lp = new LogicalPermissions();
@@ -1094,7 +1094,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGate
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
   public function testCheckAccessNOTArrayTooFewElements() {
     $lp = new LogicalPermissions();
@@ -1121,7 +1121,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGate
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
   public function testCheckAccessNOTStringEmpty() {
     $lp = new LogicalPermissions();
@@ -1148,7 +1148,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGate
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
   public function testCheckAccessMultipleItemsNOT() {
     $lp = new LogicalPermissions();

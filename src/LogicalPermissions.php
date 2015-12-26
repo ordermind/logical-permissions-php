@@ -5,7 +5,7 @@ namespace Ordermind\LogicalPermissions;
 use Ordermind\LogicalPermissions\Interfaces\LogicalPermissionsInterface;
 use Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException;
 use Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException;
-use Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGate;
+use Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException;
 use Ordermind\LogicalPermissions\Exceptions\PermissionTypeNotRegisteredException;
 
 class LogicalPermissions implements LogicalPermissionsInterface {
@@ -199,10 +199,10 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   
   protected function processAND($permissions, $type = NULL, $context) {
     if(!is_array($permissions)) {
-      throw new InvalidValueForLogicGate("The value of an AND gate must be an array. Current value: " . print_r($permissions, TRUE));
+      throw new InvalidValueForLogicGateException("The value of an AND gate must be an array. Current value: " . print_r($permissions, TRUE));
     }
     if(count($permissions) < 1) {
-      throw new InvalidValueForLogicGate("The value array of an AND gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
+      throw new InvalidValueForLogicGateException("The value array of an AND gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
     }
 
     $access = TRUE;
@@ -218,10 +218,10 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   
   protected function processNAND($permissions, $type = NULL, $context) {
     if(!is_array($permissions)) {
-      throw new InvalidValueForLogicGate("The value of a NAND gate must be an array. Current value: " . print_r($permissions, TRUE));
+      throw new InvalidValueForLogicGateException("The value of a NAND gate must be an array. Current value: " . print_r($permissions, TRUE));
     }
     if(count($permissions) < 1) {
-      throw new InvalidValueForLogicGate("The value array of a NAND gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
+      throw new InvalidValueForLogicGateException("The value array of a NAND gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
     }
 
     $access = !$this->processAND($permissions, $type, $context);
@@ -230,10 +230,10 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   
   protected function processOR($permissions, $type = NULL, $context) {
     if(!is_array($permissions)) {
-      throw new InvalidValueForLogicGate("The value of an OR gate must be an array. Current value: " . print_r($permissions, TRUE));
+      throw new InvalidValueForLogicGateException("The value of an OR gate must be an array. Current value: " . print_r($permissions, TRUE));
     }
     if(count($permissions) < 1) {
-      throw new InvalidValueForLogicGate("The value array of an OR gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
+      throw new InvalidValueForLogicGateException("The value array of an OR gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
     }
 
     $access = FALSE;
@@ -249,10 +249,10 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   
   protected function processNOR($permissions, $type = NULL, $context) {
     if(!is_array($permissions)) {
-      throw new InvalidValueForLogicGate("The value of a NOR gate must be an array. Current value: " . print_r($permissions, TRUE));
+      throw new InvalidValueForLogicGateException("The value of a NOR gate must be an array. Current value: " . print_r($permissions, TRUE));
     }
     if(count($permissions) < 1) {
-      throw new InvalidValueForLogicGate("The value array of a NOR gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
+      throw new InvalidValueForLogicGateException("The value array of a NOR gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
     }
 
     $access = !$this->processOR($permissions, $type, $context);
@@ -261,10 +261,10 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   
   protected function processXOR($permissions, $type = NULL, $context) {
     if(!is_array($permissions)) {
-      throw new InvalidValueForLogicGate("The value of an XOR gate must be an array. Current value: " . print_r($permissions, TRUE));
+      throw new InvalidValueForLogicGateException("The value of an XOR gate must be an array. Current value: " . print_r($permissions, TRUE));
     }
     if(count($permissions) < 2) {
-     throw new InvalidValueForLogicGate("The value array of an XOR gate must contain a minimum of two elements. Current value: " . print_r($permissions, TRUE));
+     throw new InvalidValueForLogicGateException("The value array of an XOR gate must contain a minimum of two elements. Current value: " . print_r($permissions, TRUE));
     }
 
     $access = FALSE;
@@ -290,16 +290,16 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   
   protected function processNOT($permissions, $type = NULL, $context) {
     if(!is_array($permissions) && !is_string($permissions)) {
-      throw new InvalidValueForLogicGate("The value of a NOT gate must either be an array or a string. Current value: " . print_r($permissions, TRUE));
+      throw new InvalidValueForLogicGateException("The value of a NOT gate must either be an array or a string. Current value: " . print_r($permissions, TRUE));
     }
     if(is_array($permissions)) {
       if(count($permissions) != 1) {
-        throw new InvalidValueForLogicGate('A NOT permission must have exactly one child in the value array. Current value: ' . print_r($permissions, TRUE));
+        throw new InvalidValueForLogicGateException('A NOT permission must have exactly one child in the value array. Current value: ' . print_r($permissions, TRUE));
       }
     }
     elseif(is_string($permissions)) {
       if(!$permissions) {
-        throw new InvalidValueForLogicGate('A NOT permission cannot have an empty string as its value.');
+        throw new InvalidValueForLogicGateException('A NOT permission cannot have an empty string as its value.');
       }
     }
 
