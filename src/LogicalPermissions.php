@@ -123,6 +123,9 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       else if(is_array($permissions['no_bypass'])) {
         $allow_bypass = !$this->dispatch($permissions['no_bypass'], NULL, $context);
       }
+      else {
+        throw new InvalidArgumentValueException('The no_bypass value must be a boolean or an array. Current value: ' . print_r($permissions['no_bypass'], TRUE));
+      }
       unset($permissions['no_bypass']);
     }
     if($allow_bypass && $this->checkBypassAccess($context)) {
