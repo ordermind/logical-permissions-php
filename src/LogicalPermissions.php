@@ -289,9 +289,6 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   }
   
   protected function processNOT($permissions, $type = NULL, $context) {
-    if(!is_array($permissions) && !is_string($permissions)) {
-      throw new InvalidValueForLogicGateException("The value of a NOT gate must either be an array or a string. Current value: " . print_r($permissions, TRUE));
-    }
     if(is_array($permissions)) {
       if(count($permissions) != 1) {
         throw new InvalidValueForLogicGateException('A NOT permission must have exactly one child in the value array. Current value: ' . print_r($permissions, TRUE));
@@ -301,6 +298,9 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       if(!$permissions) {
         throw new InvalidValueForLogicGateException('A NOT permission cannot have an empty string as its value.');
       }
+    }
+    else {
+      throw new InvalidValueForLogicGateException("The value of a NOT gate must either be an array or a string. Current value: " . print_r($permissions, TRUE));
     }
 
     $access = !$this->dispatch($permissions, $type, $context);
