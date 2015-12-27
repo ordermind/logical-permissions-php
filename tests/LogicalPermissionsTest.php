@@ -355,9 +355,11 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $types = [
       'flag' => function($flag, $context) {
+        $access = FALSE;
         if($flag === 'never_bypass') {
-          return !empty($context['user']['never_bypass']); 
+          $access = !empty($context['user']['never_bypass']); 
         }
+        return $access;
       },
     ];
     $lp->setTypes($types);
@@ -381,9 +383,11 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $types = [
       'flag' => function($flag, $context) {
+        $access = FALSE;
         if($flag === 'never_bypass') {
-          return !empty($context['user']['never_bypass']); 
+          $access = !empty($context['user']['never_bypass']); 
         }
+        return $access;
       },
     ];
     $lp->setTypes($types);
