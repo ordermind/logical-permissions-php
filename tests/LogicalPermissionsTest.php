@@ -302,6 +302,18 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp->setBypassCallback($bypass_callback);
     $lp->checkAccess([], ['user' => $user]);
   }
+  
+  /**
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidCallbackReturnTypeException
+   */
+  public function testCheckAccessBypassAccessWrongReturnType() {
+    $lp = new LogicalPermissions();
+    $bypass_callback = function($context) {
+      return 1;
+    };
+    $lp->setBypassCallback($bypass_callback);
+    $lp->checkAccess([], []);
+  }
 
   public function testCheckAccessBypassAccessAllow() {
     $lp = new LogicalPermissions();
@@ -408,6 +420,34 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'never_bypass' => TRUE,
     ];
     $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
+  }
+  
+  /**
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidCallbackReturnTypeException
+   */
+  public function testCheckAccessWrongPermissionCallbackReturnType() {
+    $lp = new LogicalPermissions();
+    $types = [
+      'flag' => function($flag, $context) {
+        $access = FALSE;
+        if($flag === 'testflag') {
+          $access = !empty($context['user']['testflag']);
+        }
+        return 0;
+      },
+    ];
+    $lp->setTypes($types);
+    $permissions = [
+      'no_bypass' => [
+        'flag' => 'never_bypass',
+      ],
+      'flag' => 'testflag',
+    ];
+    $user = [
+      'id' => 1,
+      'testflag' => TRUE,
+    ];
+    $lp->checkAccess($permissions, ['user' => $user]);
   }
   
   public function testCheckAccessSingleItemAllow() {

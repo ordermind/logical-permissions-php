@@ -7,6 +7,7 @@ use Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException;
 use Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException;
 use Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException;
 use Ordermind\LogicalPermissions\Exceptions\PermissionTypeNotRegisteredException;
+use Ordermind\LogicalPermissions\Exceptions\InvalidCallbackReturnTypeException;
 
 class LogicalPermissions implements LogicalPermissionsInterface {
   protected $types = [];
@@ -144,6 +145,9 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     $bypass_callback = $this->getBypassCallback();
     if(is_callable($bypass_callback)) {
       $bypass_access = $bypass_callback($context);
+      if(!is_bool($bypass_access)) {
+        throw new InvalidCallbackReturnTypeException('The bypass access callback must return a boolean.');
+      }
     }
     return $bypass_access;
   }
@@ -312,13 +316,16 @@ class LogicalPermissions implements LogicalPermissionsInterface {
 
   protected function externalAccessCheck($permission, $type, $context) {
     if(!$this->typeExists($type)) {
-      throw new PermissionTypeNotRegisteredException("The permission type $type has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
+      throw new PermissionTypeNotRegisteredException("The permission type \"$type\" has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
     }
 
     $access = false;
     $callback = $this->getTypeCallback($type);
     if(is_callable($callback)) {
       $access = $callback($permission, $context);
+      if(!is_bool($access)) {
+        throw new InvalidCallbackReturnTypeException("The registered callback for the permission type \"$type\" must return a boolean.");
+      }
     }
     return $access;
   }
