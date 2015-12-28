@@ -339,7 +339,10 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       return TRUE; 
     };
     $lp->setBypassCallback($bypass_callback);
-    $this->assertTrue($lp->checkAccess(['no_bypass' => FALSE], []));
+    $permissions = ['no_bypass' => FALSE];
+    $this->assertTrue($lp->checkAccess($permissions, []));
+    //Test that permission object is not changed
+    $this->assertTrue(isset($permissions['no_bypass']));
   }
 
   public function testCheckAccessNoBypassAccessBooleanDeny() {
