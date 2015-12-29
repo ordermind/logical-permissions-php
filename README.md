@@ -251,7 +251,7 @@ Examples:
 
 ### addType
 
-Add a permission type.
+Adds a permission type.
 
 ```php
 LogicalPermissions::addType( string $name, callable $callback )
@@ -265,7 +265,7 @@ LogicalPermissions::addType( string $name, callable $callback )
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `$name` | **string** | The name of the permission type. |
-| `$callback` | **callable** | The callback that evaluates the permission type. Upon calling checkAccess() the registered callback will be passed two parameters: a $permission string (such as a role) and the $context object passed to checkAccess(). The permission will always be a single string even if for example multiple roles are accepted. In that case the callback will be called once for each role that is to be evaluated. The callback should return a boolean which determines whether access should be granted. |
+| `$callback` | **callable** | The callback that evaluates the permission type. Upon calling checkAccess() the registered callback will be passed two parameters: a $permission string (such as a role) and the $context array passed to checkAccess(). The permission will always be a single string even if for example multiple roles are accepted. In that case the callback will be called once for each role that is to be evaluated. The callback should return a boolean which determines whether access should be granted. |
 
 
 
@@ -275,7 +275,7 @@ LogicalPermissions::addType( string $name, callable $callback )
 
 ### removeType
 
-Remove a permission type.
+Removes a permission type.
 
 ```php
 LogicalPermissions::removeType( string $name )
@@ -325,7 +325,7 @@ TRUE if the type is found or FALSE if the type isn't found.
 
 ### getTypeCallback
 
-Get the callback for a permission type.
+Gets the callback for a permission type.
 
 ```php
 LogicalPermissions::getTypeCallback( string $name ): callable
@@ -352,7 +352,7 @@ Callback for the permission type.
 
 ### getTypes
 
-Get all defined permission types.
+Gets all defined permission types.
 
 ```php
 LogicalPermissions::getTypes(  ): array
@@ -373,7 +373,7 @@ Permission types with the structure ['name' => callback, 'name2' => callback2, .
 
 ### setTypes
 
-Overwrite all defined permission types.
+Overwrites all defined permission types.
 
 ```php
 LogicalPermissions::setTypes( array $types )
@@ -396,7 +396,7 @@ LogicalPermissions::setTypes( array $types )
 
 ### getBypassCallback
 
-Get the registered callback for access bypass evaluation.
+Gets the registered callback for access bypass evaluation.
 
 ```php
 LogicalPermissions::getBypassCallback(  ): callable
@@ -417,7 +417,7 @@ Bypass access callback.
 
 ### setBypassCallback
 
-Set the callback for access bypass evaluation.
+Sets the callback for access bypass evaluation.
 
 ```php
 LogicalPermissions::setBypassCallback( callable $callback )
@@ -430,7 +430,7 @@ LogicalPermissions::setBypassCallback( callable $callback )
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `$callback` | **callable** | The callback that evaluates access bypassing. Upon calling checkAccess() the registered bypass callback will be passed one parameter, which is the $context object passed to checkAccess(). It should return a boolean which determines whether bypass access should be granted. |
+| `$callback` | **callable** | The callback that evaluates access bypassing. Upon calling checkAccess() the registered bypass callback will be passed one parameter, which is the $context array passed to checkAccess(). It should return a boolean which determines whether bypass access should be granted. |
 
 
 
@@ -440,7 +440,7 @@ LogicalPermissions::setBypassCallback( callable $callback )
 
 ### checkAccess
 
-Check access for a permission tree.
+Checks access for a permission tree.
 
 ```php
 LogicalPermissions::checkAccess( array $permissions, array $context ): boolean
@@ -459,7 +459,7 @@ LogicalPermissions::checkAccess( array $permissions, array $context ): boolean
 
 **Return Value:**
 
-Access.
+TRUE if access is granted or FALSE if access is denied.
 
 
 ---
