@@ -291,7 +291,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp->checkAccess([], 0);
   }
   
-  public function testCheckAccessCheckContextPassing() {
+  public function testCheckAccessBypassAccessCheckContextPassing() {
     $lp = new LogicalPermissions();
     $user = ['id' => 1];
     $bypass_callback = function($context) use ($user) {
