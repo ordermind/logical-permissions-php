@@ -232,10 +232,12 @@ Examples:
     * [removeType](#removetype)
     * [typeExists](#typeexists)
     * [getTypeCallback](#gettypecallback)
+    * [setTypeCallback](#settypecallback)
     * [getTypes](#gettypes)
     * [setTypes](#settypes)
     * [getBypassCallback](#getbypasscallback)
     * [setBypassCallback](#setbypasscallback)
+    * [getValidPermissionKeys](#getvalidpermissionkeys)
     * [checkAccess](#checkaccess)
 
 ## LogicalPermissions
@@ -350,6 +352,30 @@ Callback for the permission type.
 ---
 
 
+### setTypeCallback
+
+Changes the callback for an existing permission type.
+
+```php
+LogicalPermissions::setTypeCallback( string $name, callable $callback )
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$name` | **string** | The name of the permission type. |
+| `$callback` | **callable** | The callback that evaluates the permission type. Upon calling checkAccess() the registered callback will be passed two parameters: a $permission string (such as a role) and the $context array passed to checkAccess(). The permission will always be a single string even if for example multiple roles are accepted. In that case the callback will be called once for each role that is to be evaluated. The callback should return a boolean which determines whether access should be granted. |
+
+
+
+
+---
+
+
 ### getTypes
 
 Gets all defined permission types.
@@ -432,6 +458,27 @@ LogicalPermissions::setBypassCallback( callable $callback )
 |-----------|------|-------------|
 | `$callback` | **callable** | The callback that evaluates access bypassing. Upon calling checkAccess() the registered bypass callback will be passed one parameter, which is the $context array passed to checkAccess(). It should return a boolean which determines whether bypass access should be granted. |
 
+
+
+
+---
+
+
+### getValidPermissionKeys
+
+Gets all keys that can be part of a permission tree.
+
+```php
+LogicalPermissions::getValidPermissionKeys(  ): array
+```
+
+
+
+
+
+**Return Value:**
+
+Valid permission keys
 
 
 
