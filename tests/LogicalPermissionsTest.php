@@ -210,6 +210,36 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $this->assertSame($lp->getBypassCallback(), $callback);
   }
   
+  /*------------LogicalPermissions::getValidPermissionKeys()---------------*/
+  
+  public function testGetValidPermissionKeys() {
+    $lp = new LogicalPermissions();
+    $this->assertEquals($lp->getValidPermissionKeys(), ['no_bypass', 'AND', 'NAND', 'OR', 'NOR', 'XOR', 'NOT']);
+    $types = [
+      'flag' => function($flag, $context) {
+        $access = FALSE;
+        if($flag === 'testflag') {
+          $access = !empty($context['user']['testflag']);
+        }
+        return $access;
+      },
+      'role' => function($role, $context) {
+        $access = FALSE;
+        if(!empty($context['user']['roles'])) {
+          $access = in_array($role, $context['user']['roles']); 
+        }
+        return $access;
+      },
+      'misc' => function($item, $context) {
+        $access = FALSE;
+        $access = !empty($context['user'][$item]);
+        return $access;
+      }
+    ];
+    $lp->setTypes($types);
+    $this->assertEquals($lp->getValidPermissionKeys(), ['no_bypass', 'AND', 'NAND', 'OR', 'NOR', 'XOR', 'NOT', 'flag', 'role', 'misc']);
+  }
+  
   /*------------LogicalPermissions::checkAccess()---------------*/
   
   /**

@@ -56,6 +56,12 @@ interface LogicalPermissionsInterface {
   public function setBypassCallback($callback);
   
   /**
+  * Gets all keys that can be part of a permission tree.
+  * @return array Valid permission keys
+  */
+  public function getValidPermissionKeys();
+  
+  /**
   * Checks access for a permission tree.
   * @param array $permissions The permission tree to be evaluated.
   * @param array $context A context array that could for example contain the evaluated user and document.

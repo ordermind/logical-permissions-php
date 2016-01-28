@@ -106,6 +106,11 @@ class LogicalPermissions implements LogicalPermissionsInterface {
 
     $this->bypass_callback = $callback;
   }
+  
+  public function getValidPermissionKeys() {
+    $keys = ['no_bypass', 'AND', 'NAND', 'OR', 'NOR', 'XOR', 'NOT'];
+    return array_merge($keys, array_keys($this->getTypes()));
+  }
 
   public function checkAccess($permissions, $context) {
     if(!is_array($permissions)) {
