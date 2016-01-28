@@ -14,17 +14,24 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   protected $bypass_callback = NULL;
 
   public function addType($name, $callback) {
+    $types = $this->getTypes();
     if(!is_string($name)) {
-      throw new InvalidArgumentTypeException('The name parameter must be a string.'); 
+      throw new InvalidArgumentTypeException('The name parameter must be a string.');
     }
     if(!$name) {
-      throw new InvalidArgumentValueException('The name parameter cannot be empty.'); 
+      throw new InvalidArgumentValueException('The name parameter cannot be empty.');
+    }
+    if(in_array($name, $core_keys = $this->getCorePermissionKeys())) {
+      throw new InvalidArgumentValueException("The name parameter has the illegal value \"$name\". It cannot be one of the following values: " . implode(',', $core_keys));
+    }
+    if(isset($types[$name])) {
+      throw new InvalidArgumentValueException("The type \"$name\" already exists! If you want to change the callback for an existing type, please use LogicalPermissions::setTypeCallback().");
     }
     if(!is_callable($callback)) {
-      throw new InvalidArgumentTypeException('The callback parameter must be a callable data type.'); 
+      throw new InvalidArgumentTypeException('The callback parameter must be a callable data type.');
     }
 
-    $types = $this->getTypes();
+    
     $types[$name] = $callback;
     $this->setTypes($types);
   }
@@ -65,11 +72,30 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       throw new InvalidArgumentValueException('The name parameter cannot be empty.'); 
     }
     if(!$this->typeExists($name)) {
-      throw new PermissionTypeNotRegisteredException("The permission type $name has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
+      throw new PermissionTypeNotRegisteredException("The permission type \"$name\" has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
     }
 
     $types = $this->getTypes();
     return $types[$name];
+  }
+  
+  public function setTypeCallback($name, $callback) {
+    if(!is_string($name)) {
+      throw new InvalidArgumentTypeException('The name parameter must be a string.'); 
+    }
+    if(!$name) {
+      throw new InvalidArgumentValueException('The name parameter cannot be empty.'); 
+    }
+    if(!$this->typeExists($name)) {
+      throw new PermissionTypeNotRegisteredException("The permission type \"$name\" has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
+    }
+    if(!is_callable($callback)) {
+      throw new InvalidArgumentTypeException('The callback parameter must be a callable data type.');
+    }
+    
+    $types = $this->getTypes();
+    $types[$name] = $callback;
+    $this->setTypes($types);
   }
 
   public function getTypes() {
@@ -86,6 +112,9 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       }
       if(!$name) {
         throw new InvalidArgumentValueException('The name for a type cannot be empty.'); 
+      }
+      if(in_array($name, $core_keys = $this->getCorePermissionKeys())) {
+        throw new InvalidArgumentValueException("The name for a type has the illegal value \"$name\". It cannot be one of the following values: " . implode(',', $core_keys));
       }
       if(!is_callable($callback)) {
         throw new InvalidArgumentValueException("The \$types callbacks must be callables."); 
@@ -108,8 +137,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   }
   
   public function getValidPermissionKeys() {
-    $keys = ['no_bypass', 'AND', 'NAND', 'OR', 'NOR', 'XOR', 'NOT'];
-    return array_merge($keys, array_keys($this->getTypes()));
+    return array_merge($this->getCorePermissionKeys(), array_keys($this->getTypes()));
   }
 
   public function checkAccess($permissions, $context) {
@@ -143,6 +171,10 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       }
     }
     return $access;
+  }
+  
+  protected function getCorePermissionKeys() {
+    return ['no_bypass', 'AND', 'NAND', 'OR', 'NOR', 'XOR', 'NOT'];
   }
   
   protected function checkBypassAccess($context) {

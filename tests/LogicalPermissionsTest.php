@@ -21,6 +21,23 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->addType('', function(){});
   }
+  
+  /**
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
+   */
+  public function testAddTypeParamNameIsCoreKey() {
+    $lp = new LogicalPermissions();
+    $lp->addType('AND', function(){});
+  }
+  
+  /**
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
+   */
+  public function testAddTypeParamNameExists() {
+    $lp = new LogicalPermissions();
+    $lp->addType('test', function(){});
+    $lp->addType('test', function(){});
+  }
 
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException
@@ -109,7 +126,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
    */
   public function testGetTypeCallbackParamNameEmpty() {
     $lp = new LogicalPermissions();
-    $lp->GetTypeCallback('');
+    $lp->getTypeCallback('');
   }
   
   /**
@@ -124,6 +141,50 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $callback = function(){};
     $lp->addType('test', $callback);
+    $this->assertSame($lp->getTypeCallback('test'), $callback);
+  }
+  
+  /*------------LogicalPermissions::setTypeCallback()---------------*/
+
+  /**
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException
+   */
+  public function testSetTypeCallbackParamNameWrongType() {
+    $lp = new LogicalPermissions();
+    $lp->setTypeCallback(0, function(){});
+  }
+  
+  /**
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
+   */
+  public function testSetTypeCallbackParamNameEmpty() {
+    $lp = new LogicalPermissions();
+    $lp->setTypeCallback('', function(){});
+  }
+  
+  /**
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\PermissionTypeNotRegisteredException
+   */
+  public function testSetTypeCallbackUnregisteredType() {
+    $lp = new LogicalPermissions();
+    $lp->setTypeCallback('test', function(){});
+  }
+  
+  /**
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException
+   */
+  public function testSetTypeCallbackParamCallbackWrongType() {
+    $lp = new LogicalPermissions();
+    $lp->addType('test', function(){});
+    $lp->setTypeCallback('test', 0);
+  }
+
+  public function testSetTypeCallback() {
+    $lp = new LogicalPermissions();
+    $lp->addType('test', function(){});
+    $callback = function(){};
+    $this->assertNotSame($lp->getTypeCallback('test'), $callback);
+    $lp->setTypeCallback('test', $callback);
     $this->assertSame($lp->getTypeCallback('test'), $callback);
   }
   
@@ -165,6 +226,15 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   public function testSetTypesParamTypesNameEmpty() {
     $lp = new LogicalPermissions();
     $types = ['' => function(){}];
+    $lp->setTypes($types);
+  }
+  
+  /**
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
+   */
+  public function testSetTypesParamTypesNameIsCoreKey() {
+    $lp = new LogicalPermissions();
+    $types = ['no_bypass' => function(){}];
     $lp->setTypes($types);
   }
   

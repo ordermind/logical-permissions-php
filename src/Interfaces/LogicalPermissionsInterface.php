@@ -32,6 +32,13 @@ interface LogicalPermissionsInterface {
   public function getTypeCallback($name);
   
   /**
+  * Changes the callback for an existing permission type.
+  * @param string $name The name of the permission type.
+  * @param callable $callback The callback that evaluates the permission type. Upon calling checkAccess() the registered callback will be passed two parameters: a $permission string (such as a role) and the $context array passed to checkAccess(). The permission will always be a single string even if for example multiple roles are accepted. In that case the callback will be called once for each role that is to be evaluated. The callback should return a boolean which determines whether access should be granted.
+  */
+  public function setTypeCallback($name, $callback);
+  
+  /**
   * Gets all defined permission types.
   * @return array Permission types with the structure ['name' => callback, 'name2' => callback2, ...].
   */
