@@ -1,6 +1,6 @@
 <?php
 
-namespace Ordermind\LogicalPermissions\Interfaces;
+namespace Ordermind\LogicalPermissions;
 
 interface LogicalPermissionsInterface {
 

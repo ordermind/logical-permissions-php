@@ -2,7 +2,6 @@
 
 namespace Ordermind\LogicalPermissions;
 
-use Ordermind\LogicalPermissions\Interfaces\LogicalPermissionsInterface;
 use Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException;
 use Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException;
 use Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException;
