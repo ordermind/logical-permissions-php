@@ -14,7 +14,6 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   protected $bypass_callback = NULL;
 
   public function addType($name, $callback) {
-    $types = $this->getTypes();
     if(!is_string($name)) {
       throw new InvalidArgumentTypeException('The name parameter must be a string.');
     }
@@ -24,14 +23,14 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(in_array($name, $core_keys = $this->getCorePermissionKeys())) {
       throw new InvalidArgumentValueException("The name parameter has the illegal value \"$name\". It cannot be one of the following values: " . implode(',', $core_keys));
     }
-    if(isset($types[$name])) {
+    if($this->typeExists($name)) {
       throw new PermissionTypeAlreadyExistsException("The type \"$name\" already exists! If you want to change the callback for an existing type, please use LogicalPermissions::setTypeCallback().");
     }
     if(!is_callable($callback)) {
       throw new InvalidArgumentTypeException('The callback parameter must be a callable data type.');
     }
 
-    
+    $types = $this->getTypes();
     $types[$name] = $callback;
     $this->setTypes($types);
   }
