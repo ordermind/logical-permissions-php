@@ -6,6 +6,7 @@ use Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException;
 use Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException;
 use Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException;
 use Ordermind\LogicalPermissions\Exceptions\PermissionTypeNotRegisteredException;
+use Ordermind\LogicalPermissions\Exceptions\PermissionTypeAlreadyExistsException;
 use Ordermind\LogicalPermissions\Exceptions\InvalidCallbackReturnTypeException;
 
 class LogicalPermissions implements LogicalPermissionsInterface {
@@ -24,7 +25,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       throw new InvalidArgumentValueException("The name parameter has the illegal value \"$name\". It cannot be one of the following values: " . implode(',', $core_keys));
     }
     if(isset($types[$name])) {
-      throw new InvalidArgumentValueException("The type \"$name\" already exists! If you want to change the callback for an existing type, please use LogicalPermissions::setTypeCallback().");
+      throw new PermissionTypeAlreadyExistsException("The type \"$name\" already exists! If you want to change the callback for an existing type, please use LogicalPermissions::setTypeCallback().");
     }
     if(!is_callable($callback)) {
       throw new InvalidArgumentTypeException('The callback parameter must be a callable data type.');

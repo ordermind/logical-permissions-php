@@ -31,7 +31,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\PermissionTypeAlreadyExistsException
    */
   public function testAddTypeParamNameExists() {
     $lp = new LogicalPermissions();
