@@ -139,7 +139,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     return array_merge($this->getCorePermissionKeys(), array_keys($this->getTypes()));
   }
 
-  public function checkAccess($permissions, $context) {
+  public function checkAccess($permissions, $context, $allow_bypass = TRUE) {
     if(!is_array($permissions)) {
       throw new InvalidArgumentTypeException('The permissions parameter must be an array.'); 
     }
@@ -148,18 +148,19 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     }
 
     $access = FALSE;
-    $allow_bypass = TRUE;
-    if(isset($permissions['no_bypass'])) {
-      if(is_bool($permissions['no_bypass'])) {
-        $allow_bypass = !$permissions['no_bypass'];
+    if($allow_bypass) {
+      if(isset($permissions['no_bypass'])) {
+        if(is_bool($permissions['no_bypass'])) {
+          $allow_bypass = !$permissions['no_bypass'];
+        }
+        else if(is_array($permissions['no_bypass'])) {
+          $allow_bypass = !$this->processOR($permissions['no_bypass'], NULL, $context);
+        }
+        else {
+          throw new InvalidArgumentValueException('The no_bypass value must be a boolean or an array. Current value: ' . print_r($permissions['no_bypass'], TRUE));
+        }
+        unset($permissions['no_bypass']);
       }
-      else if(is_array($permissions['no_bypass'])) {
-        $allow_bypass = !$this->processOR($permissions['no_bypass'], NULL, $context);
-      }
-      else {
-        throw new InvalidArgumentValueException('The no_bypass value must be a boolean or an array. Current value: ' . print_r($permissions['no_bypass'], TRUE));
-      }
-      unset($permissions['no_bypass']);
     }
     if($allow_bypass && $this->checkBypassAccess($context)) {
       $access = TRUE;
