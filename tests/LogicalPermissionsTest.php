@@ -404,6 +404,14 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
   
   /**
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException
+   */
+  public function testCheckAccessParamAllowBypassWrongType() {
+    $lp = new LogicalPermissions();
+    $lp->checkAccess([], [], 'test');
+  }
+  
+  /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidCallbackReturnTypeException
    */
   public function testCheckAccessBypassAccessWrongReturnType() {
