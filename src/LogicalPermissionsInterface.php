@@ -72,9 +72,10 @@ interface LogicalPermissionsInterface {
   * Checks access for a permission tree.
   * @param array $permissions The permission tree to be evaluated.
   * @param array $context A context array that could for example contain the evaluated user and document.
-  * @return bool Access.
+  * @param array $allow_bypass (optional) Determines whether bypassing access should be allowed. Default value is TRUE.
+  * @return bool TRUE if access is granted or FALSE if access is denied.
   */
-  public function checkAccess($permissions, $context);
+  public function checkAccess($permissions, $context, $allow_bypass = TRUE);
 
 }
 
