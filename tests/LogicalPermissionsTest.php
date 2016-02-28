@@ -433,6 +433,15 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $this->assertFalse($lp->checkAccess([], []));
   }
   
+  public function testCheckAccessBypassAccessDeny2() {
+    $lp = new LogicalPermissions();
+    $bypass_callback = function($context) {
+      return TRUE;
+    };
+    $lp->setBypassCallback($bypass_callback);
+    $this->assertFalse($lp->checkAccess([], [], FALSE));
+  }
+  
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
    */
