@@ -420,7 +420,20 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       return 1;
     };
     $lp->setBypassCallback($bypass_callback);
-    $lp->checkAccess([], []);
+    $lp->checkAccess([]);
+  }
+
+  /**
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
+   */
+  public function testCheckAccessBypassAccessIllegalDescendant() {
+    $lp = new LogicalPermissions();
+    $permissions = [
+      'OR' => [
+        'no_bypass' => true,
+      ],
+    ];
+    $lp->checkAccess($permissions);
   }
 
   public function testCheckAccessBypassAccessAllow() {
@@ -429,7 +442,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       return TRUE;
     };
     $lp->setBypassCallback($bypass_callback);
-    $this->assertTrue($lp->checkAccess([], []));
+    $this->assertTrue($lp->checkAccess([]));
   }
 
   public function testCheckAccessBypassAccessDeny() {
@@ -438,7 +451,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       return FALSE;
     };
     $lp->setBypassCallback($bypass_callback);
-    $this->assertFalse($lp->checkAccess([], []));
+    $this->assertFalse($lp->checkAccess([]));
   }
 
   public function testCheckAccessBypassAccessDeny2() {
@@ -1412,10 +1425,75 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
    */
+  public function testCheckAccessBoolTRUEIllegalDescendant() {
+    $lp = new LogicalPermissions();
+    $permissions = [
+      'role' => [TRUE],
+    ];
+    $lp->checkAccess($permissions);
+  }
+
+  public function testCheckAccessBoolTRUE() {
+    $lp = new LogicalPermissions();
+    $permissions = [
+      TRUE,
+    ];
+    $this->assertTrue($lp->checkAccess($permissions));
+  }
+
+  /**
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
+   */
+  public function testCheckAccessBoolFALSEIllegalDescendant() {
+    $lp = new LogicalPermissions();
+    $permissions = [
+      'role' => [FALSE],
+    ];
+    $lp->checkAccess($permissions);
+  }
+
+  public function testCheckAccessBoolFALSE() {
+    $lp = new LogicalPermissions();
+    $permissions = [
+      FALSE,
+    ];
+    $this->assertFalse($lp->checkAccess($permissions));
+  }
+
+  public function testCheckAccessBoolFALSEBypass() {
+    $lp = new LogicalPermissions();
+    $bypass_callback = function($context) { //Simulates for example that the user is a superuser with ability to bypass access
+      return TRUE;
+    };
+    $lp->setBypassCallback($bypass_callback);
+
+    $permissions = [
+      FALSE,
+    ];
+    $this->assertTrue($lp->checkAccess($permissions));
+  }
+
+  public function testCheckAccessBoolFALSENoBypass() {
+    $lp = new LogicalPermissions();
+    $bypass_callback = function($context) { //Simulates for example that the user is a superuser with ability to bypass access
+      return TRUE;
+    };
+    $lp->setBypassCallback($bypass_callback);
+
+    $permissions = [
+      'no_bypass' => TRUE,
+      FALSE,
+    ];
+    $this->assertFalse($lp->checkAccess($permissions));
+  }
+
+  /**
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
+   */
   public function testCheckAccessStringTRUEIllegalChildrenSingleValue() {
     $lp = new LogicalPermissions();
     $permissions = [
-      'TRUE' => false,
+      'TRUE' => FALSE,
     ];
     $lp->checkAccess($permissions);
   }
@@ -1456,7 +1534,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   public function testCheckAccessStringFALSEIllegalChildrenSingleValue() {
     $lp = new LogicalPermissions();
     $permissions = [
-      'FALSE' => false,
+      'FALSE' => FALSE,
     ];
     $lp->checkAccess($permissions);
   }
@@ -1491,6 +1569,32 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $this->assertFalse($lp->checkAccess($permissions));
   }
 
+  public function testCheckAccessStringFALSEBypass() {
+    $lp = new LogicalPermissions();
+    $bypass_callback = function($context) { //Simulates for example that the user is a superuser with ability to bypass access
+      return TRUE;
+    };
+    $lp->setBypassCallback($bypass_callback);
+
+    $permissions = [
+      'FALSE',
+    ];
+    $this->assertTrue($lp->checkAccess($permissions));
+  }
+
+  public function testCheckAccessStringFALSENoBypass() {
+    $lp = new LogicalPermissions();
+    $bypass_callback = function($context) { //Simulates for example that the user is a superuser with ability to bypass access
+      return TRUE;
+    };
+    $lp->setBypassCallback($bypass_callback);
+
+    $permissions = [
+      'no_bypass' => TRUE,
+      'FALSE',
+    ];
+    $this->assertFalse($lp->checkAccess($permissions));
+  }
   public function testMixedBooleans() {
     $lp = new LogicalPermissions();
 

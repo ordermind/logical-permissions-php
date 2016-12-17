@@ -150,15 +150,17 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       throw new InvalidArgumentTypeException('The allow_bypass parameter must be a boolean.');
     }
 
-    if($allow_bypass && isset($permissions['no_bypass'])) {
-      if(is_bool($permissions['no_bypass'])) {
-        $allow_bypass = !$permissions['no_bypass'];
-      }
-      else if(is_array($permissions['no_bypass'])) {
-        $allow_bypass = !$this->processOR($permissions['no_bypass'], NULL, $context);
-      }
-      else {
-        throw new InvalidArgumentValueException('The no_bypass value must be a boolean or an array. Current value: ' . print_r($permissions['no_bypass'], TRUE));
+    if(isset($permissions['no_bypass'])) {
+      if($allow_bypass) {
+        if(is_bool($permissions['no_bypass'])) {
+          $allow_bypass = !$permissions['no_bypass'];
+        }
+        else if(is_array($permissions['no_bypass'])) {
+          $allow_bypass = !$this->processOR($permissions['no_bypass'], NULL, $context);
+        }
+        else {
+          throw new InvalidArgumentValueException('The no_bypass value must be a boolean or an array. Current value: ' . print_r($permissions['no_bypass'], TRUE));
+        }
       }
       unset($permissions['no_bypass']);
     }
@@ -189,9 +191,6 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   }
 
   protected function dispatch($permissions, $type = NULL, $context) {
-    if(!$permissions) {
-      return FALSE;
-    }
     if(is_bool($permissions)) {
       if($permissions === TRUE) {
         if(!is_null($type)) {
@@ -225,6 +224,9 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       reset($permissions);
       $key = key($permissions);
       $value = current($permissions);
+      if($key === 'no_bypass') {
+        throw new InvalidArgumentValueException("The no_bypass key must be placed highest in the permission hierarchy. Evaluated permissions: " . print_r($permissions, TRUE));
+      }
       if($key === 'AND') {
         return $this->processAND($value, $type, $context);
       }
@@ -243,7 +245,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       if($key === 'NOT') {
         return $this->processNOT($value, $type, $context);
       }
-      if($key === TRUE || $key === FALSE || $key === 'TRUE' || $key === 'FALSE') {
+      if($key === 'TRUE' || $key === 'FALSE') {
         throw new InvalidArgumentValueException("A boolean permission cannot have children. Evaluated permissions: " . print_r($permissions, TRUE));
       }
 
