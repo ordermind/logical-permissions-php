@@ -139,7 +139,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     return array_merge($this->getCorePermissionKeys(), array_keys($this->getTypes()));
   }
 
-  public function checkAccess($permissions, $context, $allow_bypass = TRUE) {
+  public function checkAccess($permissions, $context = [], $allow_bypass = TRUE) {
     if(!is_array($permissions)) {
       throw new InvalidArgumentTypeException('The permissions parameter must be an array.');
     }
@@ -193,6 +193,18 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       return FALSE;
     }
     if(is_string($permissions)) {
+      if($permissions === 'TRUE') {
+        if(!is_null($type)) {
+          throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: $type. Evaluated permissions: " . print_r($permissions, TRUE));
+        }
+        return TRUE;
+      }
+      if($permissions === 'FALSE') {
+        if(!is_null($type)) {
+          throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: $type. Evaluated permissions: " . print_r($permissions, TRUE));
+        }
+        return FALSE;
+      }
       return $this->externalAccessCheck($permissions, $type, $context);
     }
     if(is_array($permissions)) {
@@ -217,11 +229,8 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       if($key === 'NOT') {
         return $this->processNOT($value, $type, $context);
       }
-      if($key === 'TRUE') {
-        return TRUE;
-      }
-      if($key === 'FALSE') {
-        return FALSE;
+      if($key === 'TRUE' || $key === 'FALSE') {
+        throw new InvalidArgumentValueException("A boolean permission cannot have children. Evaluated permissions: " . print_r($permissions, TRUE));
       }
 
       if(!is_numeric($key)) {

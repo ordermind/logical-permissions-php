@@ -328,7 +328,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $permissions = [
       'flag' => TRUE,
     ];
-    $lp->checkAccess($permissions, []);
+    $lp->checkAccess($permissions);
   }
 
   public function testCheckAccessParamPermissionsNestedTypes() {
@@ -343,7 +343,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
 
     $caught = FALSE;
     try {
-      $lp->checkAccess($permissions, []);
+      $lp->checkAccess($permissions);
     }
     catch(Exception $e) {
       $this->assertEquals(get_class($e), 'Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException');
@@ -362,7 +362,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
 
     $caught = FALSE;
     try {
-      $lp->checkAccess($permissions, []);
+      $lp->checkAccess($permissions);
     }
     catch(Exception $e) {
       $this->assertEquals(get_class($e), 'Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException');
@@ -380,7 +380,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $permissions = [
       'flag' => 'testflag',
     ];
-    $lp->checkAccess($permissions, []);
+    $lp->checkAccess($permissions);
   }
 
   /**
@@ -469,7 +469,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     };
     $lp->setBypassCallback($bypass_callback);
     $permissions = ['no_bypass' => FALSE];
-    $this->assertTrue($lp->checkAccess($permissions, []));
+    $this->assertTrue($lp->checkAccess($permissions));
     //Test that permission array is not changed
     $this->assertTrue(isset($permissions['no_bypass']));
   }
@@ -1348,7 +1348,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
         ],
       ],
     ];
-    $lp->checkAccess($permissions, []);
+    $lp->checkAccess($permissions);
   }
 
   public function testCheckAccessSingleItemNOTString() {
@@ -1409,6 +1409,114 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
   }
 
+  /**
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
+   */
+  public function testCheckAccessTRUEIllegalChildrenSingleValue() {
+    $lp = new LogicalPermissions();
+    $permissions = [
+      'TRUE' => false,
+    ];
+    $lp->checkAccess($permissions);
+  }
+
+  /**
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
+   */
+  public function testCheckAccessTRUEIllegalChildrenArray() {
+    $lp = new LogicalPermissions();
+    $permissions = [
+      'TRUE' => [],
+    ];
+    $lp->checkAccess($permissions);
+  }
+
+  /**
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
+   */
+  public function testCheckAccessTRUEIllegalDescendant() {
+    $lp = new LogicalPermissions();
+    $permissions = [
+      'role' => ['TRUE'],
+    ];
+    $lp->checkAccess($permissions);
+  }
+
+  public function testCheckAccessTRUE() {
+    $lp = new LogicalPermissions();
+    $permissions = [
+      'TRUE',
+    ];
+    $this->assertTrue($lp->checkAccess($permissions));
+  }
+
+  /**
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
+   */
+  public function testCheckAccessFALSEIllegalChildrenSingleValue() {
+    $lp = new LogicalPermissions();
+    $permissions = [
+      'FALSE' => false,
+    ];
+    $lp->checkAccess($permissions);
+  }
+
+  /**
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
+   */
+  public function testCheckAccessFALSEIllegalChildrenArray() {
+    $lp = new LogicalPermissions();
+    $permissions = [
+      'FALSE' => [],
+    ];
+    $lp->checkAccess($permissions);
+  }
+
+  /**
+   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
+   */
+  public function testCheckAccessFALSEIllegalDescendant() {
+    $lp = new LogicalPermissions();
+    $permissions = [
+      'role' => ['FALSE'],
+    ];
+    $lp->checkAccess($permissions);
+  }
+
+  public function testCheckAccessFALSE() {
+    $lp = new LogicalPermissions();
+    $permissions = [
+      'FALSE',
+    ];
+    $this->assertFalse($lp->checkAccess($permissions));
+  }
+
+  public function testMixedBooleans() {
+    $lp = new LogicalPermissions();
+
+    $permissions = [
+      'FALSE',
+      'TRUE',
+    ];
+    $this->assertTrue($lp->checkAccess($permissions));
+
+    $permissions = [
+      'OR' => [
+        'FALSE',
+        'TRUE',
+      ],
+    ];
+    $this->assertTrue($lp->checkAccess($permissions));
+
+    $permissions = [
+      'AND' => [
+        'TRUE',
+        'FALSE',
+      ],
+    ];
+    $this->assertFalse($lp->checkAccess($permissions));
+  }
+
   public function testCheckAccessNestedLogic() {
     $lp = new LogicalPermissions();
     $types = [
@@ -1432,6 +1540,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
           ],
         ],
       ],
+      'FALSE',
     ];
     $user = [
       'id' => 1,
@@ -1468,6 +1577,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
             ],
           ],
         ],
+        'TRUE',
       ],
     ];
     $user = [
