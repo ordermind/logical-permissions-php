@@ -150,30 +150,25 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       throw new InvalidArgumentTypeException('The allow_bypass parameter must be a boolean.');
     }
 
-    $access = FALSE;
-    if($allow_bypass) {
-      if(isset($permissions['no_bypass'])) {
-        if(is_bool($permissions['no_bypass'])) {
-          $allow_bypass = !$permissions['no_bypass'];
-        }
-        else if(is_array($permissions['no_bypass'])) {
-          $allow_bypass = !$this->processOR($permissions['no_bypass'], NULL, $context);
-        }
-        else {
-          throw new InvalidArgumentValueException('The no_bypass value must be a boolean or an array. Current value: ' . print_r($permissions['no_bypass'], TRUE));
-        }
-        unset($permissions['no_bypass']);
+    if($allow_bypass && isset($permissions['no_bypass'])) {
+      if(is_bool($permissions['no_bypass'])) {
+        $allow_bypass = !$permissions['no_bypass'];
       }
+      else if(is_array($permissions['no_bypass'])) {
+        $allow_bypass = !$this->processOR($permissions['no_bypass'], NULL, $context);
+      }
+      else {
+        throw new InvalidArgumentValueException('The no_bypass value must be a boolean or an array. Current value: ' . print_r($permissions['no_bypass'], TRUE));
+      }
+      unset($permissions['no_bypass']);
     }
     if($allow_bypass && $this->checkBypassAccess($context)) {
-      $access = TRUE;
+      return TRUE;
     }
-    else {
-      if($permissions) {
-        $access = $this->processOR($permissions, NULL, $context);
-      }
+    if($permissions) {
+      return $this->processOR($permissions, NULL, $context);
     }
-    return $access;
+    return FALSE;
   }
 
   protected function getCorePermissionKeys() {
@@ -181,73 +176,67 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   }
 
   protected function checkBypassAccess($context) {
-    $bypass_access = FALSE;
     $bypass_callback = $this->getBypassCallback();
-    if(is_callable($bypass_callback)) {
-      $bypass_access = $bypass_callback($context);
-      if(!is_bool($bypass_access)) {
-        throw new InvalidCallbackReturnTypeException('The bypass access callback must return a boolean.');
-      }
+    if(!is_callable($bypass_callback)) {
+      return FALSE;
+    }
+
+    $bypass_access = $bypass_callback($context);
+    if(!is_bool($bypass_access)) {
+      throw new InvalidCallbackReturnTypeException('The bypass access callback must return a boolean.');
     }
     return $bypass_access;
   }
 
   protected function dispatch($permissions, $type = NULL, $context) {
-    $access = FALSE;
-    if($permissions) {
-      if(is_string($permissions)) {
-        $access = $this->externalAccessCheck($permissions, $type, $context);
-      }
-      elseif(is_array($permissions)) {
-        reset($permissions);
-        $key = key($permissions);
-        $value = current($permissions);
-        if($key === 'AND') {
-          $access = $this->processAND($value, $type, $context);
-        }
-        elseif($key === 'NAND') {
-          $access = $this->processNAND($value, $type, $context);
-        }
-        elseif($key === 'OR') {
-          $access = $this->processOR($value, $type, $context);
-        }
-        elseif($key === 'NOR') {
-          $access = $this->processNOR($value, $type, $context);
-        }
-        elseif($key === 'XOR') {
-          $access = $this->processXOR($value, $type, $context);
-        }
-        elseif($key === 'NOT') {
-          $access = $this->processNOT($value, $type, $context);
-        }
-        elseif($key === 'TRUE') {
-          $access = TRUE;
-        }
-        elseif($key === 'FALSE') {
-          $access = FALSE;
-        }
-        else {
-          if(!is_numeric($key)) {
-            if(is_null($type)) {
-              $type = $key;
-            }
-            else {
-              throw new InvalidArgumentValueException("You cannot put a permission type as a descendant to another permission type. Existing type: $type. Evaluated permissions: " . print_r($permissions, TRUE));
-            }
-          }
-          if(is_array($value)) {
-            $access = $this->processOR($value, $type, $context);
-          }
-          else {
-            $access = $this->dispatch($value, $type, $context);
-          }
-        }
-      }
-      else {
-        throw new InvalidArgumentTypeException("A permission must either be a string or an array. Evaluated permissions: " . print_r($permissions, TRUE));
-      }
+    if(!$permissions) {
+      return FALSE;
     }
-    return $access;
+    if(is_string($permissions)) {
+      return $this->externalAccessCheck($permissions, $type, $context);
+    }
+    if(is_array($permissions)) {
+      reset($permissions);
+      $key = key($permissions);
+      $value = current($permissions);
+      if($key === 'AND') {
+        return $this->processAND($value, $type, $context);
+      }
+      if($key === 'NAND') {
+        return $this->processNAND($value, $type, $context);
+      }
+      if($key === 'OR') {
+        return $this->processOR($value, $type, $context);
+      }
+      if($key === 'NOR') {
+        return $this->processNOR($value, $type, $context);
+      }
+      if($key === 'XOR') {
+        return $this->processXOR($value, $type, $context);
+      }
+      if($key === 'NOT') {
+        return $this->processNOT($value, $type, $context);
+      }
+      if($key === 'TRUE') {
+        return TRUE;
+      }
+      if($key === 'FALSE') {
+        return FALSE;
+      }
+
+      if(!is_numeric($key)) {
+        if(!is_null($type)) {
+          throw new InvalidArgumentValueException("You cannot put a permission type as a descendant to another permission type. Existing type: $type. Evaluated permissions: " . print_r($permissions, TRUE));
+        }
+        $type = $key;
+      }
+
+      if(is_array($value)) {
+        return $this->processOR($value, $type, $context);
+      }
+      return $this->dispatch($value, $type, $context);
+    }
+    throw new InvalidArgumentTypeException("A permission must either be a string or an array. Evaluated permissions: " . print_r($permissions, TRUE));
   }
 
   protected function processAND($permissions, $type = NULL, $context) {
@@ -277,8 +266,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       throw new InvalidValueForLogicGateException("The value array of a NAND gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
     }
 
-    $access = !$this->processAND($permissions, $type, $context);
-    return $access;
+    return !$this->processAND($permissions, $type, $context);
   }
 
   protected function processOR($permissions, $type = NULL, $context) {
@@ -308,8 +296,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       throw new InvalidValueForLogicGateException("The value array of a NOR gate must contain a minimum of one element. Current value: " . print_r($permissions, TRUE));
     }
 
-    $access = !$this->processOR($permissions, $type, $context);
-    return $access;
+    return !$this->processOR($permissions, $type, $context);
   }
 
   protected function processXOR($permissions, $type = NULL, $context) {
@@ -348,7 +335,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       }
     }
     elseif(is_string($permissions)) {
-      if(!$permissions) {
+      if($permissions === '') {
         throw new InvalidValueForLogicGateException('A NOT permission cannot have an empty string as its value.');
       }
     }
@@ -356,8 +343,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       throw new InvalidValueForLogicGateException("The value of a NOT gate must either be an array or a string. Current value: " . print_r($permissions, TRUE));
     }
 
-    $access = !$this->dispatch($permissions, $type, $context);
-    return $access;
+    return !$this->dispatch($permissions, $type, $context);
   }
 
   protected function externalAccessCheck($permission, $type, $context) {
