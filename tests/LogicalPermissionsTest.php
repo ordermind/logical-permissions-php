@@ -326,7 +326,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   public function testCheckAccessParamPermissionsWrongPermissionType() {
     $lp = new LogicalPermissions();
     $permissions = [
-      'flag' => TRUE,
+      'flag' => 50,
     ];
     $lp->checkAccess($permissions);
   }
@@ -1412,7 +1412,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
    */
-  public function testCheckAccessTRUEIllegalChildrenSingleValue() {
+  public function testCheckAccessStringTRUEIllegalChildrenSingleValue() {
     $lp = new LogicalPermissions();
     $permissions = [
       'TRUE' => false,
@@ -1423,7 +1423,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
    */
-  public function testCheckAccessTRUEIllegalChildrenArray() {
+  public function testCheckAccessStringTRUEIllegalChildrenArray() {
     $lp = new LogicalPermissions();
     $permissions = [
       'TRUE' => [],
@@ -1434,7 +1434,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
    */
-  public function testCheckAccessTRUEIllegalDescendant() {
+  public function testCheckAccessStringTRUEIllegalDescendant() {
     $lp = new LogicalPermissions();
     $permissions = [
       'role' => ['TRUE'],
@@ -1442,7 +1442,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp->checkAccess($permissions);
   }
 
-  public function testCheckAccessTRUE() {
+  public function testCheckAccessStringTRUE() {
     $lp = new LogicalPermissions();
     $permissions = [
       'TRUE',
@@ -1453,7 +1453,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
    */
-  public function testCheckAccessFALSEIllegalChildrenSingleValue() {
+  public function testCheckAccessStringFALSEIllegalChildrenSingleValue() {
     $lp = new LogicalPermissions();
     $permissions = [
       'FALSE' => false,
@@ -1464,7 +1464,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
    */
-  public function testCheckAccessFALSEIllegalChildrenArray() {
+  public function testCheckAccessStringFALSEIllegalChildrenArray() {
     $lp = new LogicalPermissions();
     $permissions = [
       'FALSE' => [],
@@ -1475,7 +1475,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
    */
-  public function testCheckAccessFALSEIllegalDescendant() {
+  public function testCheckAccessStringFALSEIllegalDescendant() {
     $lp = new LogicalPermissions();
     $permissions = [
       'role' => ['FALSE'],
@@ -1483,7 +1483,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp->checkAccess($permissions);
   }
 
-  public function testCheckAccessFALSE() {
+  public function testCheckAccessStringFALSE() {
     $lp = new LogicalPermissions();
     $permissions = [
       'FALSE',

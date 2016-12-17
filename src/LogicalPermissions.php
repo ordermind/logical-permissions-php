@@ -192,6 +192,20 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(!$permissions) {
       return FALSE;
     }
+    if(is_bool($permissions)) {
+      if($permissions === TRUE) {
+        if(!is_null($type)) {
+          throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: $type. Evaluated permissions: " . print_r($permissions, TRUE));
+        }
+        return TRUE;
+      }
+      if($permissions === FALSE) {
+        if(!is_null($type)) {
+          throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: $type. Evaluated permissions: " . print_r($permissions, TRUE));
+        }
+        return FALSE;
+      }
+    }
     if(is_string($permissions)) {
       if($permissions === 'TRUE') {
         if(!is_null($type)) {
@@ -229,7 +243,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       if($key === 'NOT') {
         return $this->processNOT($value, $type, $context);
       }
-      if($key === 'TRUE' || $key === 'FALSE') {
+      if($key === TRUE || $key === FALSE || $key === 'TRUE' || $key === 'FALSE') {
         throw new InvalidArgumentValueException("A boolean permission cannot have children. Evaluated permissions: " . print_r($permissions, TRUE));
       }
 
