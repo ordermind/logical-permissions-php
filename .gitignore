@@ -6,6 +6,6 @@
 !/LICENSE
 !/src
 !/src/*
-!/phpunit.xml
+!/phpunit.xml*
 !/tests
 !/tests/*

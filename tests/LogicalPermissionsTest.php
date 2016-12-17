@@ -1,9 +1,9 @@
 <?php
- 
+
 use Ordermind\LogicalPermissions\LogicalPermissions;
- 
+
 class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
-  
+
   /*-----------LogicalPermissions::addType()-------------*/
 
   /**
@@ -13,7 +13,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->addType(0, function(){});
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
    */
@@ -21,7 +21,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->addType('', function(){});
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
    */
@@ -29,7 +29,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->addType('AND', function(){});
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\PermissionTypeAlreadyExistsException
    */
@@ -46,13 +46,13 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->addType('test', 0);
   }
-  
+
   public function testAddType() {
     $lp = new LogicalPermissions();
     $lp->addType('test', function(){});
     $this->assertTrue($lp->typeExists('test'));
   }
-  
+
   /*-------------LogicalPermissions::removeType()--------------*/
 
   /**
@@ -62,7 +62,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->removeType(0);
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
    */
@@ -70,7 +70,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->removeType('');
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\PermissionTypeNotRegisteredException
    */
@@ -78,14 +78,14 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->removeType('test');
   }
-  
+
   public function testRemoveType() {
     $lp = new LogicalPermissions();
     $lp->addType('test', function() {});
     $lp->removeType('test');
     $this->assertFalse($lp->typeExists('test'));
   }
-  
+
   /*------------LogicalPermissions::typeExists()---------------*/
 
   /**
@@ -95,7 +95,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->typeExists(0);
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
    */
@@ -103,14 +103,14 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->typeExists('');
   }
-  
+
   public function testTypeExists() {
     $lp = new LogicalPermissions();
     $this->assertFalse($lp->typeExists('test'));
     $lp->addType('test', function(){});
     $this->assertTrue($lp->typeExists('test'));
   }
-  
+
   /*------------LogicalPermissions::getTypeCallback()---------------*/
 
   /**
@@ -120,7 +120,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->getTypeCallback(0);
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
    */
@@ -128,7 +128,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->getTypeCallback('');
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\PermissionTypeNotRegisteredException
    */
@@ -136,14 +136,14 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->getTypeCallback('test');
   }
-  
+
   public function testGetTypeCallback() {
     $lp = new LogicalPermissions();
     $callback = function(){};
     $lp->addType('test', $callback);
     $this->assertSame($lp->getTypeCallback('test'), $callback);
   }
-  
+
   /*------------LogicalPermissions::setTypeCallback()---------------*/
 
   /**
@@ -153,7 +153,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->setTypeCallback(0, function(){});
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
    */
@@ -161,7 +161,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->setTypeCallback('', function(){});
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\PermissionTypeNotRegisteredException
    */
@@ -169,7 +169,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->setTypeCallback('test', function(){});
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException
    */
@@ -187,9 +187,9 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp->setTypeCallback('test', $callback);
     $this->assertSame($lp->getTypeCallback('test'), $callback);
   }
-  
+
   /*------------LogicalPermissions::getTypes()---------------*/
-  
+
   public function testGetTypes() {
     $lp = new LogicalPermissions();
     $this->assertEquals($lp->getTypes(), []);
@@ -199,7 +199,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($types, ['test' => $callback]);
     $this->assertSame($types['test'], $callback);
   }
-  
+
   /*------------LogicalPermissions::setTypes()---------------*/
 
   /**
@@ -219,7 +219,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $types = [function(){}];
     $lp->setTypes($types);
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
    */
@@ -228,7 +228,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $types = ['' => function(){}];
     $lp->setTypes($types);
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
    */
@@ -237,7 +237,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $types = ['no_bypass' => function(){}];
     $lp->setTypes($types);
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
    */
@@ -246,7 +246,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $types = ['test' => 'hej'];
     $lp->setTypes($types);
   }
-  
+
   public function testSetTypes() {
     $lp = new LogicalPermissions();
     $callback = function(){};
@@ -255,14 +255,14 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($types, ['test' => $callback]);
     $this->assertSame($types['test'], $callback);
   }
-  
+
   /*------------LogicalPermissions::getBypassCallback()---------------*/
-  
+
   public function testGetBypassCallback() {
     $lp = new LogicalPermissions();
     $this->assertNull($lp->getBypassCallback());
   }
-  
+
   /*------------LogicalPermissions::setBypassCallback()---------------*/
 
   /**
@@ -272,19 +272,19 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->setBypassCallback('test');
   }
-  
+
   public function testSetBypassCallback() {
     $lp = new LogicalPermissions();
     $callback = function(){};
     $lp->setBypassCallback($callback);
     $this->assertSame($lp->getBypassCallback(), $callback);
   }
-  
+
   /*------------LogicalPermissions::getValidPermissionKeys()---------------*/
-  
+
   public function testGetValidPermissionKeys() {
     $lp = new LogicalPermissions();
-    $this->assertEquals($lp->getValidPermissionKeys(), ['no_bypass', 'AND', 'NAND', 'OR', 'NOR', 'XOR', 'NOT']);
+    $this->assertEquals($lp->getValidPermissionKeys(), ['no_bypass', 'AND', 'NAND', 'OR', 'NOR', 'XOR', 'NOT', 'TRUE', 'FALSE']);
     $types = [
       'flag' => function($flag, $context) {
         $access = FALSE;
@@ -296,7 +296,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -307,11 +307,11 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       }
     ];
     $lp->setTypes($types);
-    $this->assertEquals($lp->getValidPermissionKeys(), ['no_bypass', 'AND', 'NAND', 'OR', 'NOR', 'XOR', 'NOT', 'flag', 'role', 'misc']);
+    $this->assertEquals($lp->getValidPermissionKeys(), ['no_bypass', 'AND', 'NAND', 'OR', 'NOR', 'XOR', 'NOT', 'TRUE', 'FALSE', 'flag', 'role', 'misc']);
   }
-  
+
   /*------------LogicalPermissions::checkAccess()---------------*/
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException
    */
@@ -319,7 +319,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->checkAccess(0, []);
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException
    */
@@ -333,24 +333,24 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
 
   public function testCheckAccessParamPermissionsNestedTypes() {
     $lp = new LogicalPermissions();
-    
+
     //Directly nested
     $permissions = [
       'flag' => [
         'flag' => 'testflag',
       ],
     ];
-    
+
     $caught = FALSE;
     try {
       $lp->checkAccess($permissions, []);
     }
     catch(Exception $e) {
-      $this->assertEquals(get_class($e), 'Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException'); 
+      $this->assertEquals(get_class($e), 'Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException');
       $caught = TRUE;
     }
     $this->assertTrue($caught);
-    
+
     //Indirectly nested
     $permissions = [
       'flag' => [
@@ -359,30 +359,30 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
         ],
       ],
     ];
-    
+
     $caught = FALSE;
     try {
       $lp->checkAccess($permissions, []);
     }
     catch(Exception $e) {
-      $this->assertEquals(get_class($e), 'Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException'); 
+      $this->assertEquals(get_class($e), 'Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException');
       $caught = TRUE;
     }
     $this->assertTrue($caught);
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\PermissionTypeNotRegisteredException
    */
   public function testCheckAccessParamPermissionsUnregisteredType() {
     $lp = new LogicalPermissions();
-    
+
     $permissions = [
       'flag' => 'testflag',
     ];
     $lp->checkAccess($permissions, []);
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException
    */
@@ -390,7 +390,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->checkAccess([], 0);
   }
-  
+
   public function testCheckAccessBypassAccessCheckContextPassing() {
     $lp = new LogicalPermissions();
     $user = ['id' => 1];
@@ -402,7 +402,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp->setBypassCallback($bypass_callback);
     $lp->checkAccess([], ['user' => $user]);
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException
    */
@@ -410,7 +410,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp = new LogicalPermissions();
     $lp->checkAccess([], [], 'test');
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidCallbackReturnTypeException
    */
@@ -440,7 +440,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp->setBypassCallback($bypass_callback);
     $this->assertFalse($lp->checkAccess([], []));
   }
-  
+
   public function testCheckAccessBypassAccessDeny2() {
     $lp = new LogicalPermissions();
     $bypass_callback = function($context) {
@@ -449,23 +449,23 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $lp->setBypassCallback($bypass_callback);
     $this->assertFalse($lp->checkAccess([], [], FALSE));
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
    */
   public function testCheckAccessNoBypassWrongType() {
     $lp = new LogicalPermissions();
     $bypass_callback = function($context) {
-      return TRUE; 
+      return TRUE;
     };
     $lp->setBypassCallback($bypass_callback);
     $lp->checkAccess(['no_bypass' => 'test'], []);
   }
-  
+
   public function testCheckAccessNoBypassAccessBooleanAllow() {
     $lp = new LogicalPermissions();
     $bypass_callback = function($context) {
-      return TRUE; 
+      return TRUE;
     };
     $lp->setBypassCallback($bypass_callback);
     $permissions = ['no_bypass' => FALSE];
@@ -477,19 +477,19 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   public function testCheckAccessNoBypassAccessBooleanDeny() {
     $lp = new LogicalPermissions();
     $bypass_callback = function($context) {
-      return TRUE; 
+      return TRUE;
     };
     $lp->setBypassCallback($bypass_callback);
     $this->assertFalse($lp->checkAccess(['no_bypass' => TRUE], []));
   }
-  
+
   public function testCheckAccessNoBypassAccessArrayAllow() {
     $lp = new LogicalPermissions();
     $types = [
       'flag' => function($flag, $context) {
         $access = FALSE;
         if($flag === 'never_bypass') {
-          $access = !empty($context['user']['never_bypass']); 
+          $access = !empty($context['user']['never_bypass']);
         }
         return $access;
       },
@@ -517,14 +517,14 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'flag' => function($flag, $context) {
         $access = FALSE;
         if($flag === 'never_bypass') {
-          $access = !empty($context['user']['never_bypass']); 
+          $access = !empty($context['user']['never_bypass']);
         }
         return $access;
       },
     ];
     $lp->setTypes($types);
     $bypass_callback = function($context) { //Simulates for example that the user is a superuser with ability to bypass access
-      return TRUE; 
+      return TRUE;
     };
     $lp->setBypassCallback($bypass_callback);
     $permissions = [
@@ -538,7 +538,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     ];
     $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidCallbackReturnTypeException
    */
@@ -566,7 +566,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     ];
     $lp->checkAccess($permissions, ['user' => $user]);
   }
-  
+
   public function testCheckAccessSingleItemAllow() {
     $lp = new LogicalPermissions();
     $types = [
@@ -591,7 +591,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     ];
     $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
   }
-  
+
   public function testCheckAccessSingleItemDeny() {
     $lp = new LogicalPermissions();
     $types = [
@@ -626,7 +626,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -685,7 +685,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -722,7 +722,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -739,7 +739,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     ];
     $lp->checkAccess($permissions, ['user' => $user]);
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
@@ -749,7 +749,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -773,7 +773,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -782,7 +782,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $permissions = [
       'role' => [
         'AND' => [
-          'admin', 
+          'admin',
           'editor',
           'writer',
         ],
@@ -818,7 +818,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $user['roles'] = ['admin', 'editor', 'writer'];
     $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
@@ -828,7 +828,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -845,7 +845,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     ];
     $lp->checkAccess($permissions, ['user' => $user]);
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
@@ -855,7 +855,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -872,14 +872,14 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     ];
     $lp->checkAccess($permissions, ['user' => $user]);
   }
-  
+
   public function testCheckAccessMultipleItemsNAND() {
     $lp = new LogicalPermissions();
     $types = [
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -888,7 +888,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $permissions = [
       'role' => [
         'NAND' => [
-          'admin', 
+          'admin',
           'editor',
           'writer',
         ],
@@ -924,7 +924,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $user['roles'] = ['admin', 'editor', 'writer'];
     $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
@@ -934,7 +934,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -951,7 +951,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     ];
     $lp->checkAccess($permissions, ['user' => $user]);
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
@@ -961,7 +961,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -978,14 +978,14 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     ];
     $lp->checkAccess($permissions, ['user' => $user]);
   }
-  
+
   public function testCheckAccessMultipleItemsOR() {
     $lp = new LogicalPermissions();
     $types = [
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -994,7 +994,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $permissions = [
       'role' => [
         'OR' => [
-          'admin', 
+          'admin',
           'editor',
           'writer',
         ],
@@ -1030,7 +1030,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $user['roles'] = ['admin', 'editor', 'writer'];
     $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
@@ -1040,7 +1040,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -1057,7 +1057,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     ];
     $lp->checkAccess($permissions, ['user' => $user]);
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
@@ -1067,7 +1067,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -1084,14 +1084,14 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     ];
     $lp->checkAccess($permissions, ['user' => $user]);
   }
-  
+
   public function testCheckAccessMultipleItemsNOR() {
     $lp = new LogicalPermissions();
     $types = [
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -1100,7 +1100,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $permissions = [
       'role' => [
         'NOR' => [
-          'admin', 
+          'admin',
           'editor',
           'writer',
         ],
@@ -1136,7 +1136,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $user['roles'] = ['admin', 'editor', 'writer'];
     $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
@@ -1146,7 +1146,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -1163,7 +1163,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     ];
     $lp->checkAccess($permissions, ['user' => $user]);
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
@@ -1173,7 +1173,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -1190,14 +1190,14 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     ];
     $lp->checkAccess($permissions, ['user' => $user]);
   }
-  
+
   public function testCheckAccessMultipleItemsXOR() {
     $lp = new LogicalPermissions();
     $types = [
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -1206,7 +1206,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $permissions = [
       'role' => [
         'XOR' => [
-          'admin', 
+          'admin',
           'editor',
           'writer',
         ],
@@ -1242,7 +1242,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $user['roles'] = ['admin', 'editor', 'writer'];
     $this->assertFalse($lp->checkAccess($permissions, ['user' => $user]));
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
@@ -1252,7 +1252,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -1269,7 +1269,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     ];
     $lp->checkAccess($permissions, ['user' => $user]);
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
@@ -1279,7 +1279,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -1296,7 +1296,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     ];
     $lp->checkAccess($permissions, ['user' => $user]);
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
@@ -1306,7 +1306,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -1323,7 +1323,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     ];
     $lp->checkAccess($permissions, ['user' => $user]);
   }
-  
+
   /**
    * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
    */
@@ -1333,7 +1333,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -1342,7 +1342,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $permissions = [
       'role' => [
         'NOT' => [
-          'admin', 
+          'admin',
           'editor',
           'writer',
         ],
@@ -1350,14 +1350,14 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     ];
     $lp->checkAccess($permissions, []);
   }
-  
+
   public function testCheckAccessSingleItemNOTString() {
     $lp = new LogicalPermissions();
     $types = [
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -1378,14 +1378,14 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $user['roles'] = ['editor'];
     $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
   }
-  
+
   public function testCheckAccessSingleItemNOTArray() {
     $lp = new LogicalPermissions();
     $types = [
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -1408,14 +1408,14 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $user['roles'] = ['editor'];
     $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
   }
-  
+
   public function testCheckAccessNestedLogic() {
     $lp = new LogicalPermissions();
     $types = [
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -1443,14 +1443,14 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $user['roles'] = ['editor'];
     $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
   }
-  
+
   public function testCheckAccessLogicGateFirst() {
     $lp = new LogicalPermissions();
     $types = [
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -1480,14 +1480,14 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $user['roles'] = ['editor'];
     $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
   }
-  
+
   public function testCheckAccessShorthandORMixedNumericStringKeys() {
     $lp = new LogicalPermissions();
     $types = [
       'role' => function($role, $context) {
         $access = FALSE;
         if(!empty($context['user']['roles'])) {
-          $access = in_array($role, $context['user']['roles']); 
+          $access = in_array($role, $context['user']['roles']);
         }
         return $access;
       },
@@ -1524,4 +1524,4 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
     $user['roles'] = ['admin', 'writer'];
     $this->assertTrue($lp->checkAccess($permissions, ['user' => $user]));
   }
-} 
+}
