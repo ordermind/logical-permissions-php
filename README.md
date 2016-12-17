@@ -27,7 +27,7 @@ In this example `role` and `flag` are the evaluated permission types. For this e
 ### Bypassing permissions
 This packages also supports rules for bypassing permissions completely for superusers. In order to use this functionality you need to register a callback with [`LogicalPermissions::setBypassCallback()`](#setbypasscallback). The registered callback will run on every permission check and if it returns `TRUE`, access will automatically be granted. If you want to make exceptions you can do so by adding `'no_bypass' => TRUE` to the first level of a permission tree. You can even use permissions as conditions for `no_bypass`.
 
-Examples: 
+Examples:
 
 ```php
 //Disallow access bypassing
@@ -151,7 +151,7 @@ is interpreted exactly the same way as this permission tree:
 
 A logic NOR gate returns true if all of its children returns false. Otherwise it returns false.
 
-Examples: 
+Examples:
 
 ```php
 //Allow access if the user is neither an editor nor a sales person
@@ -222,6 +222,47 @@ Examples:
 ]
 ```
 
+## Boolean Permissions
+
+Boolean permissions are a special kind of permission. They can be used for allowing or disallowing access for everyone (except those with bypass access). They are not allowed as descendants to a permission type and they may not contain children. Both true booleans and booleans represented as uppercase strings are supported. Of course a simpler way to allow access to everyone is to not define any permissions at all for that action, but it might be nice sometimes to explicitly allow access for everyone.
+
+Examples:
+
+```php
+//Allow access for anyone
+[
+  TRUE,
+]
+```
+
+```php
+//Example with string representation
+[
+  'TRUE',
+]
+```
+
+```php
+//Deny access for everyone except those with bypass access
+[
+  FALSE,
+]
+```
+
+```php
+//Example with string representation
+[
+  'FALSE',
+]
+```
+
+```php
+//Deny access for everyone including those with bypass access
+[
+  FALSE,
+  'no_bypass' => TRUE,
+]
+```
 
 ## API Documentation
 
@@ -490,7 +531,7 @@ Valid permission keys
 Checks access for a permission tree.
 
 ```php
-LogicalPermissions::checkAccess( array $permissions, array $context, boolean $allow_bypass = TRUE ): boolean
+LogicalPermissions::checkAccess( array $permissions, array $context = [], boolean $allow_bypass = TRUE ): boolean
 ```
 
 
@@ -501,7 +542,7 @@ LogicalPermissions::checkAccess( array $permissions, array $context, boolean $al
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `$permissions` | **array** | The permission tree to be evaluated. |
-| `$context` | **array** | A context array that could for example contain the evaluated user and document. |
+| `$context` | **array** | (optional) A context array that could for example contain the evaluated user and document. Default value is an empty array. |
 | `$allow_bypass` | **boolean** | (optional) Determines whether bypassing access should be allowed. Default value is TRUE. |
 
 

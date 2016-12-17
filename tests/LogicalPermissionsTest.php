@@ -1644,6 +1644,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
           ],
         ],
       ],
+      FALSE,
       'FALSE',
     ];
     $user = [
@@ -1681,6 +1682,7 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
             ],
           ],
         ],
+        TRUE,
         'TRUE',
       ],
     ];
