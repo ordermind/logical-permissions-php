@@ -543,7 +543,7 @@ Valid permission keys
 Checks access for a permission tree.
 
 ```php
-LogicalPermissions::checkAccess( array $permissions, array $context = [], boolean $allow_bypass = TRUE ): boolean
+LogicalPermissions::checkAccess( array|string|boolean $permissions, array $context = [], boolean $allow_bypass = TRUE ): boolean
 ```
 
 

@@ -70,7 +70,7 @@ interface LogicalPermissionsInterface {
 
   /**
   * Checks access for a permission tree.
-  * @param array $permissions The permission tree to be evaluated.
+  * @param array|string|bool $permissions The permission tree to be evaluated.
   * @param array $context (optional) A context array that could for example contain the evaluated user and document. Default value is an empty array.
   * @param bool $allow_bypass (optional) Determines whether bypassing access should be allowed. Default value is TRUE.
   * @return bool TRUE if access is granted or FALSE if access is denied.
