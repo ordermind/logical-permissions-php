@@ -233,6 +233,9 @@ Examples:
 [
   TRUE,
 ]
+
+//Using a boolean without an array is also permitted
+TRUE
 ```
 
 ```php
@@ -240,6 +243,9 @@ Examples:
 [
   'TRUE',
 ]
+
+//Using a string representation without an array is also permitted
+'TRUE'
 ```
 
 ```php
@@ -247,6 +253,9 @@ Examples:
 [
   FALSE,
 ]
+
+//Using a boolean without an array is also permitted
+FALSE
 ```
 
 ```php
@@ -254,6 +263,9 @@ Examples:
 [
   'FALSE',
 ]
+
+//Using a string representation without an array is also permitted
+'FALSE'
 ```
 
 ```php

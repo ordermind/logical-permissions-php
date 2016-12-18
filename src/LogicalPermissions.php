@@ -140,8 +140,8 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   }
 
   public function checkAccess($permissions, $context = [], $allow_bypass = TRUE) {
-    if(!is_array($permissions)) {
-      throw new InvalidArgumentTypeException('The permissions parameter must be an array.');
+    if(!is_array($permissions) && !is_string($permissions) && !is_bool($permissions)) {
+      throw new InvalidArgumentTypeException('The permissions parameter must be either an array or in certain cases a string or boolean.');
     }
     if(!is_array($context)) {
       throw new InvalidArgumentTypeException('The context parameter must be an array.');
@@ -150,7 +150,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       throw new InvalidArgumentTypeException('The allow_bypass parameter must be a boolean.');
     }
 
-    if(isset($permissions['no_bypass'])) {
+    if(is_array($permissions) && isset($permissions['no_bypass'])) {
       if($allow_bypass) {
         if(is_bool($permissions['no_bypass'])) {
           $allow_bypass = !$permissions['no_bypass'];
@@ -164,10 +164,17 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       }
       unset($permissions['no_bypass']);
     }
+
     if($allow_bypass && $this->checkBypassAccess($context)) {
       return TRUE;
     }
-    if($permissions) {
+    if(is_bool($permissions)) {
+      return $this->dispatch($permissions);
+    }
+    if(is_string($permissions)) {
+      return $this->dispatch($permissions);
+    }
+    if(is_array($permissions) && count($permissions)) {
       return $this->processOR($permissions, NULL, $context);
     }
     return FALSE;
@@ -190,7 +197,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     return $bypass_access;
   }
 
-  protected function dispatch($permissions, $type = NULL, $context) {
+  protected function dispatch($permissions, $type = NULL, $context = []) {
     if(is_bool($permissions)) {
       if($permissions === TRUE) {
         if(!is_null($type)) {

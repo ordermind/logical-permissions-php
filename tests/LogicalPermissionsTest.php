@@ -1435,6 +1435,12 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
 
   public function testCheckAccessBoolTRUE() {
     $lp = new LogicalPermissions();
+    $permissions = TRUE;
+    $this->assertTrue($lp->checkAccess($permissions));
+  }
+
+  public function testCheckAccessBoolTRUEArray() {
+    $lp = new LogicalPermissions();
     $permissions = [
       TRUE,
     ];
@@ -1453,6 +1459,12 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testCheckAccessBoolFALSE() {
+    $lp = new LogicalPermissions();
+    $permissions = FALSE;
+    $this->assertFalse($lp->checkAccess($permissions));
+  }
+
+  public function testCheckAccessBoolFALSEArray() {
     $lp = new LogicalPermissions();
     $permissions = [
       FALSE,
@@ -1522,6 +1534,12 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
 
   public function testCheckAccessStringTRUE() {
     $lp = new LogicalPermissions();
+    $permissions = 'TRUE';
+    $this->assertTrue($lp->checkAccess($permissions));
+  }
+
+  public function testCheckAccessStringTRUEArray() {
+    $lp = new LogicalPermissions();
     $permissions = [
       'TRUE',
     ];
@@ -1562,6 +1580,12 @@ class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testCheckAccessStringFALSE() {
+    $lp = new LogicalPermissions();
+    $permissions = 'FALSE';
+    $this->assertFalse($lp->checkAccess($permissions));
+  }
+
+  public function testCheckAccessStringFALSEArray() {
     $lp = new LogicalPermissions();
     $permissions = [
       'FALSE',
