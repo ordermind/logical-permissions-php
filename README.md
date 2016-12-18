@@ -553,7 +553,7 @@ LogicalPermissions::checkAccess( array|string|boolean $permissions, array $conte
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `$permissions` | **array|string|boolean** | The permission tree to be evaluated. |
+| `$permissions` | **mixed** | The permission tree to be evaluated. |
 | `$context` | **array** | (optional) A context array that could for example contain the evaluated user and document. Default value is an empty array. |
 | `$allow_bypass` | **boolean** | (optional) Determines whether bypassing access should be allowed. Default value is TRUE. |
 
