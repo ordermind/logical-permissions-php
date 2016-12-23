@@ -268,7 +268,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       }
       return $this->dispatch($value, $type, $context);
     }
-    throw new InvalidArgumentTypeException("A permission must either be a string or an array. Evaluated permissions: " . print_r($permissions, TRUE));
+    throw new InvalidArgumentTypeException("A permission must either be a boolean, a string or an array. Evaluated permissions: " . print_r($permissions, TRUE));
   }
 
   protected function processAND($permissions, $type = NULL, $context) {
