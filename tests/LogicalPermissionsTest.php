@@ -2,7 +2,15 @@
 
 use Ordermind\LogicalPermissions\LogicalPermissions;
 
-class LogicalPermissionsTest extends PHPUnit_Framework_TestCase {
+// Solves issue with different parent classes in different versions of PHPUnits
+if(class_exists('PHPUnit_Framework_TestCase')) {
+  class LogicalPermissionsPHPUnitShim extends PHPUnit_Framework_TestCase {}
+}
+else {
+  class LogicalPermissionsPHPUnitShim extends PHPUnit\Framework\TestCase {}
+}
+
+class LogicalPermissionsTest extends LogicalPermissionsPHPUnitShim {
 
   /*-----------LogicalPermissions::addType()-------------*/
 
