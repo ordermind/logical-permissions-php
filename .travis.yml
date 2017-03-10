@@ -7,3 +7,5 @@ php:
   - 'nightly'
   - 'hhvm'
 install: composer install
+notifications:
+  email: false
