@@ -504,6 +504,27 @@ class LogicalPermissionsTest extends LogicalPermissionsPHPUnitShim {
     $this->assertFalse($lp->checkAccess(['no_bypass' => TRUE], []));
   }
 
+  public function testCheckAccessNoBypassAccessStringAllow() {
+    $lp = new LogicalPermissions();
+    $bypass_callback = function($context) {
+      return TRUE;
+    };
+    $lp->setBypassCallback($bypass_callback);
+    $permissions = ['no_bypass' => 'False'];
+    $this->assertTrue($lp->checkAccess($permissions));
+    //Test that permission array is not changed
+    $this->assertTrue(isset($permissions['no_bypass']));
+  }
+
+  public function testCheckAccessNoBypassAccessStringDeny() {
+    $lp = new LogicalPermissions();
+    $bypass_callback = function($context) {
+      return TRUE;
+    };
+    $lp->setBypassCallback($bypass_callback);
+    $this->assertFalse($lp->checkAccess(['no_bypass' => 'True'], []));
+  }
+
   public function testCheckAccessNoBypassAccessArrayAllow() {
     $lp = new LogicalPermissions();
     $types = [
