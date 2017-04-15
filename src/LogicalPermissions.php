@@ -20,7 +20,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(!$name) {
       throw new InvalidArgumentValueException('The name parameter cannot be empty.');
     }
-    if(in_array($name, $core_keys = $this->getCorePermissionKeys())) {
+    if(in_array(strtoupper($name), $core_keys = $this->getCorePermissionKeys())) {
       throw new InvalidArgumentValueException("The name parameter has the illegal value \"$name\". It cannot be one of the following values: " . implode(',', $core_keys));
     }
     if($this->typeExists($name)) {
