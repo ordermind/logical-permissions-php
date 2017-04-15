@@ -25,14 +25,14 @@ The main api method is [`LogicalPermissions::checkAccess()`](#checkaccess), whic
 In this example `role` and `flag` are the evaluated permission types. For this example to work you will need to register the permission types 'role' and 'flag' so that the class knows which callbacks are responsible for evaluating the respective permission types. You can do that with [`LogicalPermissions::addType()`](#addtype).
 
 ### Bypassing permissions
-This packages also supports rules for bypassing permissions completely for superusers. In order to use this functionality you need to register a callback with [`LogicalPermissions::setBypassCallback()`](#setbypasscallback). The registered callback will run on every permission check and if it returns `TRUE`, access will automatically be granted. If you want to make exceptions you can do so by adding `'no_bypass' => TRUE` to the first level of a permission tree. You can even use permissions as conditions for `no_bypass`.
+This packages also supports rules for bypassing permissions completely for superusers. In order to use this functionality you need to register a callback with [`LogicalPermissions::setBypassCallback()`](#setbypasscallback). The registered callback will run on every permission check and if it returns `TRUE`, access will automatically be granted. If you want to make exceptions you can do so by adding `'NO_BYPASS' => TRUE` to the first level of a permission tree. You can even use permissions as conditions for `NO_BYPASS`.
 
 Examples:
 
 ```php
 //Disallow access bypassing
 [
-  'no_bypass' => TRUE,
+  'NO_BYPASS' => TRUE,
   'role' => 'editor',
 ]
 ```
@@ -40,7 +40,7 @@ Examples:
 ```php
 //Disallow access bypassing only if the user is an admin
 [
-  'no_bypass' => [
+  'NO_BYPASS' => [
     'role' => 'admin',
   ],
   'role' => 'editor',
@@ -272,7 +272,7 @@ FALSE
 //Deny access for everyone including those with bypass access
 [
   FALSE,
-  'no_bypass' => TRUE,
+  'NO_BYPASS' => TRUE,
 ]
 ```
 
