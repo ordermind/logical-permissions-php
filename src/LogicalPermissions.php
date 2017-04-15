@@ -226,13 +226,13 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       }
     }
     if(is_string($permissions)) {
-      if($permissions === 'TRUE') {
+      if(strtoupper($permissions) === 'TRUE') {
         if(!is_null($type)) {
           throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: $type. Evaluated permissions: " . print_r($permissions, TRUE));
         }
         return TRUE;
       }
-      if($permissions === 'FALSE') {
+      if(strtoupper($permissions) === 'FALSE') {
         if(!is_null($type)) {
           throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: $type. Evaluated permissions: " . print_r($permissions, TRUE));
         }
@@ -244,38 +244,38 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       reset($permissions);
       $key = key($permissions);
       $value = current($permissions);
-      if($key === 'NO_BYPASS') {
-        throw new InvalidArgumentValueException("The NO_BYPASS key must be placed highest in the permission hierarchy. Evaluated permissions: " . print_r($permissions, TRUE));
-      }
-      if($key === 'AND') {
-        return $this->processAND($value, $type, $context);
-      }
-      if($key === 'NAND') {
-        return $this->processNAND($value, $type, $context);
-      }
-      if($key === 'OR') {
-        return $this->processOR($value, $type, $context);
-      }
-      if($key === 'NOR') {
-        return $this->processNOR($value, $type, $context);
-      }
-      if($key === 'XOR') {
-        return $this->processXOR($value, $type, $context);
-      }
-      if($key === 'NOT') {
-        return $this->processNOT($value, $type, $context);
-      }
-      if($key === 'TRUE' || $key === 'FALSE') {
-        throw new InvalidArgumentValueException("A boolean permission cannot have children. Evaluated permissions: " . print_r($permissions, TRUE));
-      }
+      if(is_string($key)) {
+        $key_upper = strtoupper($key);
+        if($key_upper === 'NO_BYPASS') {
+          throw new InvalidArgumentValueException("The NO_BYPASS key must be placed highest in the permission hierarchy. Evaluated permissions: " . print_r($permissions, TRUE));
+        }
+        if($key_upper === 'AND') {
+          return $this->processAND($value, $type, $context);
+        }
+        if($key_upper === 'NAND') {
+          return $this->processNAND($value, $type, $context);
+        }
+        if($key_upper === 'OR') {
+          return $this->processOR($value, $type, $context);
+        }
+        if($key_upper === 'NOR') {
+          return $this->processNOR($value, $type, $context);
+        }
+        if($key_upper === 'XOR') {
+          return $this->processXOR($value, $type, $context);
+        }
+        if($key_upper === 'NOT') {
+          return $this->processNOT($value, $type, $context);
+        }
+        if($key_upper === 'TRUE' || $key_upper === 'FALSE') {
+          throw new InvalidArgumentValueException("A boolean permission cannot have children. Evaluated permissions: " . print_r($permissions, TRUE));
+        }
 
-      if(!is_numeric($key)) {
         if(!is_null($type)) {
           throw new InvalidArgumentValueException("You cannot put a permission type as a descendant to another permission type. Existing type: $type. Evaluated permissions: " . print_r($permissions, TRUE));
         }
         $type = $key;
       }
-
       if(is_array($value)) {
         return $this->processOR($value, $type, $context);
       }
