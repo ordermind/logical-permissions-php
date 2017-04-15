@@ -396,7 +396,7 @@ class LogicalPermissionsTest extends LogicalPermissionsPHPUnitShim {
    */
   public function testCheckAccessParamContextWrongType() {
     $lp = new LogicalPermissions();
-    $lp->checkAccess([], 0);
+    $lp->checkAccess(FALSE, 0);
   }
 
   public function testCheckAccessBypassAccessCheckContextPassing() {
@@ -408,7 +408,7 @@ class LogicalPermissionsTest extends LogicalPermissionsPHPUnitShim {
       return TRUE;
     };
     $lp->setBypassCallback($bypass_callback);
-    $lp->checkAccess([], ['user' => $user]);
+    $lp->checkAccess(FALSE, ['user' => $user]);
   }
 
   /**
@@ -416,7 +416,12 @@ class LogicalPermissionsTest extends LogicalPermissionsPHPUnitShim {
    */
   public function testCheckAccessParamAllowBypassWrongType() {
     $lp = new LogicalPermissions();
-    $lp->checkAccess([], [], 'test');
+    $lp->checkAccess(FALSE, [], 'test');
+  }
+
+  public function testCheckAccessEmptyArrayAllow() {
+    $lp = new LogicalPermissions();
+    $this->assertTrue($lp->checkAccess([]));
   }
 
   /**
@@ -428,7 +433,7 @@ class LogicalPermissionsTest extends LogicalPermissionsPHPUnitShim {
       return 1;
     };
     $lp->setBypassCallback($bypass_callback);
-    $lp->checkAccess([]);
+    $lp->checkAccess(FALSE);
   }
 
   /**
@@ -450,7 +455,7 @@ class LogicalPermissionsTest extends LogicalPermissionsPHPUnitShim {
       return TRUE;
     };
     $lp->setBypassCallback($bypass_callback);
-    $this->assertTrue($lp->checkAccess([]));
+    $this->assertTrue($lp->checkAccess(FALSE));
   }
 
   public function testCheckAccessBypassAccessDeny() {
@@ -459,7 +464,7 @@ class LogicalPermissionsTest extends LogicalPermissionsPHPUnitShim {
       return FALSE;
     };
     $lp->setBypassCallback($bypass_callback);
-    $this->assertFalse($lp->checkAccess([]));
+    $this->assertFalse($lp->checkAccess(FALSE));
   }
 
   public function testCheckAccessBypassAccessDeny2() {
@@ -468,7 +473,7 @@ class LogicalPermissionsTest extends LogicalPermissionsPHPUnitShim {
       return TRUE;
     };
     $lp->setBypassCallback($bypass_callback);
-    $this->assertFalse($lp->checkAccess([], [], FALSE));
+    $this->assertFalse($lp->checkAccess(FALSE, [], FALSE));
   }
 
   /**
@@ -480,7 +485,12 @@ class LogicalPermissionsTest extends LogicalPermissionsPHPUnitShim {
       return TRUE;
     };
     $lp->setBypassCallback($bypass_callback);
-    $lp->checkAccess(['no_bypass' => 'test'], []);
+    $lp->checkAccess(['no_bypass' => 'test']);
+  }
+
+  public function testCheckAccessNoBypassEmptyPermissionsAllow() {
+    $lp = new LogicalPermissions();
+    $this->assertTrue($lp->checkAccess(['no_bypass' => TRUE]));
   }
 
   public function testCheckAccessNoBypassAccessBooleanAllow() {
@@ -501,7 +511,7 @@ class LogicalPermissionsTest extends LogicalPermissionsPHPUnitShim {
       return TRUE;
     };
     $lp->setBypassCallback($bypass_callback);
-    $this->assertFalse($lp->checkAccess(['no_bypass' => TRUE], []));
+    $this->assertFalse($lp->checkAccess(['no_bypass' => TRUE, FALSE], []));
   }
 
   public function testCheckAccessNoBypassAccessStringAllow() {
@@ -522,7 +532,7 @@ class LogicalPermissionsTest extends LogicalPermissionsPHPUnitShim {
       return TRUE;
     };
     $lp->setBypassCallback($bypass_callback);
-    $this->assertFalse($lp->checkAccess(['no_bypass' => 'True'], []));
+    $this->assertFalse($lp->checkAccess(['no_bypass' => 'True', FALSE], []));
   }
 
   public function testCheckAccessNoBypassAccessArrayAllow() {
@@ -573,6 +583,7 @@ class LogicalPermissionsTest extends LogicalPermissionsPHPUnitShim {
       'no_bypass' => [
         'flag' => 'never_bypass',
       ],
+      FALSE,
     ];
     $user = [
       'id' => 1,

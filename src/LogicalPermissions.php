@@ -184,7 +184,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(is_array($permissions) && count($permissions)) {
       return $this->processOR($permissions, NULL, $context);
     }
-    return FALSE;
+    return TRUE;
   }
 
   protected function getCorePermissionKeys() {
