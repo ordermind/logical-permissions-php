@@ -250,7 +250,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       reset($permissions);
       $key = key($permissions);
       $value = current($permissions);
-      if(is_string($key)) {
+      if(!is_numeric($key)) {
         $key_upper = strtoupper($key);
         if($key_upper === 'NO_BYPASS') {
           throw new InvalidArgumentValueException("The NO_BYPASS key must be placed highest in the permission hierarchy. Evaluated permissions: " . print_r($permissions, TRUE));
