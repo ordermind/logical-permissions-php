@@ -112,7 +112,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       if(!$name) {
         throw new InvalidArgumentValueException('The name for a type cannot be empty.');
       }
-      if(in_array($name, $core_keys = $this->getCorePermissionKeys())) {
+      if(in_array(strtoupper($name), $core_keys = $this->getCorePermissionKeys())) {
         throw new InvalidArgumentValueException("The name for a type has the illegal value \"$name\". It cannot be one of the following values: " . implode(',', $core_keys));
       }
       if(!is_callable($callback)) {
@@ -150,26 +150,32 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       throw new InvalidArgumentTypeException('The allow_bypass parameter must be a boolean.');
     }
 
+    // uppercasing of no_bypass key for backward compatibility
     if(is_array($permissions) && array_key_exists('no_bypass', $permissions)) {
+      $permissions['NO_BYPASS'] = $permissions['no_bypass'];
+      unset($permissions['no_bypass']);
+    }
+
+    if(is_array($permissions) && array_key_exists('NO_BYPASS', $permissions)) {
       if($allow_bypass) {
-        if(is_bool($permissions['no_bypass'])) {
-          $allow_bypass = !$permissions['no_bypass'];
+        if(is_bool($permissions['NO_BYPASS'])) {
+          $allow_bypass = !$permissions['NO_BYPASS'];
         }
-        else if(is_string($permissions['no_bypass'])) {
-          if(!in_array(strtolower($permissions['no_bypass']), array('true', 'false'))) {
-            throw new InvalidArgumentValueException('The no_bypass value must be a boolean, a boolean string or an array. Current value: ' . print_r($permissions['no_bypass'], TRUE));
+        else if(is_string($permissions['NO_BYPASS'])) {
+          if(!in_array(strtolower($permissions['NO_BYPASS']), array('true', 'false'))) {
+            throw new InvalidArgumentValueException('The NO_BYPASS value must be a boolean, a boolean string or an array. Current value: ' . print_r($permissions['NO_BYPASS'], TRUE));
           }
 
-          $allow_bypass = !filter_var($permissions['no_bypass'], FILTER_VALIDATE_BOOLEAN);
+          $allow_bypass = !filter_var($permissions['NO_BYPASS'], FILTER_VALIDATE_BOOLEAN);
         }
-        else if(is_array($permissions['no_bypass'])) {
-          $allow_bypass = !$this->processOR($permissions['no_bypass'], NULL, $context);
+        else if(is_array($permissions['NO_BYPASS'])) {
+          $allow_bypass = !$this->processOR($permissions['NO_BYPASS'], NULL, $context);
         }
         else {
-          throw new InvalidArgumentValueException('The no_bypass value must be a boolean, a boolean string or an array. Current value: ' . print_r($permissions['no_bypass'], TRUE));
+          throw new InvalidArgumentValueException('The NO_BYPASS value must be a boolean, a boolean string or an array. Current value: ' . print_r($permissions['NO_BYPASS'], TRUE));
         }
       }
-      unset($permissions['no_bypass']);
+      unset($permissions['NO_BYPASS']);
     }
 
     if($allow_bypass && $this->checkBypassAccess($context)) {
@@ -188,7 +194,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   }
 
   protected function getCorePermissionKeys() {
-    return ['no_bypass', 'AND', 'NAND', 'OR', 'NOR', 'XOR', 'NOT', 'TRUE', 'FALSE'];
+    return ['NO_BYPASS', 'AND', 'NAND', 'OR', 'NOR', 'XOR', 'NOT', 'TRUE', 'FALSE'];
   }
 
   protected function checkBypassAccess($context) {
@@ -238,8 +244,8 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       reset($permissions);
       $key = key($permissions);
       $value = current($permissions);
-      if($key === 'no_bypass') {
-        throw new InvalidArgumentValueException("The no_bypass key must be placed highest in the permission hierarchy. Evaluated permissions: " . print_r($permissions, TRUE));
+      if($key === 'NO_BYPASS') {
+        throw new InvalidArgumentValueException("The NO_BYPASS key must be placed highest in the permission hierarchy. Evaluated permissions: " . print_r($permissions, TRUE));
       }
       if($key === 'AND') {
         return $this->processAND($value, $type, $context);

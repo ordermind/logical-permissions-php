@@ -292,7 +292,7 @@ class LogicalPermissionsTest extends LogicalPermissionsPHPUnitShim {
 
   public function testGetValidPermissionKeys() {
     $lp = new LogicalPermissions();
-    $this->assertEquals($lp->getValidPermissionKeys(), ['no_bypass', 'AND', 'NAND', 'OR', 'NOR', 'XOR', 'NOT', 'TRUE', 'FALSE']);
+    $this->assertEquals($lp->getValidPermissionKeys(), ['NO_BYPASS', 'AND', 'NAND', 'OR', 'NOR', 'XOR', 'NOT', 'TRUE', 'FALSE']);
     $types = [
       'flag' => function($flag, $context) {
         $access = FALSE;
@@ -315,7 +315,7 @@ class LogicalPermissionsTest extends LogicalPermissionsPHPUnitShim {
       }
     ];
     $lp->setTypes($types);
-    $this->assertEquals($lp->getValidPermissionKeys(), ['no_bypass', 'AND', 'NAND', 'OR', 'NOR', 'XOR', 'NOT', 'TRUE', 'FALSE', 'flag', 'role', 'misc']);
+    $this->assertEquals($lp->getValidPermissionKeys(), ['NO_BYPASS', 'AND', 'NAND', 'OR', 'NOR', 'XOR', 'NOT', 'TRUE', 'FALSE', 'flag', 'role', 'misc']);
   }
 
   /*------------LogicalPermissions::checkAccess()---------------*/
