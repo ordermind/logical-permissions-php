@@ -162,11 +162,17 @@ class LogicalPermissions implements LogicalPermissionsInterface {
           $allow_bypass = !$permissions['NO_BYPASS'];
         }
         else if(is_string($permissions['NO_BYPASS'])) {
-          if(!in_array(strtoupper($permissions['NO_BYPASS']), array('TRUE', 'FALSE'))) {
+          $no_bypass_upper = strtoupper($permissions['NO_BYPASS']);
+          if(!in_array($no_bypass_upper, array('TRUE', 'FALSE'))) {
             throw new InvalidArgumentValueException('The NO_BYPASS value must be a boolean, a boolean string or an array. Current value: ' . print_r($permissions['NO_BYPASS'], TRUE));
           }
 
-          $allow_bypass = !filter_var($permissions['NO_BYPASS'], FILTER_VALIDATE_BOOLEAN);
+          if($no_bypass_upper === 'TRUE') {
+            $allow_bypass = FALSE;
+          }
+          else if($no_bypass_upper === 'FALSE') {
+            $allow_bypass = TRUE;
+          }
         }
         else if(is_array($permissions['NO_BYPASS'])) {
           $allow_bypass = !$this->processOR($permissions['NO_BYPASS'], NULL, $context);
