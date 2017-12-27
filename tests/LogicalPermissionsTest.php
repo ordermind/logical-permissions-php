@@ -333,6 +333,7 @@ class LogicalPermissionsTest extends LogicalPermissionsPHPUnitShim {
    */
   public function testCheckAccessParamPermissionsWrongPermissionType() {
     $lp = new LogicalPermissions();
+    $lp->addType('flag', function(){});
     $permissions = [
       'flag' => 50,
     ];
@@ -341,6 +342,7 @@ class LogicalPermissionsTest extends LogicalPermissionsPHPUnitShim {
 
   public function testCheckAccessParamPermissionsNestedTypes() {
     $lp = new LogicalPermissions();
+    $lp->addType('flag', function(){});
 
     //Directly nested
     $permissions = [

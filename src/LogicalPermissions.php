@@ -280,6 +280,9 @@ class LogicalPermissions implements LogicalPermissionsInterface {
         if(!is_null($type)) {
           throw new InvalidArgumentValueException("You cannot put a permission type as a descendant to another permission type. Existing type: $type. Evaluated permissions: " . print_r($permissions, TRUE));
         }
+        if(!$this->typeExists($key)) {
+          throw new PermissionTypeNotRegisteredException("The permission type \"$key\" has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
+        }
         $type = $key;
       }
       if(is_array($value)) {
