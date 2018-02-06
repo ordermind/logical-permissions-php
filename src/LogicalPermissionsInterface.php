@@ -34,7 +34,7 @@ interface LogicalPermissionsInterface {
   /**
   * Changes the callback for an existing permission type.
   * @param string $name The name of the permission type.
-  * @param callable $callback The callback that evaluates the permission type. Upon calling checkAccess() the registered callback will be passed two parameters: a $permission string (such as a role) and the $context array passed to checkAccess(). The permission will always be a single string even if for example multiple roles are accepted. In that case the callback will be called once for each role that is to be evaluated. The callback should return a boolean which determines whether access should be granted.
+  * @param callable $callback The callback that evaluates the permission type. Upon calling checkAccess() the registered callback will be passed two parameters: a $permission string (such as a role) and the $context array (or object) passed to checkAccess(). The permission will always be a single string even if for example multiple roles are accepted. In that case the callback will be called once for each role that is to be evaluated. The callback should return a boolean which determines whether access should be granted.
   */
   public function setTypeCallback($name, $callback);
 
@@ -58,7 +58,7 @@ interface LogicalPermissionsInterface {
 
   /**
   * Sets the callback for access bypass evaluation.
-  * @param callable $callback The callback that evaluates access bypassing. Upon calling checkAccess() the registered bypass callback will be passed one parameter, which is the $context array passed to checkAccess(). It should return a boolean which determines whether bypass access should be granted.
+  * @param callable $callback The callback that evaluates access bypassing. Upon calling checkAccess() the registered bypass callback will be passed one parameter, which is the $context (or object) array passed to checkAccess(). It should return a boolean which determines whether bypass access should be granted.
   */
   public function setBypassCallback($callback);
 
@@ -71,7 +71,7 @@ interface LogicalPermissionsInterface {
   /**
   * Checks access for a permission tree.
   * @param array|string|bool $permissions The permission tree to be evaluated.
-  * @param array $context (optional) A context array that could for example contain the evaluated user and document. Default value is an empty array.
+  * @param array|object $context (optional) A context that could for example contain the evaluated user and document. Default value is an empty array.
   * @param bool $allow_bypass (optional) Determines whether bypassing access should be allowed. Default value is TRUE.
   * @return bool TRUE if access is granted or FALSE if access is denied.
   */
