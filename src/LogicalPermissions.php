@@ -143,8 +143,8 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(!is_array($permissions) && !is_string($permissions) && !is_bool($permissions)) {
       throw new InvalidArgumentTypeException('The permissions parameter must be either an array or in certain cases a string or boolean.');
     }
-    if(!is_array($context)) {
-      throw new InvalidArgumentTypeException('The context parameter must be an array.');
+    if(!is_array($context) && !is_object($context)) {
+      throw new InvalidArgumentTypeException('The context parameter must be an array or object.');
     }
     if(!is_bool($allow_bypass)) {
       throw new InvalidArgumentTypeException('The allow_bypass parameter must be a boolean.');
