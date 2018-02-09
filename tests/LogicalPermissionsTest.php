@@ -401,7 +401,7 @@ class LogicalPermissionsTest extends LogicalPermissionsPHPUnitShim {
     $lp->checkAccess(FALSE, 0);
   }
 
-  public function testCheckAccessBypassAccessCheckContextPassing() {
+  public function testCheckAccessBypassAccessCheckContextPassingArray() {
     $lp = new LogicalPermissions();
     $user = ['id' => 1];
     $bypass_callback = function($context) use ($user) {
@@ -411,6 +411,20 @@ class LogicalPermissionsTest extends LogicalPermissionsPHPUnitShim {
     };
     $lp->setBypassCallback($bypass_callback);
     $lp->checkAccess(FALSE, ['user' => $user]);
+  }
+
+  public function testCheckAccessBypassAccessCheckContextPassingObject() {
+    $lp = new LogicalPermissions();
+    $user = ['id' => 1];
+    $bypass_callback = function($context) use ($user) {
+      $this->assertTrue(isset($context->user));
+      $this->assertEquals($context->user, $user);
+      return TRUE;
+    };
+    $lp->setBypassCallback($bypass_callback);
+    $context = new stdClass();
+    $context->user = $user;
+    $lp->checkAccess(FALSE, $context);
   }
 
   /**
