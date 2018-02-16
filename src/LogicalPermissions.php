@@ -139,11 +139,11 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     return array_merge($this->getCorePermissionKeys(), array_keys($this->getTypes()));
   }
 
-  public function checkAccess($permissions, $context = [], $allow_bypass = TRUE) {
+  public function checkAccess($permissions, $context = NULL, $allow_bypass = TRUE) {
     if(!is_array($permissions) && !is_string($permissions) && !is_bool($permissions)) {
-      throw new InvalidArgumentTypeException('The permissions parameter must be either an array or in certain cases a string or boolean.');
+      throw new InvalidArgumentTypeException('The permissions parameter must be an array or in certain cases a string or boolean.');
     }
-    if(!is_array($context) && !is_object($context)) {
+    if(!is_null($context) && !is_array($context) && !is_object($context)) {
       throw new InvalidArgumentTypeException('The context parameter must be an array or object.');
     }
     if(!is_bool($allow_bypass)) {
@@ -216,7 +216,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     return $bypass_access;
   }
 
-  protected function dispatch($permissions, $type = NULL, $context = []) {
+  protected function dispatch($permissions, $type = NULL, $context = NULL) {
     if(is_bool($permissions)) {
       if($permissions === TRUE) {
         if(!is_null($type)) {

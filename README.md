@@ -543,7 +543,7 @@ Valid permission keys
 Checks access for a permission tree.
 
 ```php
-LogicalPermissions::checkAccess( array|string|boolean $permissions, array|object $context = [], boolean $allow_bypass = TRUE ): boolean
+LogicalPermissions::checkAccess( array|string|boolean $permissions, array|object $context = NULL, boolean $allow_bypass = TRUE ): boolean
 ```
 
 
@@ -554,7 +554,7 @@ LogicalPermissions::checkAccess( array|string|boolean $permissions, array|object
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `$permissions` | **mixed** | The permission tree to be evaluated. |
-| `$context` | **mixed** | (optional) A context that could for example contain the evaluated user and document. Default value is an empty array. |
+| `$context` | **mixed** | (optional) A context that could for example contain the evaluated user and document. Default value is NULL. |
 | `$allow_bypass` | **boolean** | (optional) Determines whether bypassing access should be allowed. Default value is TRUE. |
 
 
