@@ -60,6 +60,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     }
 
     $types = $this->getTypes();
+
     return isset($types[$name]);
   }
 
@@ -75,6 +76,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     }
 
     $types = $this->getTypes();
+
     return $types[$name];
   }
 
@@ -196,6 +198,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(is_array($permissions) && count($permissions)) {
       return $this->processOR($permissions, NULL, $context);
     }
+
     return TRUE;
   }
 
@@ -213,6 +216,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     if(!is_bool($bypass_access)) {
       throw new InvalidCallbackReturnTypeException('The bypass access callback must return a boolean.');
     }
+
     return $bypass_access;
   }
 
@@ -222,12 +226,14 @@ class LogicalPermissions implements LogicalPermissionsInterface {
         if(!is_null($type)) {
           throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: $type. Evaluated permissions: " . print_r($permissions, TRUE));
         }
+
         return TRUE;
       }
       if($permissions === FALSE) {
         if(!is_null($type)) {
           throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: $type. Evaluated permissions: " . print_r($permissions, TRUE));
         }
+
         return FALSE;
       }
     }
@@ -236,14 +242,17 @@ class LogicalPermissions implements LogicalPermissionsInterface {
         if(!is_null($type)) {
           throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: $type. Evaluated permissions: " . print_r($permissions, TRUE));
         }
+
         return TRUE;
       }
       if(strtoupper($permissions) === 'FALSE') {
         if(!is_null($type)) {
           throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: $type. Evaluated permissions: " . print_r($permissions, TRUE));
         }
+
         return FALSE;
       }
+
       return $this->externalAccessCheck($permissions, $type, $context);
     }
     if(is_array($permissions)) {
@@ -288,6 +297,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
       if(is_array($value)) {
         return $this->processOR($value, $type, $context);
       }
+
       return $this->dispatch($value, $type, $context);
     }
     throw new InvalidArgumentTypeException("A permission must either be a boolean, a string or an array. Evaluated permissions: " . print_r($permissions, TRUE));
@@ -309,6 +319,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
         break;
       }
     }
+
     return $access;
   }
 
@@ -339,6 +350,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
         break;
       }
     }
+
     return $access;
   }
 
@@ -379,6 +391,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
         break;
       }
     }
+
     return $access;
   }
 
@@ -413,6 +426,7 @@ class LogicalPermissions implements LogicalPermissionsInterface {
         throw new InvalidCallbackReturnTypeException("The registered callback for the permission type \"$type\" must return a boolean.");
       }
     }
+
     return $access;
   }
 }
