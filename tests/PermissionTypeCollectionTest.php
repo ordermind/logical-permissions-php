@@ -53,6 +53,9 @@ class PermissionTypeCollectionTest extends LogicalPermissionsPHPUnitShim {
     $this->assertTrue($permissionTypeCollection->has('always_allow'));
   }
 
+  /**
+   * @doesNotPerformAssertions
+   */
   public function testAddUpdate() {
     $permissionTypeCollection = new PermissionTypeCollection();
     $permissionTypeCollection->add(new AlwaysAllow());
@@ -77,6 +80,9 @@ class PermissionTypeCollectionTest extends LogicalPermissionsPHPUnitShim {
     $permissionTypeCollection->remove('');
   }
 
+  /**
+   * @doesNotPerformAssertions
+   */
   public function testRemoveUnregisteredType() {
     $permissionTypeCollection = new PermissionTypeCollection();
     $permissionTypeCollection->remove('test');
