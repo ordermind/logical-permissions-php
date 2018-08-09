@@ -28,8 +28,8 @@ class PermissionTypeCollection implements PermissionTypeCollectionInterface {
     if(!$name) {
       throw new InvalidPermissionTypeException(sprintf('The name of the permission type %s must not be empty.', get_class($permissionType)));
     }
-    if(in_array(strtoupper($name), $core_keys = $this->getReservedPermissionKeys())) {
-      throw new InvalidPermissionTypeException(sprintf('The permission type %s has the illegal name "%s". It must not be one of the following values: [%s]', get_class($permissionType), $name, implode(', ', $core_keys)));
+    if(in_array(strtoupper($name), $reservedKeys = $this->getReservedPermissionKeys())) {
+      throw new InvalidPermissionTypeException(sprintf('The permission type %s has the illegal name "%s". It must not be one of the following values: [%s]', get_class($permissionType), $name, implode(', ', $reservedKeys)));
     }
     if($this->has($name) && !$overwriteIfExists) {
       throw new PermissionTypeAlreadyExistsException("The permission type \"$name\" already exists!");

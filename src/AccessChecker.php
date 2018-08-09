@@ -72,14 +72,14 @@ class AccessChecker implements AccessCheckerInterface {
   /**
    * {@inheritdoc}
    */
-  public function checkAccess($permissions, $context = NULL, $allow_bypass = TRUE) {
+  public function checkAccess($permissions, $context = NULL, $allowBypass = TRUE) {
     if(!is_array($permissions) && !is_string($permissions) && !is_bool($permissions)) {
       throw new InvalidArgumentTypeException('The permissions parameter must be an array or in certain cases a string or boolean.');
     }
     if(!is_null($context) && !is_array($context) && !is_object($context)) {
       throw new InvalidArgumentTypeException('The context parameter must be an array or object.');
     }
-    if(!is_bool($allow_bypass)) {
+    if(!is_bool($allowBypass)) {
       throw new InvalidArgumentTypeException('The allow_bypass parameter must be a boolean.');
     }
 
@@ -90,25 +90,25 @@ class AccessChecker implements AccessCheckerInterface {
     }
 
     if(is_array($permissions) && array_key_exists('NO_BYPASS', $permissions)) {
-      if($allow_bypass) {
+      if($allowBypass) {
         if(is_bool($permissions['NO_BYPASS'])) {
-          $allow_bypass = !$permissions['NO_BYPASS'];
+          $allowBypass = !$permissions['NO_BYPASS'];
         }
         else if(is_string($permissions['NO_BYPASS'])) {
-          $no_bypass_upper = strtoupper($permissions['NO_BYPASS']);
-          if(!in_array($no_bypass_upper, array('TRUE', 'FALSE'))) {
+          $noBypassUpper = strtoupper($permissions['NO_BYPASS']);
+          if(!in_array($noBypassUpper, array('TRUE', 'FALSE'))) {
             throw new InvalidArgumentValueException('The NO_BYPASS value must be a boolean, a boolean string or an array. Current value: ' . print_r($permissions['NO_BYPASS'], TRUE));
           }
 
-          if($no_bypass_upper === 'TRUE') {
-            $allow_bypass = FALSE;
+          if($noBypassUpper === 'TRUE') {
+            $allowBypass = FALSE;
           }
-          else if($no_bypass_upper === 'FALSE') {
-            $allow_bypass = TRUE;
+          else if($noBypassUpper === 'FALSE') {
+            $allowBypass = TRUE;
           }
         }
         else if(is_array($permissions['NO_BYPASS'])) {
-          $allow_bypass = !$this->processOR($permissions['NO_BYPASS'], NULL, $context);
+          $allowBypass = !$this->processOR($permissions['NO_BYPASS'], NULL, $context);
         }
         else {
           throw new InvalidArgumentValueException('The NO_BYPASS value must be a boolean, a boolean string or an array. Current value: ' . print_r($permissions['NO_BYPASS'], TRUE));
@@ -117,7 +117,7 @@ class AccessChecker implements AccessCheckerInterface {
       unset($permissions['NO_BYPASS']);
     }
 
-    if($allow_bypass && $this->checkBypassAccess($context)) {
+    if($allowBypass && $this->checkBypassAccess($context)) {
       return TRUE;
     }
     if(is_bool($permissions)) {
@@ -139,12 +139,12 @@ class AccessChecker implements AccessCheckerInterface {
       return FALSE;
     }
 
-    $bypass_access = $bypassAccessChecker->checkBypassAccess($context);
-    if(!is_bool($bypass_access)) {
+    $bypassAccess = $bypassAccessChecker->checkBypassAccess($context);
+    if(!is_bool($bypassAccess)) {
       throw new InvalidReturnTypeException('The bypass access checker must return a boolean, see Ordermind\LogicalPermissions\BypassAccessCheckerInterface::checkBypassAccess().');
     }
 
-    return $bypass_access;
+    return $bypassAccess;
   }
 
   protected function dispatch($permissions, $type = NULL, $context = NULL) {
@@ -187,29 +187,29 @@ class AccessChecker implements AccessCheckerInterface {
       $key = key($permissions);
       $value = current($permissions);
       if(!is_numeric($key)) {
-        $key_upper = strtoupper($key);
-        if($key_upper === 'NO_BYPASS') {
+        $keyUpper = strtoupper($key);
+        if($keyUpper === 'NO_BYPASS') {
           throw new InvalidArgumentValueException("The NO_BYPASS key must be placed highest in the permission hierarchy. Evaluated permissions: " . print_r($permissions, TRUE));
         }
-        if($key_upper === 'AND') {
+        if($keyUpper === 'AND') {
           return $this->processAND($value, $type, $context);
         }
-        if($key_upper === 'NAND') {
+        if($keyUpper === 'NAND') {
           return $this->processNAND($value, $type, $context);
         }
-        if($key_upper === 'OR') {
+        if($keyUpper === 'OR') {
           return $this->processOR($value, $type, $context);
         }
-        if($key_upper === 'NOR') {
+        if($keyUpper === 'NOR') {
           return $this->processNOR($value, $type, $context);
         }
-        if($key_upper === 'XOR') {
+        if($keyUpper === 'XOR') {
           return $this->processXOR($value, $type, $context);
         }
-        if($key_upper === 'NOT') {
+        if($keyUpper === 'NOT') {
           return $this->processNOT($value, $type, $context);
         }
-        if($key_upper === 'TRUE' || $key_upper === 'FALSE') {
+        if($keyUpper === 'TRUE' || $keyUpper === 'FALSE') {
           throw new InvalidArgumentValueException("A boolean permission cannot have children. Evaluated permissions: " . print_r($permissions, TRUE));
         }
 
