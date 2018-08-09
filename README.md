@@ -33,7 +33,7 @@ class MyPermissionType implements PermissionTypeInterface {
   }
 }
 ```
-Now we have implemented the two required methods: getName() and checkPermission() and created a simple example of checking a role for a user. The name of the permission type is going to be used later as a key in your permission tree, and the checkPermission() method is where you, in this case, check whether the current user has a role or not.
+Now we have implemented the two required methods - getName() and checkPermission() - and created a simple example for checking a role for a user. The name of the permission type is going to be used later as a key in your permission tree, and the checkPermission() method is where you, in this case, check whether the current user has a role or not.
 
 Once you have created a permission type you can register it like this:
 
@@ -64,7 +64,7 @@ $permissions = [
   'role' => 'admin',
 ];
 ```
-This is an example of a **permission tree**. A permission tree is a hierarchical combination of permissions that should be evaluated in order to determine access for a specific action. Let's say for example that you want to restrict access for updating a user. You'd like only users with the role "admin" to be able to update any user, but users should also be able to update their own user data (or at least some of it). With the format that this library provides, these conditions could be expressed elegantly in a permission tree as such:
+This is an example of a **permission tree**. A permission tree is a hierarchical combination of permissions that is evaluated in order to determine access for a specific action. Let's say for example that you want to restrict access for updating a user. You'd like only users with the role "admin" to be able to update any user, but users should also be able to update their own user data (or at least some of it). With the format that this library provides, these conditions could be expressed elegantly in a permission tree as such:
 
 ```php
 [
