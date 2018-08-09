@@ -2,145 +2,69 @@
 
 namespace Ordermind\LogicalPermissions;
 
-use Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException;
 use Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException;
+use Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException;
 use Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException;
 use Ordermind\LogicalPermissions\Exceptions\PermissionTypeNotRegisteredException;
-use Ordermind\LogicalPermissions\Exceptions\PermissionTypeAlreadyExistsException;
-use Ordermind\LogicalPermissions\Exceptions\InvalidCallbackReturnTypeException;
+use Ordermind\LogicalPermissions\Exceptions\InvalidReturnTypeException;
+use Ordermind\LogicalPermissions\PermissionTypeCollection;
+use Ordermind\LogicalPermissions\PermissionTypeCollectionInterface;
+use Ordermind\LogicalPermissions\BypassAccessCheckerInterface;
+use Ordermind\LogicalPermissions\AccessCheckerInterface;
 
-class LogicalPermissions implements LogicalPermissionsInterface {
-  protected $types = [];
-  protected $bypass_callback = NULL;
+class AccessChecker implements AccessCheckerInterface {
+  /**
+   * @var Ordermind\LogicalPermissions\PermissionTypeCollectionInterface
+   */
+  protected $permissionTypeCollection;
 
-  public function addType($name, $callback) {
-    if(!is_string($name)) {
-      throw new InvalidArgumentTypeException('The name parameter must be a string.');
-    }
-    if(!$name) {
-      throw new InvalidArgumentValueException('The name parameter cannot be empty.');
-    }
-    if(in_array(strtoupper($name), $core_keys = $this->getCorePermissionKeys())) {
-      throw new InvalidArgumentValueException("The name parameter has the illegal value \"$name\". It cannot be one of the following values: " . implode(',', $core_keys));
-    }
-    if($this->typeExists($name)) {
-      throw new PermissionTypeAlreadyExistsException("The type \"$name\" already exists! If you want to change the callback for an existing type, please use LogicalPermissions::setTypeCallback().");
-    }
-    if(!is_callable($callback)) {
-      throw new InvalidArgumentTypeException('The callback parameter must be a callable data type.');
-    }
+  /**
+   * @var Ordermind\LogicalPermissions\BypassAccessCheckerInterface
+   */
+  protected $bypassAccessChecker;
 
-    $types = $this->getTypes();
-    $types[$name] = $callback;
-    $this->setTypes($types);
+  /**
+   * @internal
+   */
+  public function __construct() {
+    $this->setPermissionTypeCollection(new PermissionTypeCollection());
   }
 
-  public function removeType($name) {
-    if(!is_string($name)) {
-      throw new InvalidArgumentTypeException('The name parameter must be a string.');
-    }
-    if(!$name) {
-      throw new InvalidArgumentValueException('The name parameter cannot be empty.');
-    }
-    if(!$this->typeExists($name)) {
-      throw new PermissionTypeNotRegisteredException("The permission type \"$name\" has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function setPermissionTypeCollection(PermissionTypeCollectionInterface $permissionTypeCollection) {
+    $this->permissionTypeCollection = $permissionTypeCollection;
 
-    $types = $this->getTypes();
-    unset($types[$name]);
-    $this->setTypes($types);
+    return $this;
   }
 
-  public function typeExists($name) {
-    if(!is_string($name)) {
-      throw new InvalidArgumentTypeException('The name parameter must be a string.');
-    }
-    if(!$name) {
-      throw new InvalidArgumentValueException('The name parameter cannot be empty.');
-    }
-
-    $types = $this->getTypes();
-
-    return isset($types[$name]);
+  /**
+   * {@inheritdoc}
+   */
+  public function getPermissionTypeCollection() {
+    return $this->permissionTypeCollection;
   }
 
-  public function getTypeCallback($name) {
-    if(!is_string($name)) {
-      throw new InvalidArgumentTypeException('The name parameter must be a string.');
-    }
-    if(!$name) {
-      throw new InvalidArgumentValueException('The name parameter cannot be empty.');
-    }
-    if(!$this->typeExists($name)) {
-      throw new PermissionTypeNotRegisteredException("The permission type \"$name\" has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function setBypassAccessChecker(BypassAccessCheckerInterface $bypassAccessChecker) {
+    $this->bypassAccessChecker = $bypassAccessChecker;
 
-    $types = $this->getTypes();
-
-    return $types[$name];
+    return $this;
   }
 
-  public function setTypeCallback($name, $callback) {
-    if(!is_string($name)) {
-      throw new InvalidArgumentTypeException('The name parameter must be a string.');
-    }
-    if(!$name) {
-      throw new InvalidArgumentValueException('The name parameter cannot be empty.');
-    }
-    if(!$this->typeExists($name)) {
-      throw new PermissionTypeNotRegisteredException("The permission type \"$name\" has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
-    }
-    if(!is_callable($callback)) {
-      throw new InvalidArgumentTypeException('The callback parameter must be a callable data type.');
-    }
-
-    $types = $this->getTypes();
-    $types[$name] = $callback;
-    $this->setTypes($types);
+  /**
+   * {@inheritdoc}
+   */
+  public function getBypassAccessChecker() {
+    return $this->bypassAccessChecker;
   }
 
-  public function getTypes() {
-    return $this->types;
-  }
-
-  public function setTypes($types) {
-    if(!is_array($types)) {
-      throw new InvalidArgumentTypeException('The types parameter must be an array.');
-    }
-    foreach($types as $name => $callback) {
-      if(!is_string($name)) {
-        throw new InvalidArgumentValueException("The \$types keys must be strings.");
-      }
-      if(!$name) {
-        throw new InvalidArgumentValueException('The name for a type cannot be empty.');
-      }
-      if(in_array(strtoupper($name), $core_keys = $this->getCorePermissionKeys())) {
-        throw new InvalidArgumentValueException("The name for a type has the illegal value \"$name\". It cannot be one of the following values: " . implode(',', $core_keys));
-      }
-      if(!is_callable($callback)) {
-        throw new InvalidArgumentValueException("The \$types callbacks must be callables.");
-      }
-    }
-
-    $this->types = $types;
-  }
-
-  public function getBypassCallback() {
-    return $this->bypass_callback;
-  }
-
-  public function setBypassCallback($callback) {
-    if(!is_callable($callback)) {
-      throw new InvalidArgumentTypeException('The callback parameter must be a callable data type.');
-    }
-
-    $this->bypass_callback = $callback;
-  }
-
-  public function getValidPermissionKeys() {
-    return array_merge($this->getCorePermissionKeys(), array_keys($this->getTypes()));
-  }
-
+  /**
+   * {@inheritdoc}
+   */
   public function checkAccess($permissions, $context = NULL, $allow_bypass = TRUE) {
     if(!is_array($permissions) && !is_string($permissions) && !is_bool($permissions)) {
       throw new InvalidArgumentTypeException('The permissions parameter must be an array or in certain cases a string or boolean.');
@@ -202,19 +126,15 @@ class LogicalPermissions implements LogicalPermissionsInterface {
     return TRUE;
   }
 
-  protected function getCorePermissionKeys() {
-    return ['NO_BYPASS', 'AND', 'NAND', 'OR', 'NOR', 'XOR', 'NOT', 'TRUE', 'FALSE'];
-  }
-
   protected function checkBypassAccess($context) {
-    $bypass_callback = $this->getBypassCallback();
-    if(!is_callable($bypass_callback)) {
+    $bypassAccessChecker = $this->getBypassAccessChecker();
+    if(is_null($bypassAccessChecker)) {
       return FALSE;
     }
 
-    $bypass_access = $bypass_callback($context);
+    $bypass_access = $bypassAccessChecker->checkBypassAccess($context);
     if(!is_bool($bypass_access)) {
-      throw new InvalidCallbackReturnTypeException('The bypass access callback must return a boolean.');
+      throw new InvalidReturnTypeException('The bypass access checker must return a boolean, see Ordermind\LogicalPermissions\BypassAccessCheckerInterface::checkBypassAccess().');
     }
 
     return $bypass_access;
@@ -289,8 +209,8 @@ class LogicalPermissions implements LogicalPermissionsInterface {
         if(!is_null($type)) {
           throw new InvalidArgumentValueException("You cannot put a permission type as a descendant to another permission type. Existing type: $type. Evaluated permissions: " . print_r($permissions, TRUE));
         }
-        if(!$this->typeExists($key)) {
-          throw new PermissionTypeNotRegisteredException("The permission type \"$key\" has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
+        if(!$this->getPermissionTypeCollection()->has($key)) {
+          throw new PermissionTypeNotRegisteredException("The permission type \"$key\" could not be found.");
         }
         $type = $key;
       }
@@ -414,17 +334,16 @@ class LogicalPermissions implements LogicalPermissionsInterface {
   }
 
   protected function externalAccessCheck($permission, $type, $context) {
-    if(!$this->typeExists($type)) {
-      throw new PermissionTypeNotRegisteredException("The permission type \"$type\" has not been registered. Please use LogicalPermissions::addType() or LogicalPermissions::setTypes() to register permission types.");
+    $permissionTypeCollection = $this->getPermissionTypeCollection();
+    if(!$permissionTypeCollection->has($type)) {
+      throw new PermissionTypeNotRegisteredException("The permission type \"$type\" could not be found.");
     }
 
     $access = false;
-    $callback = $this->getTypeCallback($type);
-    if(is_callable($callback)) {
-      $access = $callback($permission, $context);
-      if(!is_bool($access)) {
-        throw new InvalidCallbackReturnTypeException("The registered callback for the permission type \"$type\" must return a boolean.");
-      }
+    $permissionType = $permissionTypeCollection->get($type);
+    $access = $permissionType->checkPermission($permission, $context);
+    if(!is_bool($access)) {
+      throw new InvalidReturnTypeException("The permission type \"$type\" must return a boolean, see Ordermind\LogicalPermissions\PermissionTypeInterface::checkPermission().");
     }
 
     return $access;

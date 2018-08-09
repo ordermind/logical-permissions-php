@@ -2,6 +2,6 @@
 
 namespace Ordermind\LogicalPermissions\Exceptions;
 
-class InvalidCallbackReturnTypeException extends \Exception {
+class InvalidReturnTypeException extends \Exception {
   
 }
