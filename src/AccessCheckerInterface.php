@@ -36,6 +36,13 @@ interface AccessCheckerInterface {
   public function getBypassAccessChecker();
 
   /**
+   * Gets all keys that can be used in a permission tree.
+   *
+   * @return array Valid permission keys.
+   */
+  public function getValidPermissionKeys();
+
+  /**
   * Checks access for a permission tree.
   * @param array|string|bool $permissions The permission tree to be evaluated.
   * @param array|object $context (optional) A context that could for example contain the evaluated user and document. Default value is NULL.

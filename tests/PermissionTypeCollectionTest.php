@@ -155,13 +155,4 @@ class PermissionTypeCollectionTest extends LogicalPermissionsPHPUnitShim {
     $this->assertEquals($types, ['always_allow' => $permissionType]);
     $this->assertSame($types['always_allow'], $permissionType);
   }
-
-  /*------------PermissionTypeCollection::getValidPermissionKeys()---------------*/
-
-  public function testGetValidPermissionKeys() {
-    $permissionTypeCollection = new PermissionTypeCollection();
-    $this->assertEquals($permissionTypeCollection->getValidPermissionKeys(), ['NO_BYPASS', 'AND', 'NAND', 'OR', 'NOR', 'XOR', 'NOT', 'TRUE', 'FALSE']);
-    $permissionTypeCollection->add(new AlwaysAllow());
-    $this->assertEquals($permissionTypeCollection->getValidPermissionKeys(), ['NO_BYPASS', 'AND', 'NAND', 'OR', 'NOR', 'XOR', 'NOT', 'TRUE', 'FALSE', 'always_allow']);
-  }
 }

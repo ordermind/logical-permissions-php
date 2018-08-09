@@ -65,6 +65,13 @@ class AccessChecker implements AccessCheckerInterface {
   /**
    * {@inheritdoc}
    */
+  public function getValidPermissionKeys() {
+    return array_merge($this->getPermissionTypeCollection()->getReservedPermissionKeys(), array_keys($this->getPermissionTypeCollection()->toArray()));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function checkAccess($permissions, $context = NULL, $allow_bypass = TRUE) {
     if(!is_array($permissions) && !is_string($permissions) && !is_bool($permissions)) {
       throw new InvalidArgumentTypeException('The permissions parameter must be an array or in certain cases a string or boolean.');

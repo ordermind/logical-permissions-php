@@ -4,17 +4,12 @@ namespace Ordermind\LogicalPermissions\Test\Fixtures\PermissionType;
 
 use Ordermind\LogicalPermissions\PermissionTypeInterface;
 
-class Role implements PermissionTypeInterface {
+class Misc implements PermissionTypeInterface {
   public static function getName() {
-    return 'role';
+    return 'misc';
   }
 
   public function checkPermission($permission, $context) {
-    $access = FALSE;
-    if(!empty($context['user']['roles'])) {
-      $access = in_array($permission, $context['user']['roles']);
-    }
-
-    return $access;
+    return !empty($context['user'][$permission]);
   }
 }

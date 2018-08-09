@@ -28,7 +28,7 @@ class PermissionTypeCollection implements PermissionTypeCollectionInterface {
     if(!$name) {
       throw new InvalidPermissionTypeException(sprintf('The name of the permission type %s must not be empty.', get_class($permissionType)));
     }
-    if(in_array(strtoupper($name), $core_keys = $this->getCorePermissionKeys())) {
+    if(in_array(strtoupper($name), $core_keys = $this->getReservedPermissionKeys())) {
       throw new InvalidPermissionTypeException(sprintf('The permission type %s has the illegal name "%s". It must not be one of the following values: [%s]', get_class($permissionType), $name, implode(', ', $core_keys)));
     }
     if($this->has($name) && !$overwriteIfExists) {
@@ -97,15 +97,11 @@ class PermissionTypeCollection implements PermissionTypeCollectionInterface {
   /**
    * @internal
    *
-   * Gets all keys that can be used in a permission tree.
+   * Gets reserved permission keys.
    *
-   * @return array Valid permission keys.
+   * @return array
    */
-  public function getValidPermissionKeys() {
-    return array_merge($this->getCorePermissionKeys(), array_keys($this->types));
-  }
-
-  protected function getCorePermissionKeys() {
+  public function getReservedPermissionKeys() {
     return ['NO_BYPASS', 'AND', 'NAND', 'OR', 'NOR', 'XOR', 'NOT', 'TRUE', 'FALSE'];
   }
 }
