@@ -350,6 +350,7 @@ FALSE
 ]
 ```
 
+
 # API Documentation
 
 ## Table of Contents
@@ -383,7 +384,7 @@ Checks access based on registered permission types, a permission tree and a cont
 Sets the permission type collection.
 
 ```php
-AccessChecker::setPermissionTypeCollection( \Ordermind\LogicalPermissions\PermissionTypeCollectionInterface $permissionTypeCollection ): \Ordermind\LogicalPermissions\Ordermind\LogicalPermissions\AccessCheckerInterface
+AccessChecker::setPermissionTypeCollection( \Ordermind\LogicalPermissions\PermissionTypeCollectionInterface $permissionTypeCollection ): \Ordermind\LogicalPermissions\AccessCheckerInterface
 ```
 
 
@@ -405,7 +406,7 @@ AccessChecker::setPermissionTypeCollection( \Ordermind\LogicalPermissions\Permis
 Gets the permission type collection.
 
 ```php
-AccessChecker::getPermissionTypeCollection(  ): \Ordermind\LogicalPermissions\Ordermind\LogicalPermissions\PermissionTypeCollectionInterface|NULL
+AccessChecker::getPermissionTypeCollection(  ): \Ordermind\LogicalPermissions\PermissionTypeCollectionInterface|NULL
 ```
 
 
@@ -421,7 +422,7 @@ AccessChecker::getPermissionTypeCollection(  ): \Ordermind\LogicalPermissions\Or
 Sets the bypass access checker.
 
 ```php
-AccessChecker::setBypassAccessChecker( \Ordermind\LogicalPermissions\BypassAccessCheckerInterface $bypassAccessChecker ): \Ordermind\LogicalPermissions\Ordermind\LogicalPermissions\AccessCheckerInterface
+AccessChecker::setBypassAccessChecker( \Ordermind\LogicalPermissions\BypassAccessCheckerInterface $bypassAccessChecker ): \Ordermind\LogicalPermissions\AccessCheckerInterface
 ```
 
 
@@ -443,7 +444,7 @@ AccessChecker::setBypassAccessChecker( \Ordermind\LogicalPermissions\BypassAcces
 Gets the bypass access checker.
 
 ```php
-AccessChecker::getBypassAccessChecker(  ): \Ordermind\LogicalPermissions\Ordermind\LogicalPermissions\BypassAccessCheckerInterface|NULL
+AccessChecker::getBypassAccessChecker(  ): \Ordermind\LogicalPermissions\BypassAccessCheckerInterface|NULL
 ```
 
 
@@ -502,7 +503,6 @@ TRUE if access is granted or FALSE if access is denied.
 
 ---
 
-
 ## PermissionTypeCollection
 
 Collection of permission types.
@@ -518,7 +518,7 @@ Collection of permission types.
 Adds a permission type to the collection.
 
 ```php
-PermissionTypeCollection::add( \Ordermind\LogicalPermissions\PermissionTypeInterface $permissionType, boolean $overwriteIfExists = FALSE ): \Ordermind\LogicalPermissions\Ordermind\LogicalPermissions\PermissionTypeCollectionInterface
+PermissionTypeCollection::add( \Ordermind\LogicalPermissions\PermissionTypeInterface $permissionType, boolean $overwriteIfExists = FALSE ): \Ordermind\LogicalPermissions\PermissionTypeCollectionInterface
 ```
 
 
@@ -541,7 +541,7 @@ PermissionTypeCollection::add( \Ordermind\LogicalPermissions\PermissionTypeInter
 Removes a permission type by name from the collection. If the permission type cannot be found in the collection, nothing happens.
 
 ```php
-PermissionTypeCollection::remove( string $name ): \Ordermind\LogicalPermissions\Ordermind\LogicalPermissions\PermissionTypeCollectionInterface
+PermissionTypeCollection::remove( string $name ): \Ordermind\LogicalPermissions\PermissionTypeCollectionInterface
 ```
 
 
@@ -585,7 +585,7 @@ PermissionTypeCollection::has( string $name ): boolean
 Gets a permission type by name. If the permission type cannot be found, NULL is returned.
 
 ```php
-PermissionTypeCollection::get( string $name ): \Ordermind\LogicalPermissions\Ordermind\LogicalPermissions\PermissionTypeInterface|NULL
+PermissionTypeCollection::get( string $name ): \Ordermind\LogicalPermissions\PermissionTypeInterface|NULL
 ```
 
 
@@ -611,4 +611,10 @@ PermissionTypeCollection::toArray(  ): array
 ```
 
 
---------
+
+
+
+
+
+---
+

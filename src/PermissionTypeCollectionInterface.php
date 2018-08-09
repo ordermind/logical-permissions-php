@@ -9,7 +9,7 @@ interface PermissionTypeCollectionInterface {
    * @param Ordermind\LogicalPermissions\PermissionTypeInterface $permissionType
    * @param bool $overwriteIfExists (optional) If the permission type already exists in the collection, it will be overwritten if this parameter is set to TRUE. If it is set to FALSE, Ordermind\LogicalPermissions\Exceptions\PermissionTypeAlreadyExistsException will be thrown. Default value is FALSE.
    *
-   * @return Ordermind\LogicalPermissions\PermissionTypeCollectionInterface
+   * @return \Ordermind\LogicalPermissions\PermissionTypeCollectionInterface
    */
   public function add(\Ordermind\LogicalPermissions\PermissionTypeInterface $permissionType, $overwriteIfExists = FALSE);
 
@@ -18,7 +18,7 @@ interface PermissionTypeCollectionInterface {
    *
    * @param string $name The name of the permission type.
    *
-   * @return Ordermind\LogicalPermissions\PermissionTypeCollectionInterface
+   * @return \Ordermind\LogicalPermissions\PermissionTypeCollectionInterface
    */
   public function remove($name);
 
@@ -36,7 +36,7 @@ interface PermissionTypeCollectionInterface {
    *
    * @param string $name The name of the permission type.
    *
-   * @return Ordermind\LogicalPermissions\PermissionTypeInterface|NULL
+   * @return \Ordermind\LogicalPermissions\PermissionTypeInterface|NULL
    */
   public function get($name);
 

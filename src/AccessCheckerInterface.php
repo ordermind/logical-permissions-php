@@ -6,32 +6,32 @@ interface AccessCheckerInterface {
   /**
    * Sets the permission type collection.
    *
-   * @param Ordermind\LogicalPermissions\PermissionTypeCollectionInterface $permissionTypeCollection
+   * @param \Ordermind\LogicalPermissions\PermissionTypeCollectionInterface $permissionTypeCollection
    *
-   * @return Ordermind\LogicalPermissions\AccessCheckerInterface
+   * @return \Ordermind\LogicalPermissions\AccessCheckerInterface
    */
   public function setPermissionTypeCollection(\Ordermind\LogicalPermissions\PermissionTypeCollectionInterface $permissionTypeCollection);
 
   /**
    * Gets the permission type collection.
    *
-   * @return Ordermind\LogicalPermissions\PermissionTypeCollectionInterface|NULL
+   * @return \Ordermind\LogicalPermissions\PermissionTypeCollectionInterface|NULL
    */
   public function getPermissionTypeCollection();
 
   /**
    * Sets the bypass access checker.
    *
-   * @param Ordermind\LogicalPermissions\BypassAccessCheckerInterface $bypassAccessChecker
+   * @param \Ordermind\LogicalPermissions\BypassAccessCheckerInterface $bypassAccessChecker
    *
-   * @return Ordermind\LogicalPermissions\AccessCheckerInterface
+   * @return \Ordermind\LogicalPermissions\AccessCheckerInterface
    */
   public function setBypassAccessChecker(BypassAccessCheckerInterface $bypassAccessChecker);
 
   /**
    * Gets the bypass access checker.
    *
-   * @return Ordermind\LogicalPermissions\BypassAccessCheckerInterface|NULL
+   * @return \Ordermind\LogicalPermissions\BypassAccessCheckerInterface|NULL
    */
   public function getBypassAccessChecker();
 
