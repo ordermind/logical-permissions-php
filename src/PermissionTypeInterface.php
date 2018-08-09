@@ -20,5 +20,5 @@ interface PermissionTypeInterface {
    *
    * @return bool TRUE if access is granted or FALSE if access is not granted
    */
-  public function checkPermission(string $permission, $context);
+  public function checkPermission($permission, $context);
 }

@@ -20,5 +20,10 @@
         "psr-4": {
             "Ordermind\\LogicalPermissions\\": "src"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ordermind\\LogicalPermissions\\Test\\": "tests"
+        }
     }
 }

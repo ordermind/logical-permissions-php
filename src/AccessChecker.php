@@ -144,14 +144,14 @@ class AccessChecker implements AccessCheckerInterface {
     if(is_bool($permissions)) {
       if($permissions === TRUE) {
         if(!is_null($type)) {
-          throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: $type. Evaluated permissions: " . print_r($permissions, TRUE));
+          throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: \"$type\". Evaluated permissions: " . print_r($permissions, TRUE));
         }
 
         return TRUE;
       }
       if($permissions === FALSE) {
         if(!is_null($type)) {
-          throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: $type. Evaluated permissions: " . print_r($permissions, TRUE));
+          throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: \"$type\". Evaluated permissions: " . print_r($permissions, TRUE));
         }
 
         return FALSE;
@@ -160,14 +160,14 @@ class AccessChecker implements AccessCheckerInterface {
     if(is_string($permissions)) {
       if(strtoupper($permissions) === 'TRUE') {
         if(!is_null($type)) {
-          throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: $type. Evaluated permissions: " . print_r($permissions, TRUE));
+          throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: \"$type\". Evaluated permissions: " . print_r($permissions, TRUE));
         }
 
         return TRUE;
       }
       if(strtoupper($permissions) === 'FALSE') {
         if(!is_null($type)) {
-          throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: $type. Evaluated permissions: " . print_r($permissions, TRUE));
+          throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: \"$type\". Evaluated permissions: " . print_r($permissions, TRUE));
         }
 
         return FALSE;
@@ -207,7 +207,7 @@ class AccessChecker implements AccessCheckerInterface {
         }
 
         if(!is_null($type)) {
-          throw new InvalidArgumentValueException("You cannot put a permission type as a descendant to another permission type. Existing type: $type. Evaluated permissions: " . print_r($permissions, TRUE));
+          throw new InvalidArgumentValueException("You cannot put a permission type as a descendant to another permission type. Existing type: \"$type\". Evaluated permissions: " . print_r($permissions, TRUE));
         }
         if(!$this->getPermissionTypeCollection()->has($key)) {
           throw new PermissionTypeNotRegisteredException("The permission type \"$key\" could not be found.");

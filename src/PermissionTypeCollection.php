@@ -4,6 +4,7 @@ namespace Ordermind\LogicalPermissions;
 
 use Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException;
 use Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException;
+use Ordermind\LogicalPermissions\Exceptions\InvalidPermissionTypeException;
 use Ordermind\LogicalPermissions\Exceptions\PermissionTypeAlreadyExistsException;
 use Ordermind\LogicalPermissions\Exceptions\PermissionTypeNotRegisteredException;
 use Ordermind\LogicalPermissions\PermissionTypeCollectionInterface;
@@ -18,24 +19,17 @@ class PermissionTypeCollection implements PermissionTypeCollectionInterface {
   /**
    * {@inheritdoc}
    */
-  public function toArray() {
-    return $this->types;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function add(PermissionTypeInterface $permissionType, $overwriteIfExists = FALSE) {
     $name = $permissionType->getName();
 
     if(!is_string($name)) {
-      throw new InvalidArgumentTypeException('The name must be a string.');
+      throw new InvalidPermissionTypeException(sprintf('The name of the permission type %s must be a string.', get_class($permissionType)));
     }
     if(!$name) {
-      throw new InvalidArgumentValueException('The name cannot be empty.');
+      throw new InvalidPermissionTypeException(sprintf('The name of the permission type %s must not be empty.', get_class($permissionType)));
     }
     if(in_array(strtoupper($name), $core_keys = $this->getCorePermissionKeys())) {
-      throw new InvalidArgumentValueException("The name has the illegal value \"$name\". It cannot be one of the following values: " . implode(',', $core_keys));
+      throw new InvalidPermissionTypeException(sprintf('The permission type %s has the illegal name "%s". It must not be one of the following values: [%s]', get_class($permissionType), $name, implode(', ', $core_keys)));
     }
     if($this->has($name) && !$overwriteIfExists) {
       throw new PermissionTypeAlreadyExistsException("The permission type \"$name\" already exists!");
@@ -54,7 +48,7 @@ class PermissionTypeCollection implements PermissionTypeCollectionInterface {
       throw new InvalidArgumentTypeException('The name must be a string.');
     }
     if(!$name) {
-      throw new InvalidArgumentValueException('The name cannot be empty.');
+      throw new InvalidArgumentValueException('The name must not be empty.');
     }
 
     unset($this->types[$name]);
@@ -65,12 +59,26 @@ class PermissionTypeCollection implements PermissionTypeCollectionInterface {
   /**
    * {@inheritdoc}
    */
+  public function has($name) {
+    if(!is_string($name)) {
+      throw new InvalidArgumentTypeException('The name must be a string.');
+    }
+    if(!$name) {
+      throw new InvalidArgumentValueException('The name must not be empty.');
+    }
+
+    return isset($this->types[$name]);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function get($name) {
     if(!is_string($name)) {
       throw new InvalidArgumentTypeException('The name parameter must be a string.');
     }
     if(!$name) {
-      throw new InvalidArgumentValueException('The name parameter cannot be empty.');
+      throw new InvalidArgumentValueException('The name parameter must not be empty.');
     }
     if(!$this->has($name)) {
       return NULL;
@@ -82,19 +90,16 @@ class PermissionTypeCollection implements PermissionTypeCollectionInterface {
   /**
    * {@inheritdoc}
    */
-  public function has($name) {
-    if(!is_string($name)) {
-      throw new InvalidArgumentTypeException('The name must be a string.');
-    }
-    if(!$name) {
-      throw new InvalidArgumentValueException('The name cannot be empty.');
-    }
-
-    return isset($this->types[$name]);
+  public function toArray() {
+    return $this->types;
   }
 
   /**
-   * {@inheritdoc}
+   * @internal
+   *
+   * Gets all keys that can be used in a permission tree.
+   *
+   * @return array Valid permission keys.
    */
   public function getValidPermissionKeys() {
     return array_merge($this->getCorePermissionKeys(), array_keys($this->types));
