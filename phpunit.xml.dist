@@ -12,6 +12,7 @@
     <testsuites>
         <testsuite name="LogicalPermissions Test Suite">
             <directory suffix=".php">./tests/</directory>
+            <exclude>./tests/LogicalPermissionsPHPUnitShim.php</exclude>
         </testsuite>
     </testsuites>
 </phpunit> 
