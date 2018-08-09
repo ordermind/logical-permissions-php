@@ -11,7 +11,60 @@ This is a generic library that provides support for array-based permissions with
 
 ### Usage
 
-The main api method is [`LogicalPermissions::checkAccess()`](#checkaccess), which checks the access for a **permission tree**. A permission tree is a bundle of permissions that apply to a specific action. Let's say for example that you want to restrict access for updating a user. You'd like only users with the role "admin" to be able to update any user, but users should also be able to update their own user data (or at least some of it). With the structure this package provides, these conditions could be expressed elegantly in a permission tree as such:
+#### Register permission types
+
+Permission types are used to check different kinds of conditions for access control, and the first thing to do is to create one of these and register it. Let's say, for example, that we want to determine access using the current user's roles. First you create a class that implements ```Ordermind\LogicalPermissions\PermissionTypeInterface``` like this:
+
+```php
+use Ordermind\LogicalPermissions\PermissionTypeInterface;
+
+class MyPermissionType implements PermissionTypeInterface {
+  public static function getName() {
+    return 'role';
+  }
+
+  public function checkPermission($role, $context) {
+    $access = FALSE;
+    if(!empty($context['user']['roles'])) {
+      $access = in_array($role, $context['user']['roles']);
+    }
+
+    return $access;
+  }
+}
+```
+Now we have implemented the two required methods: getName() and checkPermission() and created a simple example of checking a role for a user. The name of the permission type is going to be used later as a key in your permission tree, and the checkPermission() method is where you, in this case, check whether the current user has a role or not.
+
+Once you have created a permission type you can register it like this:
+
+```php
+use Ordermind\LogicalPermissions\AccessChecker;
+
+$permissionType = new MyPermissionType();
+$accessChecker = new AccessChecker();
+$permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
+$permissionTypeCollection->add($permissionType);
+```
+#### Check access
+
+Now everything is set and you can check the access for a user based on their roles:
+```php
+$permissions = [
+  'role' => 'admin', // The key 'role' here is the name of your permission type
+];
+$user = ['roles' => ['admin', 'sales']];
+$access = $accessChecker->checkAccess($permissions, ['user' => $user]);
+// TRUE
+```
+
+### Permission trees
+In the previous example, we had a variable called ```$permissions``` that looked like this:
+```php
+$permissions = [
+  'role' => 'admin',
+];
+```
+This is an example of a **permission tree**. A permission tree is a hierarchical combination of permissions that should be evaluated in order to determine access for a specific action. Let's say for example that you want to restrict access for updating a user. You'd like only users with the role "admin" to be able to update any user, but users should also be able to update their own user data (or at least some of it). With the format that this library provides, these conditions could be expressed elegantly in a permission tree as such:
 
 ```php
 [
@@ -22,10 +75,31 @@ The main api method is [`LogicalPermissions::checkAccess()`](#checkaccess), whic
 ]
 ```
 
-In this example `role` and `flag` are the evaluated permission types. For this example to work you will need to register the permission types 'role' and 'flag' so that the class knows which callbacks are responsible for evaluating the respective permission types. You can do that with [`LogicalPermissions::addType()`](#addtype).
+In this example `role` and `flag` are the evaluated permission types. For this example to work you will need to register the permission types 'role' and 'flag' according to the previous guide.
 
-### Bypassing permissions
-This packages also supports rules for bypassing permissions completely for superusers. In order to use this functionality you need to register a callback with [`LogicalPermissions::setBypassCallback()`](#setbypasscallback). The registered callback will run on every permission check and if it returns `TRUE`, access will automatically be granted. If you want to make exceptions you can do so by adding `'NO_BYPASS' => TRUE` to the first level of a permission tree. You can even use permissions as conditions for `NO_BYPASS`.
+### Bypassing access checks
+This library also supports rules for bypassing access checks completely for superusers. In order to use this functionality you first need to create a class that implements ```Ordermind\LogicalPermissions\BypassAccessCheckerInterface``` like this:
+
+```php
+use Ordermind\LogicalPermissions\BypassAccessCheckerInterface;
+
+class MyBypassAccessChecker implements BypassAccessCheckerInterface {
+  public function checkBypassAccess($context) {
+    $bypassAccess = FALSE;
+    if($context['user']['id'] == 1) {
+      $bypassAccess = TRUE;
+    }
+
+    return $bypassAccess;
+  }
+}
+```
+Then you can register it like this:
+```php
+$bypassAccessChecker = new MyBypassAccessChecker();
+$accessChecker->setBypassAccessChecker($bypassAccessChecker);
+```
+From now on, every time you call ```$accessChecker->checkAccess()``` the user with the id 1 will be exempted so that no matter what the permissions are, they will always be granted access. If you want to make exceptions, you can do so by adding `'NO_BYPASS' => TRUE` to the first level of a permission tree. You can even use permissions as conditions for `NO_BYPASS`.
 
 Examples:
 
