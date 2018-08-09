@@ -2,6 +2,9 @@
 
 namespace Ordermind\LogicalPermissions;
 
+/**
+ * Definition of a permission type.
+ */
 interface PermissionTypeInterface {
   /**
    * Gets the name of the permission type
@@ -16,7 +19,7 @@ interface PermissionTypeInterface {
    * @param string $permission The permission to check, for example "admin" if the permission type is "role".
    * The permission will always be a single string even if for example multiple roles are accepted. In that case this method will be called once for each role that is to be evaluated.
    *
-   * @param array|object $context The context for evaluating the permission
+   * @param array|object|NULL $context The context for evaluating the permission
    *
    * @return bool TRUE if access is granted or FALSE if access is not granted
    */

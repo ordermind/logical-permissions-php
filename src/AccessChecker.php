@@ -12,6 +12,9 @@ use Ordermind\LogicalPermissions\PermissionTypeCollectionInterface;
 use Ordermind\LogicalPermissions\BypassAccessCheckerInterface;
 use Ordermind\LogicalPermissions\AccessCheckerInterface;
 
+/**
+ * Checks access based on registered permission types, a permission tree and a context.
+ */
 class AccessChecker implements AccessCheckerInterface {
   /**
    * @var Ordermind\LogicalPermissions\PermissionTypeCollectionInterface
@@ -133,6 +136,13 @@ class AccessChecker implements AccessCheckerInterface {
     return TRUE;
   }
 
+  /**
+   * @internal
+   *
+   * @param array|object|NULL $context
+   *
+   * @return bool
+   */
   protected function checkBypassAccess($context) {
     $bypassAccessChecker = $this->getBypassAccessChecker();
     if(is_null($bypassAccessChecker)) {
@@ -147,6 +157,15 @@ class AccessChecker implements AccessCheckerInterface {
     return $bypassAccess;
   }
 
+  /**
+   * @internal
+   *
+   * @param array|string|bool $permissions
+   * @param string|NULL $type
+   * @param array|object|NULL $context
+   *
+   * @return bool
+   */
   protected function dispatch($permissions, $type = NULL, $context = NULL) {
     if(is_bool($permissions)) {
       if($permissions === TRUE) {
@@ -230,6 +249,15 @@ class AccessChecker implements AccessCheckerInterface {
     throw new InvalidArgumentTypeException("A permission must either be a boolean, a string or an array. Evaluated permissions: " . print_r($permissions, TRUE));
   }
 
+  /**
+   * @internal
+   *
+   * @param array|string|bool $permissions
+   * @param string|NULL $type
+   * @param array|object|NULL $context
+   *
+   * @return bool
+   */
   protected function processAND($permissions, $type = NULL, $context) {
     if(!is_array($permissions)) {
       throw new InvalidValueForLogicGateException("The value of an AND gate must be an array. Current value: " . print_r($permissions, TRUE));
@@ -250,6 +278,15 @@ class AccessChecker implements AccessCheckerInterface {
     return $access;
   }
 
+  /**
+   * @internal
+   *
+   * @param array|string|bool $permissions
+   * @param string|NULL $type
+   * @param array|object|NULL $context
+   *
+   * @return bool
+   */
   protected function processNAND($permissions, $type = NULL, $context) {
     if(!is_array($permissions)) {
       throw new InvalidValueForLogicGateException("The value of a NAND gate must be an array. Current value: " . print_r($permissions, TRUE));
@@ -261,6 +298,15 @@ class AccessChecker implements AccessCheckerInterface {
     return !$this->processAND($permissions, $type, $context);
   }
 
+  /**
+   * @internal
+   *
+   * @param array|string|bool $permissions
+   * @param string|NULL $type
+   * @param array|object|NULL $context
+   *
+   * @return bool
+   */
   protected function processOR($permissions, $type = NULL, $context) {
     if(!is_array($permissions)) {
       throw new InvalidValueForLogicGateException("The value of an OR gate must be an array. Current value: " . print_r($permissions, TRUE));
@@ -281,6 +327,15 @@ class AccessChecker implements AccessCheckerInterface {
     return $access;
   }
 
+  /**
+   * @internal
+   *
+   * @param array|string|bool $permissions
+   * @param string|NULL $type
+   * @param array|object|NULL $context
+   *
+   * @return bool
+   */
   protected function processNOR($permissions, $type = NULL, $context) {
     if(!is_array($permissions)) {
       throw new InvalidValueForLogicGateException("The value of a NOR gate must be an array. Current value: " . print_r($permissions, TRUE));
@@ -292,6 +347,15 @@ class AccessChecker implements AccessCheckerInterface {
     return !$this->processOR($permissions, $type, $context);
   }
 
+  /**
+   * @internal
+   *
+   * @param array|string|bool $permissions
+   * @param string|NULL $type
+   * @param array|object|NULL $context
+   *
+   * @return bool
+   */
   protected function processXOR($permissions, $type = NULL, $context) {
     if(!is_array($permissions)) {
       throw new InvalidValueForLogicGateException("The value of an XOR gate must be an array. Current value: " . print_r($permissions, TRUE));
@@ -322,6 +386,15 @@ class AccessChecker implements AccessCheckerInterface {
     return $access;
   }
 
+  /**
+   * @internal
+   *
+   * @param array|string|bool $permissions
+   * @param string|NULL $type
+   * @param array|object|NULL $context
+   *
+   * @return bool
+   */
   protected function processNOT($permissions, $type = NULL, $context) {
     if(is_array($permissions)) {
       if(count($permissions) != 1) {
@@ -340,6 +413,15 @@ class AccessChecker implements AccessCheckerInterface {
     return !$this->dispatch($permissions, $type, $context);
   }
 
+  /**
+   * @internal
+   *
+   * @param array|string|bool $permissions
+   * @param string $type
+   * @param array|object|NULL $context
+   *
+   * @return bool
+   */
   protected function externalAccessCheck($permission, $type, $context) {
     $permissionTypeCollection = $this->getPermissionTypeCollection();
     if(!$permissionTypeCollection->has($type)) {

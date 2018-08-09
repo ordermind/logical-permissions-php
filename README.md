@@ -350,40 +350,40 @@ FALSE
 ]
 ```
 
-## API Documentation
+# API Documentation
 
 ## Table of Contents
 
-* [LogicalPermissions](#logicalpermissions)
-    * [addType](#addtype)
-    * [removeType](#removetype)
-    * [typeExists](#typeexists)
-    * [getTypeCallback](#gettypecallback)
-    * [setTypeCallback](#settypecallback)
-    * [getTypes](#gettypes)
-    * [setTypes](#settypes)
-    * [getBypassCallback](#getbypasscallback)
-    * [setBypassCallback](#setbypasscallback)
+* [AccessChecker](#accesschecker)
+    * [setPermissionTypeCollection](#setpermissiontypecollection)
+    * [getPermissionTypeCollection](#getpermissiontypecollection)
+    * [setBypassAccessChecker](#setbypassaccesschecker)
+    * [getBypassAccessChecker](#getbypassaccesschecker)
     * [getValidPermissionKeys](#getvalidpermissionkeys)
     * [checkAccess](#checkaccess)
+* [PermissionTypeCollection](#permissiontypecollection)
+    * [add](#add)
+    * [remove](#remove)
+    * [has](#has)
+    * [get](#get)
+    * [toArray](#toarray)
 
-## LogicalPermissions
+## AccessChecker
+
+Checks access based on registered permission types, a permission tree and a context.
 
 
 
+* Full name: \Ordermind\LogicalPermissions\AccessChecker
+* This class implements: \Ordermind\LogicalPermissions\AccessCheckerInterface
 
 
-* Full name: \Ordermind\LogicalPermissions\LogicalPermissions
-* This class implements: \Ordermind\LogicalPermissions\LogicalPermissionsInterface
+### setPermissionTypeCollection
 
-
-
-### addType
-
-Adds a permission type.
+Sets the permission type collection.
 
 ```php
-LogicalPermissions::addType( string $name, callable $callback )
+AccessChecker::setPermissionTypeCollection( \Ordermind\LogicalPermissions\PermissionTypeCollectionInterface $permissionTypeCollection ): \Ordermind\LogicalPermissions\Ordermind\LogicalPermissions\AccessCheckerInterface
 ```
 
 
@@ -393,21 +393,35 @@ LogicalPermissions::addType( string $name, callable $callback )
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `$name` | **string** | The name of the permission type. |
-| `$callback` | **callable** | The callback that evaluates the permission type. Upon calling checkAccess() the registered callback will be passed two parameters: a $permission string (such as a role) and the $context parameter passed to checkAccess(). The permission will always be a single string even if for example multiple roles are accepted. In that case the callback will be called once for each role that is to be evaluated. The callback should return a boolean which determines whether access should be granted. |
+| `$permissionTypeCollection` | **\Ordermind\LogicalPermissions\PermissionTypeCollectionInterface** |  |
 
 
 
 
 ---
 
+### getPermissionTypeCollection
 
-### removeType
-
-Removes a permission type.
+Gets the permission type collection.
 
 ```php
-LogicalPermissions::removeType( string $name )
+AccessChecker::getPermissionTypeCollection(  ): \Ordermind\LogicalPermissions\Ordermind\LogicalPermissions\PermissionTypeCollectionInterface|NULL
+```
+
+
+
+
+
+
+
+---
+
+### setBypassAccessChecker
+
+Sets the bypass access checker.
+
+```php
+AccessChecker::setBypassAccessChecker( \Ordermind\LogicalPermissions\BypassAccessCheckerInterface $bypassAccessChecker ): \Ordermind\LogicalPermissions\Ordermind\LogicalPermissions\AccessCheckerInterface
 ```
 
 
@@ -417,186 +431,35 @@ LogicalPermissions::removeType( string $name )
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `$name` | **string** | The name of the permission type. |
+| `$bypassAccessChecker` | **\Ordermind\LogicalPermissions\BypassAccessCheckerInterface** |  |
 
 
 
 
 ---
 
+### getBypassAccessChecker
 
-### typeExists
-
-Checks whether a permission type is registered.
-
-```php
-LogicalPermissions::typeExists( string $name ): boolean
-```
-
-
-
-
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `$name` | **string** | The name of the permission type. |
-
-
-**Return Value:**
-
-TRUE if the type is found or FALSE if the type isn't found.
-
-
-
----
-
-
-### getTypeCallback
-
-Gets the callback for a permission type.
+Gets the bypass access checker.
 
 ```php
-LogicalPermissions::getTypeCallback( string $name ): callable
-```
-
-
-
-
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `$name` | **string** | The name of the permission type. |
-
-
-**Return Value:**
-
-Callback for the permission type.
-
-
-
----
-
-
-### setTypeCallback
-
-Changes the callback for an existing permission type.
-
-```php
-LogicalPermissions::setTypeCallback( string $name, callable $callback )
-```
-
-
-
-
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `$name` | **string** | The name of the permission type. |
-| `$callback` | **callable** | The callback that evaluates the permission type. Upon calling checkAccess() the registered callback will be passed two parameters: a $permission string (such as a role) and the $context parameter passed to checkAccess(). The permission will always be a single string even if for example multiple roles are accepted. In that case the callback will be called once for each role that is to be evaluated. The callback should return a boolean which determines whether access should be granted. |
-
-
-
-
----
-
-
-### getTypes
-
-Gets all defined permission types.
-
-```php
-LogicalPermissions::getTypes(  ): array
+AccessChecker::getBypassAccessChecker(  ): \Ordermind\LogicalPermissions\Ordermind\LogicalPermissions\BypassAccessCheckerInterface|NULL
 ```
 
 
 
 
 
-**Return Value:**
-
-Permission types with the structure ['name' => callback, 'name2' => callback2, ...].
-
 
 
 ---
-
-
-### setTypes
-
-Overwrites all defined permission types.
-
-```php
-LogicalPermissions::setTypes( array $types )
-```
-
-
-
-
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `$types` | **array** | Permission types with the structure ['name' => callback, 'name2' => callback2, ...]. |
-
-
-
-
----
-
-
-### getBypassCallback
-
-Gets the registered callback for access bypass evaluation.
-
-```php
-LogicalPermissions::getBypassCallback(  ): callable
-```
-
-
-
-
-
-**Return Value:**
-
-Bypass access callback.
-
-
-
----
-
-
-### setBypassCallback
-
-Sets the callback for access bypass evaluation.
-
-```php
-LogicalPermissions::setBypassCallback( callable $callback )
-```
-
-
-
-
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `$callback` | **callable** | The callback that evaluates access bypassing. Upon calling checkAccess() the registered bypass callback will be passed one parameter, which is the $context parameter passed to checkAccess(). It should return a boolean which determines whether bypass access should be granted. |
-
-
-
-
----
-
 
 ### getValidPermissionKeys
 
-Gets all keys that can be part of a permission tree.
+Gets all keys that can be used in a permission tree.
 
 ```php
-LogicalPermissions::getValidPermissionKeys(  ): array
+AccessChecker::getValidPermissionKeys(  ): array
 ```
 
 
@@ -605,19 +468,18 @@ LogicalPermissions::getValidPermissionKeys(  ): array
 
 **Return Value:**
 
-Valid permission keys
+Valid permission keys.
 
 
 
 ---
-
 
 ### checkAccess
 
 Checks access for a permission tree.
 
 ```php
-LogicalPermissions::checkAccess( array|string|boolean $permissions, array|object $context = NULL, boolean $allow_bypass = TRUE ): boolean
+AccessChecker::checkAccess( array|string|boolean $permissions, array|object|NULL $context = NULL, boolean $allowBypass = TRUE ): boolean
 ```
 
 
@@ -627,9 +489,9 @@ LogicalPermissions::checkAccess( array|string|boolean $permissions, array|object
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `$permissions` | **mixed** | The permission tree to be evaluated. |
-| `$context` | **mixed** | (optional) A context that could for example contain the evaluated user and document. Default value is NULL. |
-| `$allow_bypass` | **boolean** | (optional) Determines whether bypassing access should be allowed. Default value is TRUE. |
+| `$permissions` | **array&#124;string&#124;boolean** | The permission tree to be evaluated. |
+| `$context` | **array&#124;object&#124;NULL** | (optional) A context that could for example contain the evaluated user and document. Default value is NULL. |
+| `$allowBypass` | **boolean** | (optional) Determines whether bypassing access should be allowed. Default value is TRUE. |
 
 
 **Return Value:**
@@ -637,4 +499,116 @@ LogicalPermissions::checkAccess( array|string|boolean $permissions, array|object
 TRUE if access is granted or FALSE if access is denied.
 
 
+
 ---
+
+
+## PermissionTypeCollection
+
+Collection of permission types.
+
+
+
+* Full name: \Ordermind\LogicalPermissions\PermissionTypeCollection
+* This class implements: \Ordermind\LogicalPermissions\PermissionTypeCollectionInterface
+
+
+### add
+
+Adds a permission type to the collection.
+
+```php
+PermissionTypeCollection::add( \Ordermind\LogicalPermissions\PermissionTypeInterface $permissionType, boolean $overwriteIfExists = FALSE ): \Ordermind\LogicalPermissions\Ordermind\LogicalPermissions\PermissionTypeCollectionInterface
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$permissionType` | **\Ordermind\LogicalPermissions\PermissionTypeInterface** |  |
+| `$overwriteIfExists` | **boolean** | (optional) If the permission type already exists in the collection, it will be overwritten if this parameter is set to TRUE. If it is set to FALSE, Ordermind\LogicalPermissions\Exceptions\PermissionTypeAlreadyExistsException will be thrown. Default value is FALSE. |
+
+
+
+
+---
+
+### remove
+
+Removes a permission type by name from the collection. If the permission type cannot be found in the collection, nothing happens.
+
+```php
+PermissionTypeCollection::remove( string $name ): \Ordermind\LogicalPermissions\Ordermind\LogicalPermissions\PermissionTypeCollectionInterface
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$name` | **string** | The name of the permission type. |
+
+
+
+
+---
+
+### has
+
+Checks if a permission type exists in the collection.
+
+```php
+PermissionTypeCollection::has( string $name ): boolean
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$name` | **string** | The name of the permission type. |
+
+
+
+
+---
+
+### get
+
+Gets a permission type by name. If the permission type cannot be found, NULL is returned.
+
+```php
+PermissionTypeCollection::get( string $name ): \Ordermind\LogicalPermissions\Ordermind\LogicalPermissions\PermissionTypeInterface|NULL
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$name` | **string** | The name of the permission type. |
+
+
+
+
+---
+
+### toArray
+
+Returns a PHP array representation of this collection.
+
+```php
+PermissionTypeCollection::toArray(  ): array
+```
+
+
+--------

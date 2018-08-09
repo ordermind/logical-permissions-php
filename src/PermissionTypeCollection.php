@@ -10,6 +10,9 @@ use Ordermind\LogicalPermissions\Exceptions\PermissionTypeNotRegisteredException
 use Ordermind\LogicalPermissions\PermissionTypeCollectionInterface;
 use Ordermind\LogicalPermissions\PermissionTypeInterface;
 
+/**
+ * Collection of permission types.
+ */
 class PermissionTypeCollection implements PermissionTypeCollectionInterface {
   /**
    * @var array

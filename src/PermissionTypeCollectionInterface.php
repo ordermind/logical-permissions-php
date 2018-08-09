@@ -7,8 +7,7 @@ interface PermissionTypeCollectionInterface {
    * Adds a permission type to the collection.
    *
    * @param Ordermind\LogicalPermissions\PermissionTypeInterface $permissionType
-   * @param bool $overwriteIfExists (optional) If the permission type already exists in the collection, it will be overwritten if this parameter is set to TRUE.
-   * If it is set to FALSE, Ordermind\LogicalPermissions\Exceptions\PermissionTypeAlreadyExistsException will be thrown. Default value is FALSE.
+   * @param bool $overwriteIfExists (optional) If the permission type already exists in the collection, it will be overwritten if this parameter is set to TRUE. If it is set to FALSE, Ordermind\LogicalPermissions\Exceptions\PermissionTypeAlreadyExistsException will be thrown. Default value is FALSE.
    *
    * @return Ordermind\LogicalPermissions\PermissionTypeCollectionInterface
    */
