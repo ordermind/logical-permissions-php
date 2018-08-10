@@ -103,10 +103,10 @@ class AccessChecker implements AccessCheckerInterface {
             throw new InvalidArgumentValueException('The NO_BYPASS value must be a boolean, a boolean string or an array. Current value: ' . print_r($permissions['NO_BYPASS'], TRUE));
           }
 
-          if($noBypassUpper === 'TRUE') {
+          if('TRUE' === $noBypassUpper) {
             $allowBypass = FALSE;
           }
-          else if($noBypassUpper === 'FALSE') {
+          else if('FALSE' === $noBypassUpper) {
             $allowBypass = TRUE;
           }
         }
@@ -168,14 +168,14 @@ class AccessChecker implements AccessCheckerInterface {
    */
   protected function dispatch($permissions, $type = NULL, $context = NULL) {
     if(is_bool($permissions)) {
-      if($permissions === TRUE) {
+      if(TRUE === $permissions) {
         if(!is_null($type)) {
           throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: \"$type\". Evaluated permissions: " . print_r($permissions, TRUE));
         }
 
         return TRUE;
       }
-      if($permissions === FALSE) {
+      if(FALSE === $permissions) {
         if(!is_null($type)) {
           throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: \"$type\". Evaluated permissions: " . print_r($permissions, TRUE));
         }
@@ -184,14 +184,14 @@ class AccessChecker implements AccessCheckerInterface {
       }
     }
     if(is_string($permissions)) {
-      if(strtoupper($permissions) === 'TRUE') {
+      if('TRUE' === strtoupper($permissions)) {
         if(!is_null($type)) {
           throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: \"$type\". Evaluated permissions: " . print_r($permissions, TRUE));
         }
 
         return TRUE;
       }
-      if(strtoupper($permissions) === 'FALSE') {
+      if('FALSE' === strtoupper($permissions)) {
         if(!is_null($type)) {
           throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: \"$type\". Evaluated permissions: " . print_r($permissions, TRUE));
         }
@@ -207,28 +207,28 @@ class AccessChecker implements AccessCheckerInterface {
       $value = current($permissions);
       if(!is_numeric($key)) {
         $keyUpper = strtoupper($key);
-        if($keyUpper === 'NO_BYPASS') {
+        if('NO_BYPASS' === $keyUpper) {
           throw new InvalidArgumentValueException("The NO_BYPASS key must be placed highest in the permission hierarchy. Evaluated permissions: " . print_r($permissions, TRUE));
         }
-        if($keyUpper === 'AND') {
+        if('AND' === $keyUpper) {
           return $this->processAND($value, $type, $context);
         }
-        if($keyUpper === 'NAND') {
+        if('NAND' === $keyUpper) {
           return $this->processNAND($value, $type, $context);
         }
-        if($keyUpper === 'OR') {
+        if('OR' === $keyUpper) {
           return $this->processOR($value, $type, $context);
         }
-        if($keyUpper === 'NOR') {
+        if('NOR' === $keyUpper) {
           return $this->processNOR($value, $type, $context);
         }
-        if($keyUpper === 'XOR') {
+        if('XOR' === $keyUpper) {
           return $this->processXOR($value, $type, $context);
         }
-        if($keyUpper === 'NOT') {
+        if('NOT' === $keyUpper) {
           return $this->processNOT($value, $type, $context);
         }
-        if($keyUpper === 'TRUE' || $keyUpper === 'FALSE') {
+        if('TRUE' === $keyUpper || 'FALSE' === $keyUpper) {
           throw new InvalidArgumentValueException("A boolean permission cannot have children. Evaluated permissions: " . print_r($permissions, TRUE));
         }
 
@@ -402,7 +402,7 @@ class AccessChecker implements AccessCheckerInterface {
       }
     }
     elseif(is_string($permissions)) {
-      if($permissions === '') {
+      if('' === $permissions) {
         throw new InvalidValueForLogicGateException('A NOT permission cannot have an empty string as its value.');
       }
     }
