@@ -168,43 +168,72 @@ class AccessChecker implements AccessCheckerInterface {
    */
   protected function dispatch($permissions, $type = NULL, $context = NULL) {
     if(is_bool($permissions)) {
-      if(TRUE === $permissions) {
-        if(!is_null($type)) {
-          throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: \"$type\". Evaluated permissions: " . print_r($permissions, TRUE));
-        }
-
-        return TRUE;
-      }
-      if(FALSE === $permissions) {
-        if(!is_null($type)) {
-          throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: \"$type\". Evaluated permissions: " . print_r($permissions, TRUE));
-        }
-
-        return FALSE;
-      }
+      return $this->dispatchBoolean($permissions, $type, $context);
     }
+
     if(is_string($permissions)) {
-      if('TRUE' === strtoupper($permissions)) {
-        if(!is_null($type)) {
-          throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: \"$type\". Evaluated permissions: " . print_r($permissions, TRUE));
-        }
+      return $this->dispatchString($permissions, $type, $context);
+    }
 
-        return TRUE;
+    if(is_array($permissions)) {
+      return $this->dispatchArray($permissions, $type, $context);
+    }
+
+    throw new InvalidArgumentTypeException("A permission must either be a boolean, a string or an array. Evaluated permissions: " . print_r($permissions, TRUE));
+  }
+
+  /**
+   * @internal
+   *
+   * @param bool $permissions
+   * @param string|NULL $type
+   * @param array|object|NULL $context
+   *
+   * @return bool
+   */
+  protected function dispatchBoolean($permissions, $type = NULL, $context = NULL) {
+      if(!is_null($type)) {
+        throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: \"$type\". Evaluated permissions: " . print_r($permissions, TRUE));
       }
-      if('FALSE' === strtoupper($permissions)) {
-        if(!is_null($type)) {
-          throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: \"$type\". Evaluated permissions: " . print_r($permissions, TRUE));
-        }
 
-        return FALSE;
+      return $permissions;
+  }
+
+  /**
+   * @internal
+   *
+   * @param string $permissions
+   * @param string|NULL $type
+   * @param array|object|NULL $context
+   *
+   * @return bool
+   */
+  protected function dispatchString($permissions, $type = NULL, $context = NULL) {
+      if('TRUE' === strtoupper($permissions)) {
+        return $this->dispatchBoolean(TRUE, $type, $context);
+      }
+
+      if('FALSE' === strtoupper($permissions)) {
+        return $this->dispatchBoolean(FALSE, $type, $context);
       }
 
       return $this->externalAccessCheck($permissions, $type, $context);
-    }
-    if(is_array($permissions)) {
+  }
+
+  /**
+   * @internal
+   *
+   * @param array $permissions
+   * @param string|NULL $type
+   * @param array|object|NULL $context
+   *
+   * @return bool
+   */
+  protected function dispatchArray(array $permissions, $type = NULL, $context = NULL) {
       reset($permissions);
       $key = key($permissions);
       $value = current($permissions);
+
       if(!is_numeric($key)) {
         $keyUpper = strtoupper($key);
         if('NO_BYPASS' === $keyUpper) {
@@ -240,13 +269,12 @@ class AccessChecker implements AccessCheckerInterface {
         }
         $type = $key;
       }
+
       if(is_array($value)) {
         return $this->processOR($value, $type, $context);
       }
 
       return $this->dispatch($value, $type, $context);
-    }
-    throw new InvalidArgumentTypeException("A permission must either be a boolean, a string or an array. Evaluated permissions: " . print_r($permissions, TRUE));
   }
 
   /**
