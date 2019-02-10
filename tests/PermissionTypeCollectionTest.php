@@ -2,6 +2,10 @@
 
 namespace Ordermind\LogicalPermissions\Test;
 
+use Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException;
+use Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException;
+use Ordermind\LogicalPermissions\Exceptions\InvalidPermissionTypeException;
+use Ordermind\LogicalPermissions\Exceptions\PermissionTypeAlreadyExistsException;
 use Ordermind\LogicalPermissions\Test\LogicalPermissionsPHPUnitShim;
 use Ordermind\LogicalPermissions\PermissionTypeCollection;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionType\ErroneousNameType;
@@ -14,34 +18,30 @@ class PermissionTypeCollectionTest extends LogicalPermissionsPHPUnitShim {
 
   /*-----------PermissionTypeCollection::add()-------------*/
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidPermissionTypeException
-   */
   public function testAddWrongNameType() {
+    $this->expectException(InvalidPermissionTypeException::class);
+
     $permissionTypeCollection = new PermissionTypeCollection();
     $permissionTypeCollection->add(new ErroneousNameType());
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidPermissionTypeException
-   */
   public function testAddEmptyName() {
+    $this->expectException(InvalidPermissionTypeException::class);
+
     $permissionTypeCollection = new PermissionTypeCollection();
     $permissionTypeCollection->add(new EmptyName());
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidPermissionTypeException
-   */
   public function testAddIllegalName() {
+    $this->expectException(InvalidPermissionTypeException::class);
+
     $permissionTypeCollection = new PermissionTypeCollection();
     $permissionTypeCollection->add(new IllegalName());
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\PermissionTypeAlreadyExistsException
-   */
   public function testAddTypeAlreadyExists() {
+    $this->expectException(PermissionTypeAlreadyExistsException::class);
+
     $permissionTypeCollection = new PermissionTypeCollection();
     $permissionTypeCollection->add(new AlwaysAllow());
     $permissionTypeCollection->add(new AlwaysAllow());
@@ -64,18 +64,16 @@ class PermissionTypeCollectionTest extends LogicalPermissionsPHPUnitShim {
 
   /*-------------PermissionTypeCollection::remove()--------------*/
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException
-   */
   public function testRemoveWrongNameType() {
+    $this->expectException(InvalidArgumentTypeException::class);
+
     $permissionTypeCollection = new PermissionTypeCollection();
     $permissionTypeCollection->remove(0);
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
-   */
   public function testRemoveEmptyName() {
+    $this->expectException(InvalidArgumentValueException::class);
+
     $permissionTypeCollection = new PermissionTypeCollection();
     $permissionTypeCollection->remove('');
   }
@@ -97,18 +95,16 @@ class PermissionTypeCollectionTest extends LogicalPermissionsPHPUnitShim {
 
   /*------------PermissionTypeCollection::has()---------------*/
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException
-   */
   public function testHasWrongNameType() {
+    $this->expectException(InvalidArgumentTypeException::class);
+
     $permissionTypeCollection = new PermissionTypeCollection();
     $permissionTypeCollection->has(0);
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
-   */
   public function testHasEmptyName() {
+    $this->expectException(InvalidArgumentValueException::class);
+
     $permissionTypeCollection = new PermissionTypeCollection();
     $permissionTypeCollection->has('');
   }
@@ -122,18 +118,16 @@ class PermissionTypeCollectionTest extends LogicalPermissionsPHPUnitShim {
 
   /*------------PermissionTypeCollection::get()---------------*/
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException
-   */
   public function testGetWrongNameType() {
+    $this->expectException(InvalidArgumentTypeException::class);
+
     $permissionTypeCollection = new PermissionTypeCollection();
     $permissionTypeCollection->get(0);
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
-   */
   public function testGetEmptyName() {
+    $this->expectException(InvalidArgumentValueException::class);
+
     $permissionTypeCollection = new PermissionTypeCollection();
     $permissionTypeCollection->get('');
   }
