@@ -101,17 +101,12 @@ class AccessChecker implements AccessCheckerInterface {
     if($allowBypass && $this->checkBypassAccess($context)) {
       return TRUE;
     }
-    if(is_bool($permissions)) {
-      return $this->dispatch($permissions);
-    }
-    if(is_string($permissions)) {
-      return $this->dispatch($permissions);
-    }
+
     if(is_array($permissions) && count($permissions)) {
       return $this->processOR($permissions, NULL, $context);
     }
 
-    return TRUE;
+    return $this->dispatch($permissions);
   }
 
   /**
@@ -207,11 +202,10 @@ class AccessChecker implements AccessCheckerInterface {
    *
    * @param bool $permissions
    * @param string|NULL $type
-   * @param array|object|NULL $context
    *
    * @return bool
    */
-  protected function dispatchBoolean($permissions, $type = NULL, $context = NULL) {
+  protected function dispatchBoolean($permissions, $type = NULL) {
       if(!is_null($type)) {
         throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: \"$type\". Evaluated permissions: " . print_r($permissions, TRUE));
       }
@@ -230,11 +224,11 @@ class AccessChecker implements AccessCheckerInterface {
    */
   protected function dispatchString($permissions, $type = NULL, $context = NULL) {
       if('TRUE' === strtoupper($permissions)) {
-        return $this->dispatchBoolean(TRUE, $type, $context);
+        return $this->dispatchBoolean(TRUE, $type);
       }
 
       if('FALSE' === strtoupper($permissions)) {
-        return $this->dispatchBoolean(FALSE, $type, $context);
+        return $this->dispatchBoolean(FALSE, $type);
       }
 
       return $this->externalAccessCheck($permissions, $type, $context);
@@ -250,6 +244,10 @@ class AccessChecker implements AccessCheckerInterface {
    * @return bool
    */
   protected function dispatchArray(array $permissions, $type = NULL, $context = NULL) {
+      if(!$permissions) {
+        return TRUE;
+      }
+
       reset($permissions);
       $key = key($permissions);
       $value = current($permissions);
