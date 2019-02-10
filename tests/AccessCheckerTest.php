@@ -3,8 +3,13 @@
 namespace Ordermind\LogicalPermissions\Test;
 
 use Ordermind\LogicalPermissions\AccessChecker;
-use Ordermind\LogicalPermissions\PermissionTypeCollection;
 use Ordermind\LogicalPermissions\BypassAccessCheckerInterface;
+use Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException;
+use Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException;
+use Ordermind\LogicalPermissions\Exceptions\InvalidReturnTypeException;
+use Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException;
+use Ordermind\LogicalPermissions\Exceptions\PermissionTypeNotRegisteredException;
+use Ordermind\LogicalPermissions\PermissionTypeCollection;
 use Ordermind\LogicalPermissions\Test\LogicalPermissionsPHPUnitShim;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionType\InvalidReturnType as PermissionTypeInvalidReturnType;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionType\AlwaysAllow as PermissionTypeAlwaysAllow;
@@ -49,18 +54,16 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
 
   /*------------AccessChecker::checkAccess()---------------*/
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException
-   */
   public function testCheckAccessParamPermissionsWrongType() {
+    $this->setExpectedException(InvalidArgumentTypeException::class);
+
     $accessChecker = new AccessChecker();
     $accessChecker->checkAccess(0, []);
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException
-   */
   public function testCheckAccessParamPermissionsWrongPermissionType() {
+    $this->setExpectedException(InvalidArgumentTypeException::class);
+
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
     $permissionTypeCollection->add(new PermissionTypeFlag());
@@ -112,10 +115,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $this->assertTrue($caught);
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\PermissionTypeNotRegisteredException
-   */
   public function testCheckAccessParamPermissionsUnregisteredType() {
+    $this->setExpectedException(PermissionTypeNotRegisteredException::class);
+
     $accessChecker = new AccessChecker();
 
     $permissions = [
@@ -124,10 +126,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $accessChecker->checkAccess($permissions);
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException
-   */
   public function testCheckAccessParamContextWrongType() {
+    $this->setExpectedException(InvalidArgumentTypeException::class);
+
     $accessChecker = new AccessChecker();
     $accessChecker->checkAccess(FALSE, 0);
   }
@@ -170,10 +171,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
 //   }
 //----------------------//
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentTypeException
-   */
   public function testCheckAccessParamAllowBypassWrongType() {
+    $this->setExpectedException(InvalidArgumentTypeException::class);
+
     $accessChecker = new AccessChecker();
     $accessChecker->checkAccess(FALSE, [], 'test');
   }
@@ -183,19 +183,17 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $this->assertTrue($accessChecker->checkAccess([]));
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidReturnTypeException
-   */
   public function testCheckAccessBypassAccessWrongReturnType() {
+    $this->setExpectedException(InvalidReturnTypeException::class);
+
     $accessChecker = new AccessChecker();
     $accessChecker->setBypassAccessChecker(new BypassCheckerInvalidReturnType());
     $accessChecker->checkAccess(FALSE);
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
-   */
   public function testCheckAccessBypassAccessIllegalDescendant() {
+    $this->setExpectedException(InvalidArgumentValueException::class);
+
     $accessChecker = new AccessChecker();
     $permissions = [
       'OR' => [
@@ -223,10 +221,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $this->assertFalse($accessChecker->checkAccess(FALSE, [], FALSE));
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
-   */
   public function testCheckAccessNoBypassWrongType() {
+    $this->setExpectedException(InvalidArgumentValueException::class);
+
     $accessChecker = new AccessChecker();
     $accessChecker->setBypassAccessChecker(new BypassCheckerAlwaysAllow());
     $accessChecker->checkAccess(['no_bypass' => 'test']);
@@ -302,10 +299,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidReturnTypeException
-   */
   public function testCheckAccessWrongPermissionTypeReturnType() {
+    $this->setExpectedException(InvalidReturnTypeException::class);
+
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
     $permissionTypeCollection->add(new PermissionTypeInvalidReturnType());
@@ -426,10 +422,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
-   */
   public function testCheckAccessANDWrongValueType() {
+    $this->setExpectedException(InvalidValueForLogicGateException::class);
+
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
     $permissionTypeCollection->add(new PermissionTypeRole());
@@ -445,10 +440,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $accessChecker->checkAccess($permissions, ['user' => $user]);
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
-   */
   public function testCheckAccessANDTooFewElements() {
+    $this->setExpectedException(InvalidValueForLogicGateException::class);
+
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
     $permissionTypeCollection->add(new PermissionTypeRole());
@@ -508,10 +502,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
-   */
   public function testCheckAccessNANDWrongValueType() {
+    $this->setExpectedException(InvalidValueForLogicGateException::class);
+
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
     $permissionTypeCollection->add(new PermissionTypeRole());
@@ -527,10 +520,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $accessChecker->checkAccess($permissions, ['user' => $user]);
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
-   */
   public function testCheckAccessNANDTooFewElements() {
+    $this->setExpectedException(InvalidValueForLogicGateException::class);
+
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
     $permissionTypeCollection->add(new PermissionTypeRole());
@@ -590,10 +582,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
-   */
   public function testCheckAccessORWrongValueType() {
+    $this->setExpectedException(InvalidValueForLogicGateException::class);
+
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
     $permissionTypeCollection->add(new PermissionTypeRole());
@@ -609,10 +600,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $accessChecker->checkAccess($permissions, ['user' => $user]);
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
-   */
   public function testCheckAccessORTooFewElements() {
+    $this->setExpectedException(InvalidValueForLogicGateException::class);
+
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
     $permissionTypeCollection->add(new PermissionTypeRole());
@@ -672,10 +662,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
-   */
   public function testCheckAccessNORWrongValueType() {
+    $this->setExpectedException(InvalidValueForLogicGateException::class);
+
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
     $permissionTypeCollection->add(new PermissionTypeRole());
@@ -691,10 +680,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $accessChecker->checkAccess($permissions, ['user' => $user]);
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
-   */
   public function testCheckAccessNORTooFewElements() {
+    $this->setExpectedException(InvalidValueForLogicGateException::class);
+
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
     $permissionTypeCollection->add(new PermissionTypeRole());
@@ -754,10 +742,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
-   */
   public function testCheckAccessXORWrongValueType() {
+    $this->setExpectedException(InvalidValueForLogicGateException::class);
+
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
     $permissionTypeCollection->add(new PermissionTypeRole());
@@ -773,10 +760,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $accessChecker->checkAccess($permissions, ['user' => $user]);
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
-   */
   public function testCheckAccessXORTooFewElements() {
+    $this->setExpectedException(InvalidValueForLogicGateException::class);
+
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
     $permissionTypeCollection->add(new PermissionTypeRole());
@@ -836,10 +822,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
-   */
   public function testCheckAccessNOTWrongValueType() {
+    $this->setExpectedException(InvalidValueForLogicGateException::class);
+
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
     $permissionTypeCollection->add(new PermissionTypeRole());
@@ -855,10 +840,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $accessChecker->checkAccess($permissions, ['user' => $user]);
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
-   */
   public function testCheckAccessNOTArrayTooFewElements() {
+    $this->setExpectedException(InvalidValueForLogicGateException::class);
+
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
     $permissionTypeCollection->add(new PermissionTypeRole());
@@ -874,10 +858,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $accessChecker->checkAccess($permissions, ['user' => $user]);
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
-   */
   public function testCheckAccessNOTStringEmpty() {
+    $this->setExpectedException(InvalidValueForLogicGateException::class);
+
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
     $permissionTypeCollection->add(new PermissionTypeRole());
@@ -893,10 +876,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $accessChecker->checkAccess($permissions, ['user' => $user]);
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidValueForLogicGateException
-   */
   public function testCheckAccessMultipleItemsNOT() {
+    $this->setExpectedException(InvalidValueForLogicGateException::class);
+
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
     $permissionTypeCollection->add(new PermissionTypeRole());
@@ -954,10 +936,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
-   */
   public function testCheckAccessBoolTRUEIllegalDescendant() {
+    $this->setExpectedException(InvalidArgumentValueException::class);
+
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
     $permissionTypeCollection->add(new PermissionTypeRole());
@@ -981,10 +962,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $this->assertTrue($accessChecker->checkAccess($permissions));
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
-   */
   public function testCheckAccessBoolFALSEIllegalDescendant() {
+    $this->setExpectedException(InvalidArgumentValueException::class);
+
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
     $permissionTypeCollection->add(new PermissionTypeRole());
@@ -1027,10 +1007,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $this->assertFalse($accessChecker->checkAccess($permissions));
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
-   */
   public function testCheckAccessStringTRUEIllegalChildrenSingleValue() {
+    $this->setExpectedException(InvalidArgumentValueException::class);
+
     $accessChecker = new AccessChecker();
     $permissions = [
       'TRUE' => FALSE,
@@ -1038,10 +1017,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $accessChecker->checkAccess($permissions);
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
-   */
   public function testCheckAccessStringTRUEIllegalChildrenArray() {
+    $this->setExpectedException(InvalidArgumentValueException::class);
+
     $accessChecker = new AccessChecker();
     $permissions = [
       'TRUE' => [],
@@ -1049,10 +1027,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $accessChecker->checkAccess($permissions);
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
-   */
   public function testCheckAccessStringTRUEIllegalDescendant() {
+    $this->setExpectedException(InvalidArgumentValueException::class);
+
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
     $permissionTypeCollection->add(new PermissionTypeRole());
@@ -1076,10 +1053,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $this->assertTrue($accessChecker->checkAccess($permissions));
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
-   */
   public function testCheckAccessStringFALSEIllegalChildrenSingleValue() {
+    $this->setExpectedException(InvalidArgumentValueException::class);
+
     $accessChecker = new AccessChecker();
     $permissions = [
       'FALSE' => FALSE,
@@ -1087,10 +1063,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $accessChecker->checkAccess($permissions);
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
-   */
   public function testCheckAccessStringFALSEIllegalChildrenArray() {
+    $this->setExpectedException(InvalidArgumentValueException::class);
+
     $accessChecker = new AccessChecker();
     $permissions = [
       'FALSE' => [],
@@ -1098,10 +1073,9 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $accessChecker->checkAccess($permissions);
   }
 
-  /**
-   * @expectedException Ordermind\LogicalPermissions\Exceptions\InvalidArgumentValueException
-   */
   public function testCheckAccessStringFALSEIllegalDescendant() {
+    $this->setExpectedException(InvalidArgumentValueException::class);
+
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
     $permissionTypeCollection->add(new PermissionTypeRole());
