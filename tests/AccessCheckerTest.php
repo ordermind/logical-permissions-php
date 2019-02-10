@@ -55,24 +55,14 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   /*------------AccessChecker::checkAccess()---------------*/
 
   public function testCheckAccessParamPermissionsWrongType() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidArgumentTypeException::class);
-    }
-    else {
-      $this->expectException(InvalidArgumentTypeException::class);
-    }
+    $this->expectException(InvalidArgumentTypeException::class);
 
     $accessChecker = new AccessChecker();
     $accessChecker->checkAccess(0, []);
   }
 
   public function testCheckAccessParamPermissionsWrongPermissionType() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidArgumentTypeException::class);
-    }
-    else {
-      $this->expectException(InvalidArgumentTypeException::class);
-    }
+    $this->expectException(InvalidArgumentTypeException::class);
 
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
@@ -126,12 +116,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessParamPermissionsUnregisteredType() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(PermissionTypeNotRegisteredException::class);
-    }
-    else {
-      $this->expectException(PermissionTypeNotRegisteredException::class);
-    }
+    $this->expectException(PermissionTypeNotRegisteredException::class);
 
     $accessChecker = new AccessChecker();
 
@@ -142,12 +127,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessParamContextWrongType() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidArgumentTypeException::class);
-    }
-    else {
-      $this->expectException(InvalidArgumentTypeException::class);
-    }
+    $this->expectException(InvalidArgumentTypeException::class);
 
     $accessChecker = new AccessChecker();
     $accessChecker->checkAccess(FALSE, 0);
@@ -192,12 +172,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
 //----------------------//
 
   public function testCheckAccessParamAllowBypassWrongType() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidArgumentTypeException::class);
-    }
-    else {
-      $this->expectException(InvalidArgumentTypeException::class);
-    }
+    $this->expectException(InvalidArgumentTypeException::class);
 
     $accessChecker = new AccessChecker();
     $accessChecker->checkAccess(FALSE, [], 'test');
@@ -209,12 +184,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessBypassAccessWrongReturnType() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidReturnTypeException::class);
-    }
-    else {
-      $this->expectException(InvalidReturnTypeException::class);
-    }
+    $this->expectException(InvalidReturnTypeException::class);
 
     $accessChecker = new AccessChecker();
     $accessChecker->setBypassAccessChecker(new BypassCheckerInvalidReturnType());
@@ -222,12 +192,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessBypassAccessIllegalDescendant() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidArgumentValueException::class);
-    }
-    else {
-      $this->expectException(InvalidArgumentValueException::class);
-    }
+    $this->expectException(InvalidArgumentValueException::class);
 
     $accessChecker = new AccessChecker();
     $permissions = [
@@ -257,12 +222,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessNoBypassWrongType() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidArgumentValueException::class);
-    }
-    else {
-      $this->expectException(InvalidArgumentValueException::class);
-    }
+    $this->expectException(InvalidArgumentValueException::class);
 
     $accessChecker = new AccessChecker();
     $accessChecker->setBypassAccessChecker(new BypassCheckerAlwaysAllow());
@@ -340,12 +300,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessWrongPermissionTypeReturnType() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidReturnTypeException::class);
-    }
-    else {
-      $this->expectException(InvalidReturnTypeException::class);
-    }
+    $this->expectException(InvalidReturnTypeException::class);
 
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
@@ -468,12 +423,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessANDWrongValueType() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidValueForLogicGateException::class);
-    }
-    else {
-      $this->expectException(InvalidValueForLogicGateException::class);
-    }
+    $this->expectException(InvalidValueForLogicGateException::class);
 
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
@@ -491,12 +441,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessANDTooFewElements() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidValueForLogicGateException::class);
-    }
-    else {
-      $this->expectException(InvalidValueForLogicGateException::class);
-    }
+    $this->expectException(InvalidValueForLogicGateException::class);
 
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
@@ -558,12 +503,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessNANDWrongValueType() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidValueForLogicGateException::class);
-    }
-    else {
-      $this->expectException(InvalidValueForLogicGateException::class);
-    }
+    $this->expectException(InvalidValueForLogicGateException::class);
 
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
@@ -581,12 +521,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessNANDTooFewElements() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidValueForLogicGateException::class);
-    }
-    else {
-      $this->expectException(InvalidValueForLogicGateException::class);
-    }
+    $this->expectException(InvalidValueForLogicGateException::class);
 
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
@@ -648,12 +583,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessORWrongValueType() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidValueForLogicGateException::class);
-    }
-    else {
-      $this->expectException(InvalidValueForLogicGateException::class);
-    }
+    $this->expectException(InvalidValueForLogicGateException::class);
 
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
@@ -671,12 +601,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessORTooFewElements() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidValueForLogicGateException::class);
-    }
-    else {
-      $this->expectException(InvalidValueForLogicGateException::class);
-    }
+    $this->expectException(InvalidValueForLogicGateException::class);
 
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
@@ -738,12 +663,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessNORWrongValueType() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidValueForLogicGateException::class);
-    }
-    else {
-      $this->expectException(InvalidValueForLogicGateException::class);
-    }
+    $this->expectException(InvalidValueForLogicGateException::class);
 
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
@@ -761,12 +681,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessNORTooFewElements() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidValueForLogicGateException::class);
-    }
-    else {
-      $this->expectException(InvalidValueForLogicGateException::class);
-    }
+    $this->expectException(InvalidValueForLogicGateException::class);
 
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
@@ -828,12 +743,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessXORWrongValueType() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidValueForLogicGateException::class);
-    }
-    else {
-      $this->expectException(InvalidValueForLogicGateException::class);
-    }
+    $this->expectException(InvalidValueForLogicGateException::class);
 
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
@@ -851,12 +761,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessXORTooFewElements() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidValueForLogicGateException::class);
-    }
-    else {
-      $this->expectException(InvalidValueForLogicGateException::class);
-    }
+    $this->expectException(InvalidValueForLogicGateException::class);
 
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
@@ -918,12 +823,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessNOTWrongValueType() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidValueForLogicGateException::class);
-    }
-    else {
-      $this->expectException(InvalidValueForLogicGateException::class);
-    }
+    $this->expectException(InvalidValueForLogicGateException::class);
 
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
@@ -941,12 +841,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessNOTArrayTooFewElements() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidValueForLogicGateException::class);
-    }
-    else {
-      $this->expectException(InvalidValueForLogicGateException::class);
-    }
+    $this->expectException(InvalidValueForLogicGateException::class);
 
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
@@ -964,12 +859,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessNOTStringEmpty() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidValueForLogicGateException::class);
-    }
-    else {
-      $this->expectException(InvalidValueForLogicGateException::class);
-    }
+    $this->expectException(InvalidValueForLogicGateException::class);
 
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
@@ -987,12 +877,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessMultipleItemsNOT() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidValueForLogicGateException::class);
-    }
-    else {
-      $this->expectException(InvalidValueForLogicGateException::class);
-    }
+    $this->expectException(InvalidValueForLogicGateException::class);
 
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
@@ -1052,12 +937,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessBoolTRUEIllegalDescendant() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidArgumentValueException::class);
-    }
-    else {
-      $this->expectException(InvalidArgumentValueException::class);
-    }
+    $this->expectException(InvalidArgumentValueException::class);
 
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
@@ -1083,12 +963,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessBoolFALSEIllegalDescendant() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidArgumentValueException::class);
-    }
-    else {
-      $this->expectException(InvalidArgumentValueException::class);
-    }
+    $this->expectException(InvalidArgumentValueException::class);
 
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
@@ -1133,12 +1008,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessStringTRUEIllegalChildrenSingleValue() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidArgumentValueException::class);
-    }
-    else {
-      $this->expectException(InvalidArgumentValueException::class);
-    }
+    $this->expectException(InvalidArgumentValueException::class);
 
     $accessChecker = new AccessChecker();
     $permissions = [
@@ -1148,12 +1018,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessStringTRUEIllegalChildrenArray() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidArgumentValueException::class);
-    }
-    else {
-      $this->expectException(InvalidArgumentValueException::class);
-    }
+    $this->expectException(InvalidArgumentValueException::class);
 
     $accessChecker = new AccessChecker();
     $permissions = [
@@ -1163,12 +1028,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessStringTRUEIllegalDescendant() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidArgumentValueException::class);
-    }
-    else {
-      $this->expectException(InvalidArgumentValueException::class);
-    }
+    $this->expectException(InvalidArgumentValueException::class);
 
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
@@ -1194,12 +1054,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessStringFALSEIllegalChildrenSingleValue() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidArgumentValueException::class);
-    }
-    else {
-      $this->expectException(InvalidArgumentValueException::class);
-    }
+    $this->expectException(InvalidArgumentValueException::class);
 
     $accessChecker = new AccessChecker();
     $permissions = [
@@ -1209,12 +1064,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessStringFALSEIllegalChildrenArray() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidArgumentValueException::class);
-    }
-    else {
-      $this->expectException(InvalidArgumentValueException::class);
-    }
+    $this->expectException(InvalidArgumentValueException::class);
 
     $accessChecker = new AccessChecker();
     $permissions = [
@@ -1224,12 +1074,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
   }
 
   public function testCheckAccessStringFALSEIllegalDescendant() {
-    if(method_exists($this, 'setExpectedException')) {
-      $this->setExpectedException(InvalidArgumentValueException::class);
-    }
-    else {
-      $this->expectException(InvalidArgumentValueException::class);
-    }
+    $this->expectException(InvalidArgumentValueException::class);
 
     $accessChecker = new AccessChecker();
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
