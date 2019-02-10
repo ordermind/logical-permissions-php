@@ -138,7 +138,7 @@ class AccessChecker implements AccessCheckerInterface {
       if('TRUE' === $noBypassUpper) {
         return FALSE;
       }
-      else if('FALSE' === $noBypassUpper) {
+      if('FALSE' === $noBypassUpper) {
         return TRUE;
       }
     }
@@ -206,11 +206,11 @@ class AccessChecker implements AccessCheckerInterface {
    * @return bool
    */
   protected function dispatchBoolean($permissions, $type = NULL) {
-      if(!is_null($type)) {
-        throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: \"$type\". Evaluated permissions: " . print_r($permissions, TRUE));
-      }
+    if(!is_null($type)) {
+      throw new InvalidArgumentValueException("You cannot put a boolean permission as a descendant to a permission type. Existing type: \"$type\". Evaluated permissions: " . print_r($permissions, TRUE));
+    }
 
-      return $permissions;
+    return $permissions;
   }
 
   /**
@@ -223,15 +223,15 @@ class AccessChecker implements AccessCheckerInterface {
    * @return bool
    */
   protected function dispatchString($permissions, $type = NULL, $context = NULL) {
-      if('TRUE' === strtoupper($permissions)) {
-        return $this->dispatchBoolean(TRUE, $type);
-      }
+    if('TRUE' === strtoupper($permissions)) {
+      return $this->dispatchBoolean(TRUE, $type);
+    }
 
-      if('FALSE' === strtoupper($permissions)) {
-        return $this->dispatchBoolean(FALSE, $type);
-      }
+    if('FALSE' === strtoupper($permissions)) {
+      return $this->dispatchBoolean(FALSE, $type);
+    }
 
-      return $this->externalAccessCheck($permissions, $type, $context);
+    return $this->externalAccessCheck($permissions, $type, $context);
   }
 
   /**
@@ -448,7 +448,7 @@ class AccessChecker implements AccessCheckerInterface {
       }
     }
     elseif(is_string($permissions)) {
-      if('' === $permissions) {
+      if(!strlen($permissions)) {
         throw new InvalidValueForLogicGateException('A NOT permission cannot have an empty string as its value.');
       }
     }
