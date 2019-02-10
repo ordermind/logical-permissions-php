@@ -86,37 +86,15 @@ class AccessChecker implements AccessCheckerInterface {
       throw new InvalidArgumentTypeException('The allow_bypass parameter must be a boolean.');
     }
 
-    // uppercasing of no_bypass key for backward compatibility
-    if(is_array($permissions) && array_key_exists('no_bypass', $permissions)) {
-      $permissions['NO_BYPASS'] = $permissions['no_bypass'];
-      unset($permissions['no_bypass']);
-    }
-
-    if(is_array($permissions) && array_key_exists('NO_BYPASS', $permissions)) {
-      if($allowBypass) {
-        if(is_bool($permissions['NO_BYPASS'])) {
-          $allowBypass = !$permissions['NO_BYPASS'];
-        }
-        else if(is_string($permissions['NO_BYPASS'])) {
-          $noBypassUpper = strtoupper($permissions['NO_BYPASS']);
-          if(!in_array($noBypassUpper, array('TRUE', 'FALSE'))) {
-            throw new InvalidArgumentValueException('The NO_BYPASS value must be a boolean, a boolean string or an array. Current value: ' . print_r($permissions['NO_BYPASS'], TRUE));
-          }
-
-          if('TRUE' === $noBypassUpper) {
-            $allowBypass = FALSE;
-          }
-          else if('FALSE' === $noBypassUpper) {
-            $allowBypass = TRUE;
-          }
-        }
-        else if(is_array($permissions['NO_BYPASS'])) {
-          $allowBypass = !$this->processOR($permissions['NO_BYPASS'], NULL, $context);
-        }
-        else {
-          throw new InvalidArgumentValueException('The NO_BYPASS value must be a boolean, a boolean string or an array. Current value: ' . print_r($permissions['NO_BYPASS'], TRUE));
-        }
+    if(is_array($permissions)) {
+      // uppercasing of no_bypass key for backward compatibility
+      if(is_array($permissions) && array_key_exists('no_bypass', $permissions)) {
+        $permissions['NO_BYPASS'] = $permissions['no_bypass'];
+        unset($permissions['no_bypass']);
       }
+
+      $allowBypass = $this->prepareAllowBypass($permissions, $context, $allowBypass);
+
       unset($permissions['NO_BYPASS']);
     }
 
@@ -134,6 +112,48 @@ class AccessChecker implements AccessCheckerInterface {
     }
 
     return TRUE;
+  }
+
+  /**
+   * @internal
+   *
+   * @param array $permissions
+   * @param array|object|NULL $context
+   * @param bool $allowBypass
+   */
+  protected function prepareAllowBypass(array $permissions, $context, $allowBypass) {
+    if(!$allowBypass) {
+      return $allowBypass;
+    }
+
+    if(!array_key_exists('NO_BYPASS', $permissions)) {
+      return $allowBypass;
+    }
+
+    if(is_bool($permissions['NO_BYPASS'])) {
+      return !$permissions['NO_BYPASS'];
+    }
+
+    if(is_string($permissions['NO_BYPASS'])) {
+      $noBypassUpper = strtoupper($permissions['NO_BYPASS']);
+      if(!in_array($noBypassUpper, array('TRUE', 'FALSE'))) {
+        throw new InvalidArgumentValueException('The NO_BYPASS value must be a boolean, a boolean string or an array. Current value: ' . print_r($permissions['NO_BYPASS'], TRUE));
+      }
+
+      if('TRUE' === $noBypassUpper) {
+        return FALSE;
+      }
+      else if('FALSE' === $noBypassUpper) {
+        return TRUE;
+      }
+    }
+
+    if(is_array($permissions['NO_BYPASS'])) {
+      return !$this->processOR($permissions['NO_BYPASS'], NULL, $context);
+    }
+
+
+    throw new InvalidArgumentValueException('The NO_BYPASS value must be a boolean, a boolean string or an array. Current value: ' . print_r($permissions['NO_BYPASS'], TRUE));
   }
 
   /**
