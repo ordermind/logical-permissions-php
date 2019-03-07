@@ -297,7 +297,7 @@ class AccessChecker implements AccessCheckerInterface {
   /**
    * @internal
    *
-   * @param array|string|bool $permissions
+   * @param array $permissions
    * @param string|NULL $type
    * @param array|object|NULL $context
    *
@@ -326,7 +326,7 @@ class AccessChecker implements AccessCheckerInterface {
   /**
    * @internal
    *
-   * @param array|string|bool $permissions
+   * @param array $permissions
    * @param string|NULL $type
    * @param array|object|NULL $context
    *
@@ -346,7 +346,7 @@ class AccessChecker implements AccessCheckerInterface {
   /**
    * @internal
    *
-   * @param array|string|bool $permissions
+   * @param array $permissions
    * @param string|NULL $type
    * @param array|object|NULL $context
    *
@@ -375,7 +375,7 @@ class AccessChecker implements AccessCheckerInterface {
   /**
    * @internal
    *
-   * @param array|string|bool $permissions
+   * @param array $permissions
    * @param string|NULL $type
    * @param array|object|NULL $context
    *
@@ -395,7 +395,7 @@ class AccessChecker implements AccessCheckerInterface {
   /**
    * @internal
    *
-   * @param array|string|bool $permissions
+   * @param array $permissions
    * @param string|NULL $type
    * @param array|object|NULL $context
    *
@@ -434,7 +434,7 @@ class AccessChecker implements AccessCheckerInterface {
   /**
    * @internal
    *
-   * @param array|string|bool $permissions
+   * @param array|string $permissions
    * @param string|NULL $type
    * @param array|object|NULL $context
    *
@@ -461,7 +461,7 @@ class AccessChecker implements AccessCheckerInterface {
   /**
    * @internal
    *
-   * @param array|string|bool $permissions
+   * @param string $permission
    * @param string $type
    * @param array|object|NULL $context
    *
