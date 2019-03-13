@@ -323,16 +323,13 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $permissionTypeCollection = $accessChecker->getPermissionTypeCollection();
     $permissionTypeCollection->add(new PermissionTypeFlag());
     $permissions = [
-      'no_bypass' => [
-        'flag' => 'never_bypass',
-      ],
       'flag' => 'testflag',
     ];
     $user = [
       'id' => 1,
       'testflag' => TRUE,
     ];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
   }
 
   public function testCheckAccessSingleItemDeny() {
@@ -345,7 +342,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $user = [
       'id' => 1,
     ];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
   }
 
   public function testCheckAccessMultipleTypesShorthandOR() {
@@ -355,9 +352,6 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     $permissionTypeCollection->add(new PermissionTypeRole());
     $permissionTypeCollection->add(new PermissionTypeMisc());
     $permissions = [
-      'no_bypass' => [
-        'flag' => 'never_bypass',
-      ],
       'flag' => 'testflag',
       'role' => 'admin',
       'misc' => 'test',
@@ -367,33 +361,33 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     ];
     //OR truth table
     //0 0 0
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //0 0 1
     $user['test'] = TRUE;
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //0 1 0
     $user['test'] = FALSE;
     $user['roles'] = ['admin'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //0 1 1
     $user['test'] = TRUE;
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 0 0
     $user = [
       'id' => 1,
       'testflag' => TRUE,
     ];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 0 1
     $user['test'] = TRUE;
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 1 0
     $user['test'] = FALSE;
     $user['roles'] = ['admin'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 1 1
     $user['test'] = TRUE;
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
   }
 
   public function testCheckAccessMultipleItemsShorthandOR() {
@@ -408,18 +402,18 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     ];
     //OR truth table
     //0 0
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     $user['roles'] = [];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //0 1
     $user['roles'] = ['editor'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 0
     $user['roles'] = ['admin'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 1
     $user['roles'] = ['editor', 'admin'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
   }
 
   public function testCheckAccessANDWrongValueType() {
@@ -437,7 +431,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
       'id' => 1,
       'roles' => ['admin'],
     ];
-    $accessChecker->checkAccess($permissions, ['user' => $user]);
+    $accessChecker->checkAccess($permissions, ['user' => $user], FALSE);
   }
 
   public function testCheckAccessANDTooFewElements() {
@@ -455,7 +449,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
       'id' => 1,
       'roles' => ['admin'],
     ];
-    $accessChecker->checkAccess($permissions, ['user' => $user]);
+    $accessChecker->checkAccess($permissions, ['user' => $user], FALSE);
   }
 
   public function testCheckAccessMultipleItemsAND() {
@@ -476,30 +470,30 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     ];
     //AND truth table
     //0 0 0
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     $user['roles'] = [];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //0 0 1
     $user['roles'] = ['writer'];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //0 1 0
     $user['roles'] = ['editor'];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //0 1 1
     $user['roles'] = ['editor', 'writer'];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 0 0
     $user['roles'] = ['admin'];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 0 1
     $user['roles'] = ['admin', 'writer'];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 1 0
     $user['roles'] = ['admin', 'editor'];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 1 1
     $user['roles'] = ['admin', 'editor', 'writer'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
   }
 
   public function testCheckAccessNANDWrongValueType() {
@@ -517,7 +511,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
       'id' => 1,
       'roles' => ['admin'],
     ];
-    $accessChecker->checkAccess($permissions, ['user' => $user]);
+    $accessChecker->checkAccess($permissions, ['user' => $user], FALSE);
   }
 
   public function testCheckAccessNANDTooFewElements() {
@@ -535,7 +529,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
       'id' => 1,
       'roles' => ['admin'],
     ];
-    $accessChecker->checkAccess($permissions, ['user' => $user]);
+    $accessChecker->checkAccess($permissions, ['user' => $user], FALSE);
   }
 
   public function testCheckAccessMultipleItemsNAND() {
@@ -556,30 +550,30 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     ];
     //NAND truth table
     //0 0 0
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     $user['roles'] = [];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //0 0 1
     $user['roles'] = ['writer'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //0 1 0
     $user['roles'] = ['editor'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //0 1 1
     $user['roles'] = ['editor', 'writer'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 0 0
     $user['roles'] = ['admin'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 0 1
     $user['roles'] = ['admin', 'writer'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 1 0
     $user['roles'] = ['admin', 'editor'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 1 1
     $user['roles'] = ['admin', 'editor', 'writer'];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
   }
 
   public function testCheckAccessORWrongValueType() {
@@ -597,7 +591,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
       'id' => 1,
       'roles' => ['admin'],
     ];
-    $accessChecker->checkAccess($permissions, ['user' => $user]);
+    $accessChecker->checkAccess($permissions, ['user' => $user], FALSE);
   }
 
   public function testCheckAccessORTooFewElements() {
@@ -615,7 +609,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
       'id' => 1,
       'roles' => ['admin'],
     ];
-    $accessChecker->checkAccess($permissions, ['user' => $user]);
+    $accessChecker->checkAccess($permissions, ['user' => $user], FALSE);
   }
 
   public function testCheckAccessMultipleItemsOR() {
@@ -636,30 +630,30 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     ];
     //OR truth table
     //0 0 0
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     $user['roles'] = [];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //0 0 1
     $user['roles'] = ['writer'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //0 1 0
     $user['roles'] = ['editor'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //0 1 1
     $user['roles'] = ['editor', 'writer'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 0 0
     $user['roles'] = ['admin'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 0 1
     $user['roles'] = ['admin', 'writer'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 1 0
     $user['roles'] = ['admin', 'editor'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 1 1
     $user['roles'] = ['admin', 'editor', 'writer'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
   }
 
   public function testCheckAccessNORWrongValueType() {
@@ -677,7 +671,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
       'id' => 1,
       'roles' => ['admin'],
     ];
-    $accessChecker->checkAccess($permissions, ['user' => $user]);
+    $accessChecker->checkAccess($permissions, ['user' => $user], FALSE);
   }
 
   public function testCheckAccessNORTooFewElements() {
@@ -695,7 +689,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
       'id' => 1,
       'roles' => ['admin'],
     ];
-    $accessChecker->checkAccess($permissions, ['user' => $user]);
+    $accessChecker->checkAccess($permissions, ['user' => $user], FALSE);
   }
 
   public function testCheckAccessMultipleItemsNOR() {
@@ -716,30 +710,30 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     ];
     //NOR truth table
     //0 0 0
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     $user['roles'] = [];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //0 0 1
     $user['roles'] = ['writer'];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //0 1 0
     $user['roles'] = ['editor'];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //0 1 1
     $user['roles'] = ['editor', 'writer'];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 0 0
     $user['roles'] = ['admin'];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 0 1
     $user['roles'] = ['admin', 'writer'];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 1 0
     $user['roles'] = ['admin', 'editor'];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 1 1
     $user['roles'] = ['admin', 'editor', 'writer'];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
   }
 
   public function testCheckAccessXORWrongValueType() {
@@ -757,7 +751,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
       'id' => 1,
       'roles' => ['admin'],
     ];
-    $accessChecker->checkAccess($permissions, ['user' => $user]);
+    $accessChecker->checkAccess($permissions, ['user' => $user], FALSE);
   }
 
   public function testCheckAccessXORTooFewElements() {
@@ -775,7 +769,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
       'id' => 1,
       'roles' => ['admin'],
     ];
-    $accessChecker->checkAccess($permissions, ['user' => $user]);
+    $accessChecker->checkAccess($permissions, ['user' => $user], FALSE);
   }
 
   public function testCheckAccessMultipleItemsXOR() {
@@ -796,30 +790,30 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
     ];
     //XOR truth table
     //0 0 0
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     $user['roles'] = [];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //0 0 1
     $user['roles'] = ['writer'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //0 1 0
     $user['roles'] = ['editor'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //0 1 1
     $user['roles'] = ['editor', 'writer'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 0 0
     $user['roles'] = ['admin'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 0 1
     $user['roles'] = ['admin', 'writer'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 1 0
     $user['roles'] = ['admin', 'editor'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     //1 1 1
     $user['roles'] = ['admin', 'editor', 'writer'];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
   }
 
   public function testCheckAccessNOTWrongValueType() {
@@ -837,7 +831,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
       'id' => 1,
       'roles' => ['admin'],
     ];
-    $accessChecker->checkAccess($permissions, ['user' => $user]);
+    $accessChecker->checkAccess($permissions, ['user' => $user], FALSE);
   }
 
   public function testCheckAccessNOTArrayTooFewElements() {
@@ -855,7 +849,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
       'id' => 1,
       'roles' => ['admin'],
     ];
-    $accessChecker->checkAccess($permissions, ['user' => $user]);
+    $accessChecker->checkAccess($permissions, ['user' => $user], FALSE);
   }
 
   public function testCheckAccessNOTStringEmpty() {
@@ -873,7 +867,7 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
       'id' => 1,
       'roles' => ['admin'],
     ];
-    $accessChecker->checkAccess($permissions, ['user' => $user]);
+    $accessChecker->checkAccess($permissions, ['user' => $user], FALSE);
   }
 
   public function testCheckAccessMultipleItemsNOT() {
@@ -907,11 +901,11 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
       'id' => 1,
       'roles' => ['admin', 'editor'],
     ];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     unset($user['roles']);
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     $user['roles'] = ['editor'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
   }
 
   public function testCheckAccessSingleItemNOTArray() {
@@ -929,11 +923,11 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
       'id' => 1,
       'roles' => ['admin', 'editor'],
     ];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     unset($user['roles']);
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     $user['roles'] = ['editor'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
   }
 
   public function testCheckAccessBoolTRUEIllegalDescendant() {
@@ -1167,11 +1161,11 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
       'id' => 1,
       'roles' => ['admin', 'editor'],
     ];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     unset($user['roles']);
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     $user['roles'] = ['editor'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
   }
 
   public function testCheckAccessLogicGateFirst() {
@@ -1198,11 +1192,11 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
       'id' => 1,
       'roles' => ['admin', 'editor'],
     ];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     unset($user['roles']);
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     $user['roles'] = ['editor'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
   }
 
   public function testCheckAccessShorthandORMixedNumericStringKeys() {
@@ -1226,18 +1220,18 @@ class AccessCheckerTest extends LogicalPermissionsPHPUnitShim {
       'id' => 1,
       'roles' => ['admin'],
     ];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     unset($user['roles']);
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     $user['roles'] = ['editor'];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     $user['roles'] = ['editor', 'writer'];
-    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertFalse($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     $user['roles'] = ['editor', 'writer', 'role1'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     $user['roles'] = ['editor', 'writer', 'role2'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
     $user['roles'] = ['admin', 'writer'];
-    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user]));
+    $this->assertTrue($accessChecker->checkAccess($permissions, ['user' => $user], FALSE));
   }
 }
