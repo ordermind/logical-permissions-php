@@ -115,7 +115,7 @@ class AccessChecker implements AccessCheckerInterface
             return $this->processOR($permissions, null, $context);
         }
 
-        return $this->dispatch($permissions);
+        return $this->dispatch($permissions, null, null);
     }
 
     /**
@@ -201,10 +201,10 @@ class AccessChecker implements AccessCheckerInterface
      * @internal
      *
      */
-    protected function dispatch($permissions, $type = null, $context = null)
+    protected function dispatch($permissions, $type, $context)
     {
         if (is_bool($permissions)) {
-            return $this->dispatchBoolean($permissions, $type, $context);
+            return $this->dispatchBoolean($permissions, $type);
         }
 
         if (is_string($permissions)) {
@@ -229,7 +229,7 @@ class AccessChecker implements AccessCheckerInterface
      * @internal
      *
      */
-    protected function dispatchBoolean($permissions, $type = null)
+    protected function dispatchBoolean($permissions, $type)
     {
         if (!is_null($type)) {
             throw new InvalidArgumentValueException(
@@ -250,7 +250,7 @@ class AccessChecker implements AccessCheckerInterface
      * @internal
      *
      */
-    protected function dispatchString($permissions, $type = null, $context = null)
+    protected function dispatchString($permissions, $type, $context)
     {
         if ('TRUE' === strtoupper($permissions)) {
             return $this->dispatchBoolean(true, $type);
@@ -272,7 +272,7 @@ class AccessChecker implements AccessCheckerInterface
      * @internal
      *
      */
-    protected function dispatchArray(array $permissions, $type = null, $context = null)
+    protected function dispatchArray(array $permissions, $type, $context)
     {
         if (!$permissions) {
             return true;
