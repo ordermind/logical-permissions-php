@@ -2,6 +2,9 @@
 
 namespace Ordermind\LogicalPermissions\Exceptions;
 
-class InvalidReturnTypeException extends \Exception {
-  
+use Exception;
+
+class InvalidReturnTypeException extends Exception
+{
+
 }

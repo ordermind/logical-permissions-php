@@ -2,6 +2,9 @@
 
 namespace Ordermind\LogicalPermissions\Exceptions;
 
-class InvalidPermissionTypeException extends \InvalidArgumentException {
+use InvalidArgumentException;
+
+class InvalidPermissionTypeException extends InvalidArgumentException
+{
 
 }
