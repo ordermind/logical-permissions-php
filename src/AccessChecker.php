@@ -122,6 +122,8 @@ class AccessChecker implements AccessCheckerInterface
      * @param array             $permissions
      * @param array|object|null $context
      * @param bool              $allowBypass
+     *
+     * @return bool
      * @internal
      *
      */
