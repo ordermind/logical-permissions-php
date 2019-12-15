@@ -340,7 +340,7 @@ class AccessChecker implements AccessCheckerInterface
      * @internal
      *
      */
-    protected function processAND($permissions, $type = null, $context)
+    protected function processAND($permissions, $type, $context)
     {
         if (!is_array($permissions)) {
             throw new InvalidValueForLogicGateException(
@@ -375,7 +375,7 @@ class AccessChecker implements AccessCheckerInterface
      * @internal
      *
      */
-    protected function processNAND($permissions, $type = null, $context)
+    protected function processNAND($permissions, $type, $context)
     {
         if (!is_array($permissions)) {
             throw new InvalidValueForLogicGateException(
@@ -401,7 +401,7 @@ class AccessChecker implements AccessCheckerInterface
      * @internal
      *
      */
-    protected function processOR($permissions, $type = null, $context)
+    protected function processOR($permissions, $type, $context)
     {
         if (!is_array($permissions)) {
             throw new InvalidValueForLogicGateException(
@@ -436,7 +436,7 @@ class AccessChecker implements AccessCheckerInterface
      * @internal
      *
      */
-    protected function processNOR($permissions, $type = null, $context)
+    protected function processNOR($permissions, $type, $context)
     {
         if (!is_array($permissions)) {
             throw new InvalidValueForLogicGateException(
@@ -462,7 +462,7 @@ class AccessChecker implements AccessCheckerInterface
      * @internal
      *
      */
-    protected function processXOR($permissions, $type = null, $context)
+    protected function processXOR($permissions, $type, $context)
     {
         if (!is_array($permissions)) {
             throw new InvalidValueForLogicGateException(
@@ -506,7 +506,7 @@ class AccessChecker implements AccessCheckerInterface
      * @internal
      *
      */
-    protected function processNOT($permissions, $type = null, $context)
+    protected function processNOT($permissions, $type, $context)
     {
         if (is_array($permissions)) {
             if (count($permissions) != 1) {
