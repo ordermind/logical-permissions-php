@@ -1,7 +1,7 @@
 <a href="https://travis-ci.org/ordermind/logical-permissions-php" target="_blank"><img src="https://travis-ci.org/ordermind/logical-permissions-php.svg?branch=2.x" /></a>
 # logical-permissions
 
-This is a generic library that provides support for array-based permissions with logic gates such as AND and OR. You can register any kind of permission types such as roles and flags. The idea with this library is to be an ultra-flexible foundation that can be used by any framework. Supported PHP version is 5.5 or higher.
+This is a generic library that provides support for array-based permissions with logic gates such as AND and OR. You can register any kind of permission types such as roles and flags. The idea with this library is to be an ultra-flexible foundation that can be used by any framework. Supported PHP version is 5.6 or higher.
 
 ## Getting started
 
