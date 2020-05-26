@@ -3,7 +3,9 @@
     "version": "1.2.12",
     "license": "MIT",
     "description": "Provides support for array-based permissions with logic gates such as AND and OR.",
-    "keywords": ["permissions"],
+    "keywords": [
+        "permissions"
+    ],
     "authors": [
         {
             "name": "Kristofer Tengström",
@@ -11,11 +13,9 @@
         }
     ],
     "require": {
-      "php": ">=5.4.37"
+        "php": ">=5.6"
     },
-    "require-dev": {
-
-    },
+    "require-dev": {},
     "autoload": {
         "psr-4": {
             "Ordermind\\LogicalPermissions\\": "src"
