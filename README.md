@@ -42,10 +42,10 @@ Once you have created a permission checker you can register it like this:
 ```php
 use Ordermind\LogicalPermissions\LogicalPermissionsFacade;
 use Ordermind\LogicalPermissions\PermissionTree\RawPermissionTree;
-use Ordermind\LogicalPermissions\PermissionTypeLocator;
+use Ordermind\LogicalPermissions\PermissionCheckerLocator;
 
-$locator = new PermissionTypeLocator();
-$locator->add(new MyPermissionType());
+$locator = new PermissionCheckerLocator();
+$locator->add(new MyPermissionChecker());
 $lpFacade = new LogicalPermissionsFacade($locator);
 ```
 #### Check access
@@ -101,10 +101,10 @@ class MyBypassAccessChecker implements BypassAccessCheckerInterface
 Then you can register it like this:
 ```php
 use Ordermind\LogicalPermissions\LogicalPermissionsFacade;
-use Ordermind\LogicalPermissions\PermissionTypeLocator;
+use Ordermind\LogicalPermissions\PermissionCheckerLocator;
 
-$locator = new PermissionTypeLocator();
-$locator->add(new MyPermissionType());
+$locator = new PermissionCheckerLocator();
+$locator->add(new MyPermissionChecker());
 $lpFacade = new LogicalPermissionsFacade($locator, new MyBypassAccessChecker());
 ```
 From now on, every time you call ```$lpFacade->checkAccess()``` the user with the id 1 will be exempted so that no matter what the permissions are, they will always be granted access. If you want to make exceptions, you can do so by adding `'no_bypass' => true` to the first level of a permission tree. You can even use permissions as conditions for `no_bypass`.
