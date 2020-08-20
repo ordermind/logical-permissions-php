@@ -9,6 +9,6 @@ use InvalidArgumentException;
 /**
  * @internal
  */
-class InvalidPermissionTypeException extends InvalidArgumentException
+class PermissionTypeAlreadyRegisteredException extends InvalidArgumentException
 {
 }

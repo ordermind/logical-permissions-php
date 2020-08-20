@@ -1,8 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ordermind\LogicalPermissions\Exceptions;
 
-class PermissionTypeNotRegisteredException extends InvalidArgumentValueException
-{
+use InvalidArgumentException;
 
+/**
+ * @internal
+ */
+class PermissionTypeNotRegisteredException extends InvalidArgumentException
+{
 }

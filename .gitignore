@@ -5,7 +5,10 @@
 !/README.md
 !/LICENSE
 !/src
-!/src/*
+!/src/**
 !/phpunit.xml*
+!/phpcs.xml
+!/phpmd.xml
+!/phpstan.neon
 !/tests
-!/tests/*
+!/tests/**
