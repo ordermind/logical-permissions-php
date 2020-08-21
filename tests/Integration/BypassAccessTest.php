@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions\Test\Integration;
 
+use Ordermind\LogicalPermissions\AccessChecker\AccessChecker;
 use Ordermind\LogicalPermissions\BypassAccessCheckerInterface;
-use Ordermind\LogicalPermissions\LogicalPermissionsFacade;
-use Ordermind\LogicalPermissions\PermissionCheckerLocator;
-use Ordermind\LogicalPermissions\PermissionTree\RawPermissionTree;
+use Ordermind\LogicalPermissions\Factories\DefaultFullPermissionTreeDeserializerFactory;
 use Ordermind\LogicalPermissions\Test\Fixtures\BypassChecker\AlwaysAllowBypassChecker;
 use Ordermind\LogicalPermissions\Test\Fixtures\BypassChecker\AlwaysDenyBypassChecker;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\FlagPermissionChecker;
@@ -17,18 +16,33 @@ use stdClass;
 class BypassAccessTest extends TestCase
 {
     /**
+     * @var DefaultFullPermissionTreeDeserializerFactory
+     */
+    private $fullTreeDeserializerFactory;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->fullTreeDeserializerFactory = new DefaultFullPermissionTreeDeserializerFactory();
+    }
+
+    /**
      * @dataProvider bypassAccessProvider
      */
     public function testBypassAccess(
         bool $expectedResult,
-        LogicalPermissionsFacade $lpFacade,
+        AccessChecker $accessChecker,
         $permissions,
         $context = null,
         bool $allowBypass = true
     ) {
+        $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create();
+        $fullPermissionTree = $fullTreeDeserializer->deserialize($permissions);
+
         $this->assertSame(
             $expectedResult,
-            $lpFacade->checkAccess(new RawPermissionTree($permissions), $context, $allowBypass)
+            $accessChecker->checkAccess($fullPermissionTree, $context, $allowBypass)
         );
     }
 
@@ -36,19 +50,19 @@ class BypassAccessTest extends TestCase
     {
         yield [
             true,
-            new LogicalPermissionsFacade(null, new AlwaysAllowBypassChecker()),
+            new AccessChecker(new AlwaysAllowBypassChecker()),
             false,
         ];
 
         yield [
             false,
-            new LogicalPermissionsFacade(null, new AlwaysDenyBypassChecker()),
+            new AccessChecker(new AlwaysDenyBypassChecker()),
             false,
         ];
 
         yield [
             false,
-            new LogicalPermissionsFacade(null, new AlwaysAllowBypassChecker()),
+            new AccessChecker(new AlwaysAllowBypassChecker()),
             false,
             [],
             false,
@@ -56,45 +70,47 @@ class BypassAccessTest extends TestCase
 
         yield [
             true,
-            new LogicalPermissionsFacade(),
+            new AccessChecker(),
             ['no_bypass' => true],
         ];
 
         yield [
             false,
-            new LogicalPermissionsFacade(null, new AlwaysAllowBypassChecker()),
+            new AccessChecker(new AlwaysAllowBypassChecker()),
             ['no_bypass' => true, false],
             [],
         ];
 
         yield [
             true,
-            new LogicalPermissionsFacade(null, new AlwaysAllowBypassChecker()),
+            new AccessChecker(new AlwaysAllowBypassChecker()),
             ['NO_BYPASS' => false],
         ];
     }
 
     public function testNoBypassArrayAllow()
     {
-        $locator = new PermissionCheckerLocator([new FlagPermissionChecker()]);
-        $lpFacade = new LogicalPermissionsFacade($locator, new AlwaysAllowBypassChecker());
+        $accessChecker = new AccessChecker(new AlwaysAllowBypassChecker());
+        $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create(new FlagPermissionChecker());
 
         $permissions = [
             'no_bypass' => [
                 'flag' => 'never_bypass',
             ],
         ];
+        $fullPermissionTree = $fullTreeDeserializer->deserialize($permissions);
+
         $user = [
             'id'           => 1,
             'never_bypass' => false,
         ];
-        $this->assertTrue($lpFacade->checkAccess(new RawPermissionTree($permissions), ['user' => $user]));
+        $this->assertTrue($accessChecker->checkAccess($fullPermissionTree, ['user' => $user]));
     }
 
     public function testNoBypassArrayDeny()
     {
-        $locator = new PermissionCheckerLocator([new FlagPermissionChecker()]);
-        $lpFacade = new LogicalPermissionsFacade($locator, new AlwaysAllowBypassChecker());
+        $accessChecker = new AccessChecker(new AlwaysAllowBypassChecker());
+        $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create(new FlagPermissionChecker());
 
         $permissions = [
             'no_bypass' => [
@@ -102,11 +118,13 @@ class BypassAccessTest extends TestCase
             ],
             false,
         ];
+        $fullPermissionTree = $fullTreeDeserializer->deserialize($permissions);
+
         $user = [
             'id'           => 1,
             'never_bypass' => true,
         ];
-        $this->assertFalse($lpFacade->checkAccess(new RawPermissionTree($permissions), ['user' => $user]));
+        $this->assertFalse($accessChecker->checkAccess($fullPermissionTree, ['user' => $user]));
     }
 
     public function testCheckBypassAccessContextArray()
@@ -121,10 +139,12 @@ class BypassAccessTest extends TestCase
             }
         };
 
-        $lpFacade = new LogicalPermissionsFacade(null, $bypassAccessChecker);
+        $accessChecker = new AccessChecker($bypassAccessChecker);
+        $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create();
+        $fullPermissionTree = $fullTreeDeserializer->deserialize(false);
 
         $user = ['id' => 1];
-        $lpFacade->checkAccess(new RawPermissionTree(false), ['user' => $user]);
+        $accessChecker->checkAccess($fullPermissionTree, ['user' => $user]);
     }
 
     public function testCheckBypassAccessContextObject()
@@ -139,12 +159,14 @@ class BypassAccessTest extends TestCase
             }
         };
 
-        $lpFacade = new LogicalPermissionsFacade(null, $bypassAccessChecker);
+        $accessChecker = new AccessChecker($bypassAccessChecker);
+        $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create();
+        $fullPermissionTree = $fullTreeDeserializer->deserialize(false);
 
         $context = new stdClass();
         $user = new stdClass();
         $user->id = 1;
         $context->user = $user;
-        $lpFacade->checkAccess(new RawPermissionTree(false), $context);
+        $accessChecker->checkAccess($fullPermissionTree, $context);
     }
 }

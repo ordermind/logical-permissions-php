@@ -40,13 +40,11 @@ Now we have implemented the two required methods - getName() and checkPermission
 Once you have created a permission checker you can register it like this:
 
 ```php
-use Ordermind\LogicalPermissions\LogicalPermissionsFacade;
-use Ordermind\LogicalPermissions\PermissionTree\RawPermissionTree;
-use Ordermind\LogicalPermissions\PermissionCheckerLocator;
+use Ordermind\LogicalPermissions\AccessChecker\AccessChecker;
+use Ordermind\LogicalPermissions\Factories\DefaultFullPermissionTreeDeserializerFactory;
 
-$locator = new PermissionCheckerLocator();
-$locator->add(new MyPermissionChecker());
-$lpFacade = new LogicalPermissionsFacade($locator);
+$fullTreeDeserializerFactory = new DefaultFullPermissionTreeDeserializerFactory();
+$fullTreeDeserializer = $fullTreeDeserializerFactory->create(new MyPermissionChecker());
 ```
 #### Check access
 
@@ -55,8 +53,12 @@ Now everything is set and you can check the access for a user based on their rol
 $permissions = [
     'role' => 'admin', // The key 'role' here is the permission type that you return the getName() method of your permission checker
 ];
+$fullPermissionTree = $fullTreeDeserializer->deserialize($permissions);
+
 $user = ['roles' => ['admin', 'sales']];
-$access = $lpFacade->checkAccess(new RawPermissionTree($permissions), ['user' => $user]);
+
+$accessChecker = new AccessChecker();
+$access = $accessChecker->checkAccess($fullPermissionTree, ['user' => $user]);
 // true
 ```
 
@@ -100,14 +102,11 @@ class MyBypassAccessChecker implements BypassAccessCheckerInterface
 ```
 Then you can register it like this:
 ```php
-use Ordermind\LogicalPermissions\LogicalPermissionsFacade;
-use Ordermind\LogicalPermissions\PermissionCheckerLocator;
+use Ordermind\LogicalPermissions\AccessChecker\AccessChecker;
 
-$locator = new PermissionCheckerLocator();
-$locator->add(new MyPermissionChecker());
-$lpFacade = new LogicalPermissionsFacade($locator, new MyBypassAccessChecker());
+$accessChecker = new AccessChecker(new MyBypassAccessChecker());
 ```
-From now on, every time you call ```$lpFacade->checkAccess()``` the user with the id 1 will be exempted so that no matter what the permissions are, they will always be granted access. If you want to make exceptions, you can do so by adding `'no_bypass' => true` to the first level of a permission tree. You can even use permissions as conditions for `no_bypass`.
+From now on, every time you call ```$accessChecker->checkAccess()``` the user with the id 1 will be exempted so that no matter what the permissions are, they will always be granted access. If you want to make exceptions, you can do so by adding `'no_bypass' => true` to the first level of a permission tree. You can even use permissions as conditions for `no_bypass`.
 
 Examples:
 

@@ -5,33 +5,40 @@ declare(strict_types=1);
 namespace Ordermind\LogicalPermissions\Test\Unit\AccessChecker;
 
 use Ordermind\LogicalPermissions\AccessChecker\AccessChecker;
-use Ordermind\LogicalPermissions\PermissionCheckerLocator;
-use Ordermind\LogicalPermissions\PermissionTree\RawPermissionTree;
-use Ordermind\LogicalPermissions\Serializers\PermissionTreeDeserializer;
-use Ordermind\LogicalPermissions\Validators\NoBypassValidator;
-use Ordermind\LogicGates\LogicGateFactory;
+use Ordermind\LogicalPermissions\PermissionTree\FullPermissionTree;
+use Ordermind\LogicalPermissions\PermissionTree\PermissionTree;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use stdClass;
 use TypeError;
 
 class AccessCheckerTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @dataProvider checkAccessContextTypeProvider
      */
     public function testCheckAccessContextType(bool $expectException, $value)
     {
-        $treeDeserializer = new PermissionTreeDeserializer(new PermissionCheckerLocator(), new LogicGateFactory());
-        $accessChecker = new AccessChecker($treeDeserializer, new NoBypassValidator());
+        $accessChecker = new AccessChecker();
 
         if ($expectException) {
             $this->expectException(TypeError::class);
             $this->expectExceptionMessage('The context parameter must be an array or object');
         }
 
-        $rawPermissionTree = new RawPermissionTree(false);
+        $mockMainTree = $this->prophesize(PermissionTree::class);
+        $mockMainTree->resolve(Argument::any())->willReturn(true);
+        $mainTree = $mockMainTree->reveal();
 
-        $accessChecker->checkAccess($rawPermissionTree, $value);
+        $mockFullPermissionTree = $this->prophesize(FullPermissionTree::class);
+        $mockFullPermissionTree->getMainTree()->willReturn($mainTree);
+        $mockFullPermissionTree->hasNoBypassTree()->willReturn(false);
+        $fullPermissionTree = $mockFullPermissionTree->reveal();
+
+        $accessChecker->checkAccess($fullPermissionTree, $value);
 
         $this->addToAssertionCount(1);
     }

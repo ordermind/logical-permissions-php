@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions\Test\Integration;
 
-use Ordermind\LogicalPermissions\LogicalPermissionsFacade;
-use Ordermind\LogicalPermissions\PermissionCheckerLocator;
-use Ordermind\LogicalPermissions\PermissionTree\RawPermissionTree;
+use Ordermind\LogicalPermissions\AccessChecker\AccessChecker;
+use Ordermind\LogicalPermissions\Factories\DefaultFullPermissionTreeDeserializerFactory;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\FlagPermissionChecker;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\MiscPermissionChecker;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\RolePermissionChecker;
@@ -14,40 +13,59 @@ use PHPUnit\Framework\TestCase;
 
 class CheckAccessTest extends TestCase
 {
+    /**
+     * @var DefaultFullPermissionTreeDeserializerFactory
+     */
+    private $fullTreeDeserializerFactory;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->fullTreeDeserializerFactory = new DefaultFullPermissionTreeDeserializerFactory();
+    }
+
     public function testEmptyArrayAllow()
     {
-        $lpFacade = new LogicalPermissionsFacade();
-        $this->assertTrue($lpFacade->checkAccess(new RawPermissionTree([])));
+        $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create();
+        $fullPermissionTree = $fullTreeDeserializer->deserialize([]);
+        $accessChecker = new AccessChecker();
+        $this->assertTrue($accessChecker->checkAccess($fullPermissionTree));
     }
 
     public function testSingleItemAllow()
     {
-        $locator = new PermissionCheckerLocator([new FlagPermissionChecker()]);
-        $lpFacade = new LogicalPermissionsFacade($locator);
+        $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create(new FlagPermissionChecker());
+        $accessChecker = new AccessChecker();
 
         $permissions = [
             'flag' => 'testflag',
         ];
+        $fullPermissionTree = $fullTreeDeserializer->deserialize($permissions);
+
         $user = [
             'id'       => 1,
             'testflag' => true,
         ];
 
-        $this->assertTrue($lpFacade->checkAccess(new RawPermissionTree($permissions), ['user' => $user], false));
+        $this->assertTrue($accessChecker->checkAccess($fullPermissionTree, ['user' => $user], false));
     }
 
     public function testSingleItemDeny()
     {
-        $locator = new PermissionCheckerLocator([new FlagPermissionChecker()]);
-        $lpFacade = new LogicalPermissionsFacade($locator);
+        $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create(new FlagPermissionChecker());
+        $accessChecker = new AccessChecker();
 
         $permissions = [
             'flag' => 'testflag',
         ];
+        $fullPermissionTree = $fullTreeDeserializer->deserialize($permissions);
+
         $user = [
             'id' => 1,
         ];
-        $this->assertFalse($lpFacade->checkAccess(new RawPermissionTree($permissions), ['user' => $user], false));
+
+        $this->assertFalse($accessChecker->checkAccess($fullPermissionTree, ['user' => $user], false));
     }
 
     /**
@@ -55,18 +73,19 @@ class CheckAccessTest extends TestCase
      */
     public function testSingleItemNOT(bool $expectedResult, array $user)
     {
-        $locator = new PermissionCheckerLocator([new RolePermissionChecker()]);
-        $lpFacade = new LogicalPermissionsFacade($locator);
+        $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create(new RolePermissionChecker());
+        $accessChecker = new AccessChecker();
 
         $permissions = [
             'role' => [
                 'NOT' => 'admin',
             ],
         ];
+        $fullPermissionTree = $fullTreeDeserializer->deserialize($permissions);
 
         $this->assertSame(
             $expectedResult,
-            $lpFacade->checkAccess(new RawPermissionTree($permissions), ['user' => $user], false)
+            $accessChecker->checkAccess($fullPermissionTree, ['user' => $user], false)
         );
 
         $permissions = [
@@ -76,10 +95,11 @@ class CheckAccessTest extends TestCase
                 ],
             ],
         ];
+        $fullPermissionTree = $fullTreeDeserializer->deserialize($permissions);
 
         $this->assertSame(
             $expectedResult,
-            $lpFacade->checkAccess(new RawPermissionTree($permissions), ['user' => $user], false)
+            $accessChecker->checkAccess($fullPermissionTree, ['user' => $user], false)
         );
     }
 
@@ -97,23 +117,23 @@ class CheckAccessTest extends TestCase
      */
     public function testMultipleTypesImplicitOR(bool $expectedResult, array $user)
     {
-        $locator = new PermissionCheckerLocator([
+        $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create(
             new FlagPermissionChecker(),
             new RolePermissionChecker(),
-            new MiscPermissionChecker(),
-        ]);
-
-        $lpFacade = new LogicalPermissionsFacade($locator);
+            new MiscPermissionChecker()
+        );
+        $accessChecker = new AccessChecker();
 
         $permissions = [
             'flag' => 'testflag',
             'role' => 'admin',
             'misc' => 'test',
         ];
+        $fullPermissionTree = $fullTreeDeserializer->deserialize($permissions);
 
         $this->assertSame(
             $expectedResult,
-            $lpFacade->checkAccess(new RawPermissionTree($permissions), ['user' => $user], false)
+            $accessChecker->checkAccess($fullPermissionTree, ['user' => $user], false)
         );
     }
 
@@ -136,12 +156,13 @@ class CheckAccessTest extends TestCase
      */
     public function testMultipleItems(bool $expectedResult, array $permissions, array $user)
     {
-        $locator = new PermissionCheckerLocator([new RolePermissionChecker()]);
-        $lpFacade = new LogicalPermissionsFacade($locator);
+        $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create(new RolePermissionChecker());
+        $accessChecker = new AccessChecker();
+        $fullPermissionTree = $fullTreeDeserializer->deserialize($permissions);
 
         $this->assertSame(
             $expectedResult,
-            $lpFacade->checkAccess(new RawPermissionTree($permissions), ['user' => $user], false)
+            $accessChecker->checkAccess($fullPermissionTree, ['user' => $user], false)
         );
     }
 
@@ -208,9 +229,11 @@ class CheckAccessTest extends TestCase
      */
     public function testBooleanPermissions(bool $expectedResult, $permissions)
     {
-        $lpFacade = new LogicalPermissionsFacade();
+        $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create();
+        $accessChecker = new AccessChecker();
+        $fullPermissionTree = $fullTreeDeserializer->deserialize($permissions);
 
-        $this->assertSame($expectedResult, $lpFacade->checkAccess(new RawPermissionTree($permissions)));
+        $this->assertSame($expectedResult, $accessChecker->checkAccess($fullPermissionTree));
     }
 
     public function booleanPermissionProvider()
@@ -236,9 +259,11 @@ class CheckAccessTest extends TestCase
      */
     public function testMixedBooleans(bool $expectedResult, $permissions)
     {
-        $lpFacade = new LogicalPermissionsFacade();
+        $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create();
+        $accessChecker = new AccessChecker();
+        $fullPermissionTree = $fullTreeDeserializer->deserialize($permissions);
 
-        $this->assertSame($expectedResult, $lpFacade->checkAccess(new RawPermissionTree($permissions)));
+        $this->assertSame($expectedResult, $accessChecker->checkAccess($fullPermissionTree));
     }
 
     public function mixedBooleansProvider()
@@ -252,10 +277,10 @@ class CheckAccessTest extends TestCase
 
     public function testNestedLogic()
     {
-        $locator = new PermissionCheckerLocator([new RolePermissionChecker()]);
-        $lpFacade = new LogicalPermissionsFacade($locator);
+        $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create(new RolePermissionChecker());
+        $accessChecker = new AccessChecker();
 
-        $rawPermissionTree = new RawPermissionTree([
+        $permissions = [
             'role' => [
                 'OR' => [
                     'NOT' => [
@@ -268,25 +293,27 @@ class CheckAccessTest extends TestCase
             ],
             false,
             'FALSE',
-        ]);
+        ];
+        $fullPermissionTree = $fullTreeDeserializer->deserialize($permissions);
+
         $user = [
             'id'    => 1,
             'roles' => ['admin', 'editor'],
         ];
 
-        $this->assertFalse($lpFacade->checkAccess($rawPermissionTree, ['user' => $user], false));
+        $this->assertFalse($accessChecker->checkAccess($fullPermissionTree, ['user' => $user], false));
         unset($user['roles']);
-        $this->assertTrue($lpFacade->checkAccess($rawPermissionTree, ['user' => $user], false));
+        $this->assertTrue($accessChecker->checkAccess($fullPermissionTree, ['user' => $user], false));
         $user['roles'] = ['editor'];
-        $this->assertTrue($lpFacade->checkAccess($rawPermissionTree, ['user' => $user], false));
+        $this->assertTrue($accessChecker->checkAccess($fullPermissionTree, ['user' => $user], false));
     }
 
     public function testLogicGateFirst()
     {
-        $locator = new PermissionCheckerLocator([new RolePermissionChecker()]);
-        $lpFacade = new LogicalPermissionsFacade($locator);
+        $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create(new RolePermissionChecker());
+        $accessChecker = new AccessChecker();
 
-        $rawPermissionTree = new RawPermissionTree([
+        $permissions = [
             'AND' => [
                 'role' => [
                     'OR' => [
@@ -301,25 +328,27 @@ class CheckAccessTest extends TestCase
                 true,
                 'TRUE',
             ],
-        ]);
+        ];
+        $fullPermissionTree = $fullTreeDeserializer->deserialize($permissions);
+
         $user = [
             'id'    => 1,
             'roles' => ['admin', 'editor'],
         ];
 
-        $this->assertFalse($lpFacade->checkAccess($rawPermissionTree, ['user' => $user], false));
+        $this->assertFalse($accessChecker->checkAccess($fullPermissionTree, ['user' => $user], false));
         unset($user['roles']);
-        $this->assertTrue($lpFacade->checkAccess($rawPermissionTree, ['user' => $user], false));
+        $this->assertTrue($accessChecker->checkAccess($fullPermissionTree, ['user' => $user], false));
         $user['roles'] = ['editor'];
-        $this->assertTrue($lpFacade->checkAccess($rawPermissionTree, ['user' => $user], false));
+        $this->assertTrue($accessChecker->checkAccess($fullPermissionTree, ['user' => $user], false));
     }
 
     public function testImplicitORMixedNumericStringKeys()
     {
-        $locator = new PermissionCheckerLocator([new RolePermissionChecker()]);
-        $lpFacade = new LogicalPermissionsFacade($locator);
+        $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create(new RolePermissionChecker());
+        $accessChecker = new AccessChecker();
 
-        $rawPermissionTree = new RawPermissionTree([
+        $permissions = [
             'role' => [
                 'admin',
                 'AND' => [
@@ -331,24 +360,26 @@ class CheckAccessTest extends TestCase
                     ],
                 ],
             ],
-        ]);
+        ];
+        $fullPermissionTree = $fullTreeDeserializer->deserialize($permissions);
+
         $user = [
             'id'    => 1,
             'roles' => ['admin'],
         ];
 
-        $this->assertTrue($lpFacade->checkAccess($rawPermissionTree, ['user' => $user], false));
+        $this->assertTrue($accessChecker->checkAccess($fullPermissionTree, ['user' => $user], false));
         unset($user['roles']);
-        $this->assertFalse($lpFacade->checkAccess($rawPermissionTree, ['user' => $user], false));
+        $this->assertFalse($accessChecker->checkAccess($fullPermissionTree, ['user' => $user], false));
         $user['roles'] = ['editor'];
-        $this->assertFalse($lpFacade->checkAccess($rawPermissionTree, ['user' => $user], false));
+        $this->assertFalse($accessChecker->checkAccess($fullPermissionTree, ['user' => $user], false));
         $user['roles'] = ['editor', 'writer'];
-        $this->assertFalse($lpFacade->checkAccess($rawPermissionTree, ['user' => $user], false));
+        $this->assertFalse($accessChecker->checkAccess($fullPermissionTree, ['user' => $user], false));
         $user['roles'] = ['editor', 'writer', 'role1'];
-        $this->assertTrue($lpFacade->checkAccess($rawPermissionTree, ['user' => $user], false));
+        $this->assertTrue($accessChecker->checkAccess($fullPermissionTree, ['user' => $user], false));
         $user['roles'] = ['editor', 'writer', 'role2'];
-        $this->assertTrue($lpFacade->checkAccess($rawPermissionTree, ['user' => $user], false));
+        $this->assertTrue($accessChecker->checkAccess($fullPermissionTree, ['user' => $user], false));
         $user['roles'] = ['admin', 'writer'];
-        $this->assertTrue($lpFacade->checkAccess($rawPermissionTree, ['user' => $user], false));
+        $this->assertTrue($accessChecker->checkAccess($fullPermissionTree, ['user' => $user], false));
     }
 }
