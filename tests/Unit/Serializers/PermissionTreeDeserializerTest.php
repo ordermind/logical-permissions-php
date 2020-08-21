@@ -11,6 +11,7 @@ use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\FlagPermissionC
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\RolePermissionChecker;
 use Ordermind\LogicGates\LogicGateFactory;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use TypeError;
 use UnexpectedValueException;
 
@@ -22,7 +23,7 @@ class PermissionTreeDeserializerTest extends TestCase
     public function testIllegalPermissions(
         string $expectedClass,
         string $expectedMessage,
-        array $permissions
+        $permissions
     ) {
         $locator = new PermissionCheckerLocator([new RolePermissionChecker(), new FlagPermissionChecker()]);
         $deserializer = new PermissionTreeDeserializer($locator, new LogicGateFactory());
@@ -34,6 +35,13 @@ class PermissionTreeDeserializerTest extends TestCase
 
     public function illegalPermissionsProvider()
     {
+        yield [
+            TypeError::class,
+            'The permissions parameter must be an array or in certain cases a string or boolean. '
+                . 'Evaluated permissions: stdClass Object',
+            new stdClass(),
+        ];
+
         yield [
             TypeError::class,
             'A permission must either be a boolean, a string or an array. Evaluated permissions: 50',

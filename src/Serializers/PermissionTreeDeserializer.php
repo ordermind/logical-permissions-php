@@ -46,17 +46,27 @@ class PermissionTreeDeserializer
     }
 
     /**
-     * Deserializes a native array into a permission tree object.
+     * Deserializes a native permission tree into a permission tree object.
      *
-     * @param array $permissions
+     * @param array|string|bool $permissions
      *
      * @return PermissionTree
      *
      * @throws TypeError
      */
-    public function deserialize(array $permissions): PermissionTree
+    public function deserialize($permissions): PermissionTree
     {
-        if (!$permissions) {
+        if (!is_array($permissions) && !is_string($permissions) && !is_bool($permissions)) {
+            throw new TypeError(
+                sprintf(
+                    'The permissions parameter must be an array or in certain cases a string or boolean. '
+                        . 'Evaluated permissions: %s',
+                    print_r($permissions, true)
+                )
+            );
+        }
+
+        if (is_array($permissions) && !$permissions) {
             return new PermissionTree(new BooleanPermission(true));
         }
 

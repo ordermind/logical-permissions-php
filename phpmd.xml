@@ -33,6 +33,7 @@
 
     <rule ref="rulesets/naming.xml">
         <exclude name="BooleanGetMethodName" />
+        <exclude name="LongVariable" />
         <exclude name="ShortMethodName" />
     </rule>
     <rule ref="rulesets/naming.xml/ShortMethodName">

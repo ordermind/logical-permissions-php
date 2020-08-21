@@ -41,7 +41,7 @@ class TreeSerializationTest extends TestCase
 
         yield [
             [true],
-            [true],
+            true,
         ];
 
         yield [

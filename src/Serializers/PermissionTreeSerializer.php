@@ -24,13 +24,7 @@ class PermissionTreeSerializer
      */
     public function serialize(PermissionTree $permissionTree): array
     {
-        $permissions = $this->serializeNode($permissionTree->getRootNode());
-
-        if (!is_array($permissions)) {
-            return [$permissions];
-        }
-
-        return $permissions;
+        return (array) $this->serializeNode($permissionTree->getRootNode());
     }
 
     /**
@@ -38,16 +32,14 @@ class PermissionTreeSerializer
      *
      * @param PermissionTreeNodeInterface $node
      *
-     * @return mixed
+     * @return array|bool
      *
      * @throws UnexpectedValueException
      */
     private function serializeNode(PermissionTreeNodeInterface $node)
     {
         if ($node instanceof LogicGateInterface) {
-            return [$node->getName() => array_map(function (PermissionTreeNodeInterface $inputValue) {
-                return $this->serializeNode($inputValue);
-            }, $node->getInputValues())];
+            return [$node->getName() => array_map([$this, 'serializeNode'], $node->getInputValues())];
         }
 
         if ($node instanceof StringPermission) {
