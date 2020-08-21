@@ -14,7 +14,7 @@ interface PermissionCheckerInterface
      *
      * @return string
      */
-    public static function getName(): string;
+    public function getName(): string;
 
     /**
      * Checks if access should be granted for this permission value in a given context.

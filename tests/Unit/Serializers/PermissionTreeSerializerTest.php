@@ -4,21 +4,33 @@ declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions\Test\Unit\Serializers;
 
+use Ordermind\LogicalPermissions\PermissionCheckerInterface;
 use Ordermind\LogicalPermissions\PermissionTree\BooleanPermission;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTree;
 use Ordermind\LogicalPermissions\PermissionTree\StringPermission;
 use Ordermind\LogicalPermissions\Serializers\PermissionTreeSerializer;
-use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\RolePermissionChecker;
-use Ordermind\LogicGates\AndGate;
+use Ordermind\LogicGates\LogicGateEnum;
+use Ordermind\LogicGates\LogicGateInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class PermissionTreeSerializerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testSerializeLogicGate()
     {
-        $permission = new BooleanPermission(true);
-        $logicGate = new AndGate($permission, $permission);
-        $permissionTree = new PermissionTree($logicGate);
+        $mockPermission = $this->prophesize(BooleanPermission::class);
+        $mockPermission->getValue()->willReturn(true);
+
+        $mockLogicGate = $this->prophesize(LogicGateInterface::class);
+        $mockLogicGate->getName()->willReturn(LogicGateEnum::AND);
+        $mockLogicGate->getInputValues()->willReturn([$mockPermission->reveal(), $mockPermission->reveal()]);
+        $logicGate = $mockLogicGate->reveal();
+
+        $mockPermissionTree = $this->prophesize(PermissionTree::class);
+        $mockPermissionTree->getRootNode()->willReturn($logicGate);
+        $permissionTree = $mockPermissionTree->reveal();
 
         $serializer = new PermissionTreeSerializer();
         $expectedResult = [
@@ -33,9 +45,19 @@ class PermissionTreeSerializerTest extends TestCase
 
     public function testSerializeStringPermission()
     {
-        $permissionChecker = new RolePermissionChecker();
-        $permission = new StringPermission($permissionChecker, 'admin');
-        $permissionTree = new PermissionTree($permission);
+        $mockPermissionChecker = $this->prophesize(PermissionCheckerInterface::class);
+        $mockPermissionChecker->getName()->willReturn('role');
+        $permissionChecker = $mockPermissionChecker->reveal();
+
+        $mockPermission = $this->prophesize(StringPermission::class);
+        $mockPermission->getPermissionChecker()->willReturn($permissionChecker);
+        $mockPermission->getPermissionValue()->willReturn('admin');
+        $permission = $mockPermission->reveal();
+
+        $mockPermissionTree = $this->prophesize(PermissionTree::class);
+        $mockPermissionTree->getRootNode()->willReturn($permission);
+        $permissionTree = $mockPermissionTree->reveal();
+
         $serializer = new PermissionTreeSerializer();
         $expectedResult = ['role' => 'admin'];
         $this->assertSame($expectedResult, $serializer->serialize($permissionTree));
@@ -43,8 +65,14 @@ class PermissionTreeSerializerTest extends TestCase
 
     public function testSerializeBooleanPermission()
     {
-        $permission = new BooleanPermission(true);
-        $permissionTree = new PermissionTree($permission);
+        $mockPermission = $this->prophesize(BooleanPermission::class);
+        $mockPermission->getValue()->willReturn(true);
+        $permission = $mockPermission->reveal();
+
+        $mockPermissionTree = $this->prophesize(PermissionTree::class);
+        $mockPermissionTree->getRootNode()->willReturn($permission);
+        $permissionTree = $mockPermissionTree->reveal();
+
         $serializer = new PermissionTreeSerializer();
         $expectedResult = [true];
         $this->assertSame($expectedResult, $serializer->serialize($permissionTree));

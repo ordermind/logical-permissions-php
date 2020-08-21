@@ -20,7 +20,7 @@ use Ordermind\LogicalPermissions\PermissionCheckerInterface;
 
 class MyPermissionChecker implements PermissionCheckerInterface 
 {
-    public static function getName() : string 
+    public function getName() : string 
     {
         return 'role';
     }

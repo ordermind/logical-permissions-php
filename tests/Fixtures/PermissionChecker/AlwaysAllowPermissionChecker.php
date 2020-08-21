@@ -11,7 +11,7 @@ class AlwaysAllowPermissionChecker implements PermissionCheckerInterface
     /**
      * {@inheritDoc}
      */
-    public static function getName(): string
+    public function getName(): string
     {
         return 'always_allow';
     }
