@@ -182,7 +182,7 @@ class CheckAccessTest extends TestCase
             'NAND' => [true,  true,  true,  true,  true,  true,  true,  false],
             'OR'   => [false, true,  true,  true,  true,  true,  true,  true],
             'NOR'  => [true,  false, false, false, false, false, false, false],
-            'XOR'  => [false, true,  true,  true,  true,  true,  true,  false],
+            'XOR'  => [false, true,  true,  false, true,  false, false, true],
         ];
 
         foreach ($truthTables as $gateName => $truthTable) {
