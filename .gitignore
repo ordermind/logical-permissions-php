@@ -4,6 +4,8 @@
 !/.travis.yml
 !/README.md
 !/LICENSE
+!/ci
+!/ci/**
 !/src
 !/src/**
 !/phpunit.xml*

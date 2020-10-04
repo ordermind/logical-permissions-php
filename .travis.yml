@@ -1,7 +1,10 @@
 language: php
 php:
-  - '7.3'
   - '7.4'
 install: composer install
+jobs:
+  include:
+    - script: ./ci/run_linters.sh
+    - script: ./ci/run_tests.sh
 notifications:
   email: false
