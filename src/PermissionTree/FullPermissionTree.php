@@ -9,15 +9,8 @@ namespace Ordermind\LogicalPermissions\PermissionTree;
  */
 class FullPermissionTree
 {
-    /**
-     * @var PermissionTree
-     */
-    private $mainTree;
-
-    /**
-     * @var PermissionTree|null
-     */
-    private $noBypassTree;
+    private PermissionTree $mainTree;
+    private ?PermissionTree $noBypassTree;
 
     public function __construct(PermissionTree $mainTree, ?PermissionTree $noBypassTree = null)
     {

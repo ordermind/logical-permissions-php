@@ -13,10 +13,7 @@ use TypeError;
  */
 class AccessChecker implements AccessCheckerInterface
 {
-    /**
-     * @var BypassAccessCheckerInterface|null
-     */
-    protected $bypassAccessChecker;
+    protected ?BypassAccessCheckerInterface $bypassAccessChecker;
 
     /**
      * AccessChecker constructor.

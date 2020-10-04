@@ -11,10 +11,7 @@ use Ordermind\LogicGates\LogicGateInputValueInterface as PermissionTreeNodeInter
  */
 class BooleanPermission implements PermissionTreeNodeInterface
 {
-    /**
-     * @var bool
-     */
-    private $value;
+    private bool $value;
 
     /**
      * BooleanPermission constructor.

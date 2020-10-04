@@ -21,15 +21,8 @@ use UnexpectedValueException;
  */
 class PermissionTreeDeserializer
 {
-    /**
-     * @var PermissionCheckerLocatorInterface
-     */
-    private $locator;
-
-    /**
-     * @var LogicGateFactory
-     */
-    private $logicGateFactory;
+    private PermissionCheckerLocatorInterface $locator;
+    private LogicGateFactory $logicGateFactory;
 
     /**
      * PermissionTreeDeserializer constructor.

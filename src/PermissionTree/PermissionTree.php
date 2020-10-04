@@ -11,10 +11,7 @@ use Ordermind\LogicGates\LogicGateInputValueInterface as PermissionTreeNodeInter
  */
 class PermissionTree
 {
-    /**
-     * @var PermissionTreeNodeInterface
-     */
-    private $rootNode;
+    private PermissionTreeNodeInterface $rootNode;
 
     /**
      * PermissionTree constructor.

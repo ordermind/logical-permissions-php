@@ -12,15 +12,8 @@ use Ordermind\LogicGates\LogicGateInputValueInterface as PermissionTreeNodeInter
  */
 class StringPermission implements PermissionTreeNodeInterface
 {
-    /**
-     * @var PermissionCheckerInterface
-     */
-    private $permissionChecker;
-
-    /**
-     * @var string
-     */
-    private $permissionValue;
+    private PermissionCheckerInterface $permissionChecker;
+    private string $permissionValue;
 
     /**
      * StringPermission constructor.

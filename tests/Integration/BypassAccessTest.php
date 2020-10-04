@@ -15,10 +15,7 @@ use stdClass;
 
 class BypassAccessTest extends TestCase
 {
-    /**
-     * @var DefaultFullPermissionTreeDeserializerFactory
-     */
-    private $fullTreeDeserializerFactory;
+    private DefaultFullPermissionTreeDeserializerFactory $fullTreeDeserializerFactory;
 
     protected function setUp(): void
     {

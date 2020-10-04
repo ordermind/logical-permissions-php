@@ -18,7 +18,7 @@ class PermissionCheckerLocator implements PermissionCheckerLocatorInterface
     /**
      * @var PermissionCheckerInterface[]
      */
-    protected $permissionCheckers = [];
+    protected array $permissionCheckers = [];
 
     /**
      * PermissionCheckerLocator constructor.

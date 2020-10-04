@@ -256,7 +256,7 @@ Examples:
 
 ### XOR
 
-A logic XOR gate returns true if one or more of its children returns true and one or more of its children returns false. Otherwise it returns false. An XOR gate requires a minimum of two elements in its value array.
+The output of the XOR gate is `true` if the number of `true` input values is odd, otherwise the output is `false`. An XOR gate requires a minimum of two elements in its value array. If the number of input values for the XOR gate is greater than 2, it behaves as a cascade of 2-input gates and performs an odd-parity function.
 
 Examples:
 

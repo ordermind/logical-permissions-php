@@ -12,10 +12,7 @@ use TypeError;
  */
 class FullPermissionTreeDeserializer
 {
-    /**
-     * @var PermissionTreeDeserializer
-     */
-    private $treeDeserializer;
+    private PermissionTreeDeserializer $treeDeserializer;
 
     public function __construct(PermissionTreeDeserializer $treeDeserializer)
     {

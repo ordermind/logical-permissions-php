@@ -13,10 +13,7 @@ use PHPUnit\Framework\TestCase;
 
 class CheckAccessTest extends TestCase
 {
-    /**
-     * @var DefaultFullPermissionTreeDeserializerFactory
-     */
-    private $fullTreeDeserializerFactory;
+    private DefaultFullPermissionTreeDeserializerFactory $fullTreeDeserializerFactory;
 
     protected function setUp(): void
     {
