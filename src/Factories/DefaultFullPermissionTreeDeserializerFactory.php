@@ -19,9 +19,17 @@ class DefaultFullPermissionTreeDeserializerFactory
     {
         return new FullPermissionTreeDeserializer(
             new PermissionTreeDeserializer(
-                new PermissionCheckerLocator($permissionCheckers),
+                new PermissionCheckerLocator(...$permissionCheckers),
                 new LogicGateFactory()
             )
         );
+    }
+
+    /**
+     * @param iterable<PermissionCheckerInterface> $permissionCheckers
+     */
+    public function createFromIterable(iterable $permissionCheckers): FullPermissionTreeDeserializer
+    {
+        return $this->create(...$permissionCheckers);
     }
 }

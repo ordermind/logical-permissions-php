@@ -110,7 +110,7 @@ class PermissionCheckerLocatorTest extends TestCase
 
     public function testRemove()
     {
-        $locator = new PermissionCheckerLocator([new AlwaysAllowPermissionChecker()]);
+        $locator = new PermissionCheckerLocator(new AlwaysAllowPermissionChecker());
         $locator->remove('always_allow');
         $this->assertFalse($locator->has('always_allow'));
     }
@@ -157,7 +157,7 @@ class PermissionCheckerLocatorTest extends TestCase
     public function testGet()
     {
         $permissionChecker = new AlwaysAllowPermissionChecker();
-        $locator = new PermissionCheckerLocator([$permissionChecker]);
+        $locator = new PermissionCheckerLocator($permissionChecker);
 
         $this->assertSame($locator->get('always_allow'), $permissionChecker);
     }

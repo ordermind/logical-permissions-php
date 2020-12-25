@@ -17,7 +17,7 @@ class TreeSerializationTest extends TestCase
      */
     public function testPermissionTreeSerialization($expectedOutput, $permissions)
     {
-        $locator = new PermissionCheckerLocator([new RolePermissionChecker()]);
+        $locator = new PermissionCheckerLocator(new RolePermissionChecker());
         $deserializer = PermissionTreeDeserializerFactory::create($locator);
         $serializer = new PermissionTreeSerializer();
 

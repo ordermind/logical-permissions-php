@@ -25,7 +25,7 @@ class PermissionTreeDeserializerTest extends TestCase
         string $expectedMessage,
         $permissions
     ) {
-        $locator = new PermissionCheckerLocator([new RolePermissionChecker(), new FlagPermissionChecker()]);
+        $locator = new PermissionCheckerLocator(new RolePermissionChecker(), new FlagPermissionChecker());
         $deserializer = new PermissionTreeDeserializer($locator, new LogicGateFactory());
 
         $this->expectException($expectedClass);

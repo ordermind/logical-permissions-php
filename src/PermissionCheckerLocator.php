@@ -20,12 +20,7 @@ class PermissionCheckerLocator implements PermissionCheckerLocatorInterface
      */
     protected array $permissionCheckers = [];
 
-    /**
-     * PermissionCheckerLocator constructor.
-     *
-     * @param iterable|PermissionCheckerInterface[] $permissionCheckers
-     */
-    public function __construct(iterable $permissionCheckers = [])
+    public function __construct(PermissionCheckerInterface ...$permissionCheckers)
     {
         foreach ($permissionCheckers as $permissionChecker) {
             $this->add($permissionChecker);
