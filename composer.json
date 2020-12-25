@@ -1,6 +1,6 @@
 {
     "name": "ordermind/logical-permissions",
-    "version": "3.0.0-alpha4",
+    "version": "3.0.0-alpha5",
     "license": "MIT",
     "description": "Provides support for array-based permissions with logic gates such as AND and OR.",
     "keywords": [
