@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions\Test\Unit\PermissionTree;
 
-use Ordermind\LogicalPermissions\PermissionTree\BooleanPermission;
+use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\BooleanPermission;
 use PHPUnit\Framework\TestCase;
 
 class BooleanPermissionTest extends TestCase

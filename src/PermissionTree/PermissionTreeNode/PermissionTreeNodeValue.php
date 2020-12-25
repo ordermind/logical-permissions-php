@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ordermind\LogicalPermissions\PermissionTree;
+namespace Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode;
 
 class PermissionTreeNodeValue
 {

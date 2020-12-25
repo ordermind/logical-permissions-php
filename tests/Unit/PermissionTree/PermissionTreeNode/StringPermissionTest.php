@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions\Test\Unit\PermissionTree;
 
-use Ordermind\LogicalPermissions\PermissionTree\StringPermission;
+use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\StringPermission;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\AlwaysAllowPermissionChecker;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\ContextPermissionChecker;
 use PHPUnit\Framework\TestCase;
 
-class PermissionTest extends TestCase
+class StringPermissionTest extends TestCase
 {
     public function testGetPermissionType()
     {

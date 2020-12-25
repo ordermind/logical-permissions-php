@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ordermind\LogicalPermissions\Serializers;
 
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTree;
-use Ordermind\LogicalPermissions\PermissionTree\StringPermission;
+use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\StringPermission;
 use Ordermind\LogicGates\LogicGateInputValueInterface as PermissionTreeNodeInterface;
 use Ordermind\LogicGates\LogicGateInterface;
 use UnexpectedValueException;
