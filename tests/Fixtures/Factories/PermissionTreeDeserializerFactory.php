@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions\Test\Fixtures\Factories;
 
+use Ordermind\LogicalPermissions\Factories\LogicGateNodeFactory;
 use Ordermind\LogicalPermissions\PermissionCheckerLocator;
 use Ordermind\LogicalPermissions\PermissionCheckerLocatorInterface;
 use Ordermind\LogicalPermissions\PermissionTypeCollection;
@@ -25,6 +26,8 @@ class PermissionTreeDeserializerFactory
             $locator = new PermissionCheckerLocator();
         }
 
-        return new PermissionTreeDeserializer($locator, new LogicGateFactory());
+        $factory = new LogicGateNodeFactory(new LogicGateFactory());
+
+        return new PermissionTreeDeserializer($locator, $factory);
     }
 }

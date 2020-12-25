@@ -20,7 +20,7 @@ class DefaultFullPermissionTreeDeserializerFactory
         return new FullPermissionTreeDeserializer(
             new PermissionTreeDeserializer(
                 new PermissionCheckerLocator(...$permissionCheckers),
-                new LogicGateFactory()
+                new LogicGateNodeFactory(new LogicGateFactory())
             )
         );
     }

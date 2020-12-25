@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Ordermind\LogicalPermissions\Serializers;
 
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTree;
+use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\LogicGateNode;
+use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\PermissionTreeNodeInterface;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\StringPermission;
-use Ordermind\LogicGates\LogicGateInputValueInterface as PermissionTreeNodeInterface;
-use Ordermind\LogicGates\LogicGateInterface;
 use UnexpectedValueException;
 
 /**
@@ -38,7 +38,7 @@ class PermissionTreeSerializer
      */
     private function serializeNode(PermissionTreeNodeInterface $node)
     {
-        if ($node instanceof LogicGateInterface) {
+        if ($node instanceof LogicGateNode) {
             return [$node->getName() => array_map([$this, 'serializeNode'], $node->getInputValues())];
         }
 

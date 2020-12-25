@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ordermind\LogicalPermissions\Test\Unit\Factories;
 
 use Ordermind\LogicalPermissions\Factories\DefaultFullPermissionTreeDeserializerFactory;
+use Ordermind\LogicalPermissions\Factories\LogicGateNodeFactory;
 use Ordermind\LogicalPermissions\PermissionCheckerLocator;
 use Ordermind\LogicalPermissions\Serializers\FullPermissionTreeDeserializer;
 use Ordermind\LogicalPermissions\Serializers\PermissionTreeDeserializer;
@@ -22,7 +23,7 @@ class DefaultFullPermissionTreeDeserializerFactoryTest extends TestCase
         $expected = new FullPermissionTreeDeserializer(
             new PermissionTreeDeserializer(
                 new PermissionCheckerLocator(...$permissionCheckers),
-                new LogicGateFactory()
+                new LogicGateNodeFactory(new LogicGateFactory())
             )
         );
         $this->assertEquals($expected, $factory->create(...$permissionCheckers));
@@ -35,7 +36,7 @@ class DefaultFullPermissionTreeDeserializerFactoryTest extends TestCase
         $expected = new FullPermissionTreeDeserializer(
             new PermissionTreeDeserializer(
                 new PermissionCheckerLocator(...$permissionCheckers),
-                new LogicGateFactory()
+                new LogicGateNodeFactory(new LogicGateFactory())
             )
         );
         $this->assertEquals($expected, $factory->createFromIterable($permissionCheckers));

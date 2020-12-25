@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode;
 
-use Ordermind\LogicGates\LogicGateInputValueInterface as PermissionTreeNodeInterface;
-
 /**
  * @internal
  */
@@ -14,13 +12,20 @@ class BooleanPermission implements PermissionTreeNodeInterface
     private bool $value;
 
     /**
+     * @var bool|string
+     */
+    private $debugPermissions;
+
+    /**
      * BooleanPermission constructor.
      *
-     * @param bool $value
+     * @param bool        $value
+     * @param bool|string $debugPermissions
      */
-    public function __construct(bool $value)
+    public function __construct(bool $value, $debugPermissions)
     {
         $this->value = $value;
+        $this->debugPermissions = $debugPermissions;
     }
 
     /**
@@ -31,5 +36,16 @@ class BooleanPermission implements PermissionTreeNodeInterface
     public function getValue($context = null): bool
     {
         return $this->value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDebugValue($context = null): PermissionTreeNodeDebugValue
+    {
+        return new PermissionTreeNodeDebugValue(
+            $this->getValue($context),
+            $this->debugPermissions
+        );
     }
 }

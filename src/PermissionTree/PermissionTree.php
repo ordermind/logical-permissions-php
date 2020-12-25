@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions\PermissionTree;
 
-use Ordermind\LogicGates\LogicGateInputValueInterface as PermissionTreeNodeInterface;
+use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\PermissionTreeNodeInterface;
 
 /**
  * @internal

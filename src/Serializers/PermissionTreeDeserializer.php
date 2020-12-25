@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Ordermind\LogicalPermissions\Serializers;
 
 use Ordermind\LogicalPermissions\Exceptions\PermissionTypeNotRegisteredException;
+use Ordermind\LogicalPermissions\Factories\LogicGateNodeFactory;
 use Ordermind\LogicalPermissions\Helpers\Helper;
 use Ordermind\LogicalPermissions\PermissionCheckerLocatorInterface;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTree;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\BooleanPermission;
+use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\PermissionTreeNodeInterface;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\StringPermission;
 use Ordermind\LogicGates\LogicGateEnum;
-use Ordermind\LogicGates\LogicGateFactory;
-use Ordermind\LogicGates\LogicGateInputValueInterface as PermissionTreeNodeInterface;
 use TypeError;
 use UnexpectedValueException;
 
@@ -22,20 +22,20 @@ use UnexpectedValueException;
 class PermissionTreeDeserializer
 {
     private PermissionCheckerLocatorInterface $locator;
-    private LogicGateFactory $logicGateFactory;
+    private LogicGateNodeFactory $logicGateNodeFactory;
 
     /**
      * PermissionTreeDeserializer constructor.
      *
      * @param PermissionCheckerLocatorInterface $locator
-     * @param LogicGateFactory                  $logicGateFactory
+     * @param LogicGateNodeFactory              $logicGateNodeFactory
      */
     public function __construct(
         PermissionCheckerLocatorInterface $locator,
-        LogicGateFactory $logicGateFactory
+        LogicGateNodeFactory $logicGateNodeFactory
     ) {
         $this->locator = $locator;
-        $this->logicGateFactory = $logicGateFactory;
+        $this->logicGateNodeFactory = $logicGateNodeFactory;
     }
 
     /**
@@ -60,11 +60,11 @@ class PermissionTreeDeserializer
         }
 
         if (is_array($permissions) && !$permissions) {
-            return new PermissionTree(new BooleanPermission(true));
+            return new PermissionTree(new BooleanPermission(true, true));
         }
 
         return new PermissionTree(
-            $this->wrapInputValues(LogicGateEnum::OR, $this->parseValue(null, $permissions, null))
+            $this->wrapInputValues(LogicGateEnum::OR, $this->parseValue(null, $permissions, null), $permissions)
         );
     }
 
@@ -82,11 +82,13 @@ class PermissionTreeDeserializer
     protected function parseValue($parentKey, $permissions, ?string $type): array
     {
         if (is_bool($permissions)) {
-            return [$this->parseBoolean($permissions, $type)];
+            return [$this->parseBoolean($permissions, $permissions, $type)];
         }
 
         if (is_string($permissions)) {
-            return [$this->parseString($permissions, $type)];
+            $debugPermissions = is_numeric($parentKey) ? $permissions : [$parentKey => $permissions];
+
+            return [$this->parseString($permissions, $debugPermissions, $type)];
         }
 
         if (is_array($permissions)) {
@@ -105,13 +107,14 @@ class PermissionTreeDeserializer
      * Parses a boolean permission value.
      *
      * @param bool        $permission
+     * @param string|bool $debugPermissions
      * @param string|null $type
      *
      * @return BooleanPermission
      *
      * @throws UnexpectedValueException
      */
-    protected function parseBoolean(bool $permission, ?string $type): BooleanPermission
+    protected function parseBoolean(bool $permission, $debugPermissions, ?string $type): BooleanPermission
     {
         if (!is_null($type)) {
             throw new UnexpectedValueException(
@@ -120,31 +123,32 @@ class PermissionTreeDeserializer
             );
         }
 
-        return new BooleanPermission($permission);
+        return new BooleanPermission($permission, $debugPermissions);
     }
 
     /**
      * Parses a string permission value.
      *
-     * @param string      $permission
-     * @param string|null $type
+     * @param string       $permission
+     * @param array|string $debugPermissions
+     * @param string|null  $type
      *
      * @return PermissionTreeNodeInterface
      *
      * @throws UnexpectedValueException
      */
-    protected function parseString(string $permission, ?string $type): PermissionTreeNodeInterface
+    protected function parseString(string $permission, $debugPermissions, ?string $type): PermissionTreeNodeInterface
     {
         if (empty($permission)) {
             throw new UnexpectedValueException('You cannot use an empty string in a permission tree.');
         }
 
         if ('TRUE' === strtoupper($permission)) {
-            return $this->parseBoolean(true, $type);
+            return $this->parseBoolean(true, $debugPermissions, $type);
         }
 
         if ('FALSE' === strtoupper($permission)) {
-            return $this->parseBoolean(false, $type);
+            return $this->parseBoolean(false, $debugPermissions, $type);
         }
 
         if (!$type) {
@@ -156,7 +160,7 @@ class PermissionTreeDeserializer
 
         $permissionChecker = $this->locator->get($type);
 
-        return new StringPermission($permissionChecker, $permission);
+        return new StringPermission($permissionChecker, $permission, $debugPermissions);
     }
 
     /**
@@ -175,7 +179,7 @@ class PermissionTreeDeserializer
         }, array_keys($permissions), $permissions);
 
         if (count($permissions) > 1 && !LogicGateEnum::isValid($parentKey)) {
-            $value = [$this->wrapInputValues(LogicGateEnum::OR, $value)];
+            $value = [$this->wrapInputValues(LogicGateEnum::OR, $value, $permissions)];
         }
 
         return $value;
@@ -214,7 +218,7 @@ class PermissionTreeDeserializer
         if (LogicGateEnum::isValid($keyUpper)) {
             $inputValues = $this->parseValue($keyUpper, $value, $type);
 
-            return [$this->wrapInputValues($keyUpper, $inputValues)];
+            return [$this->wrapInputValues($keyUpper, $inputValues, $permissions)];
         }
 
         if ('TRUE' === $keyUpper || 'FALSE' === $keyUpper) {
@@ -246,21 +250,26 @@ class PermissionTreeDeserializer
     /**
      * Optimizes input values and wraps them in a logic gate if appropriate.
      *
-     * @param string $logicGateName
-     * @param array  $inputValues
+     * @param string            $logicGateName
+     * @param array             $inputValues
+     * @param array|string|bool $debugPermissions
      *
      * @return PermissionTreeNodeInterface
      */
-    protected function wrapInputValues(string $logicGateName, array $inputValues): PermissionTreeNodeInterface
-    {
+    protected function wrapInputValues(
+        string $logicGateName,
+        array $inputValues,
+        $debugPermissions
+    ): PermissionTreeNodeInterface {
         $inputValues = Helper::flattenNumericArray($inputValues);
 
         if (count($inputValues) == 1 && in_array($logicGateName, [LogicGateEnum::AND, LogicGateEnum::OR])) {
             return $inputValues[0];
         }
 
-        return $this->logicGateFactory->createFromEnum(
+        return $this->logicGateNodeFactory->createFromEnum(
             new LogicGateEnum($logicGateName),
+            $debugPermissions,
             ...$inputValues
         );
     }

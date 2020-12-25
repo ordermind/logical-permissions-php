@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode;
 
 use Ordermind\LogicalPermissions\PermissionCheckerInterface;
-use Ordermind\LogicGates\LogicGateInputValueInterface as PermissionTreeNodeInterface;
 
 /**
  * @internal
@@ -13,18 +12,29 @@ use Ordermind\LogicGates\LogicGateInputValueInterface as PermissionTreeNodeInter
 class StringPermission implements PermissionTreeNodeInterface
 {
     private PermissionCheckerInterface $permissionChecker;
+
     private string $permissionValue;
+
+    /**
+     * @var array|string
+     */
+    private $debugPermissions;
 
     /**
      * StringPermission constructor.
      *
      * @param PermissionCheckerInterface $permissionChecker
      * @param string                     $permissionValue
+     * @param array|string               $debugPermissions
      */
-    public function __construct(PermissionCheckerInterface $permissionChecker, string $permissionValue)
-    {
+    public function __construct(
+        PermissionCheckerInterface $permissionChecker,
+        string $permissionValue,
+        $debugPermissions
+    ) {
         $this->permissionChecker = $permissionChecker;
         $this->permissionValue = $permissionValue;
+        $this->debugPermissions = $debugPermissions;
     }
 
     /**
@@ -53,5 +63,16 @@ class StringPermission implements PermissionTreeNodeInterface
     public function getPermissionValue(): string
     {
         return $this->permissionValue;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDebugValue($context = null): PermissionTreeNodeDebugValue
+    {
+        return new PermissionTreeNodeDebugValue(
+            $this->getValue($context),
+            $this->debugPermissions
+        );
     }
 }

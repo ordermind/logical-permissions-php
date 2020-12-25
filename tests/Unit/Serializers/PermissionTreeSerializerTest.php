@@ -7,6 +7,7 @@ namespace Ordermind\LogicalPermissions\Test\Unit\Serializers;
 use Ordermind\LogicalPermissions\PermissionCheckerInterface;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTree;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\BooleanPermission;
+use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\LogicGateNode;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\StringPermission;
 use Ordermind\LogicalPermissions\Serializers\PermissionTreeSerializer;
 use Ordermind\LogicGates\LogicGateEnum;
@@ -27,9 +28,10 @@ class PermissionTreeSerializerTest extends TestCase
         $mockLogicGate->getName()->willReturn(LogicGateEnum::AND);
         $mockLogicGate->getInputValues()->willReturn([$mockPermission->reveal(), $mockPermission->reveal()]);
         $logicGate = $mockLogicGate->reveal();
+        $logicGateNode = new LogicGateNode($logicGate, []);
 
         $mockPermissionTree = $this->prophesize(PermissionTree::class);
-        $mockPermissionTree->getRootNode()->willReturn($logicGate);
+        $mockPermissionTree->getRootNode()->willReturn($logicGateNode);
         $permissionTree = $mockPermissionTree->reveal();
 
         $serializer = new PermissionTreeSerializer();

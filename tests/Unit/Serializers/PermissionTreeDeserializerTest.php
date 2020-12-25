@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ordermind\LogicalPermissions\Test\Unit\Serializers;
 
 use Ordermind\LogicalPermissions\Exceptions\PermissionTypeNotRegisteredException;
+use Ordermind\LogicalPermissions\Factories\LogicGateNodeFactory;
 use Ordermind\LogicalPermissions\PermissionCheckerLocator;
 use Ordermind\LogicalPermissions\Serializers\PermissionTreeDeserializer;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\FlagPermissionChecker;
@@ -26,7 +27,8 @@ class PermissionTreeDeserializerTest extends TestCase
         $permissions
     ) {
         $locator = new PermissionCheckerLocator(new RolePermissionChecker(), new FlagPermissionChecker());
-        $deserializer = new PermissionTreeDeserializer($locator, new LogicGateFactory());
+        $factory = new LogicGateNodeFactory(new LogicGateFactory());
+        $deserializer = new PermissionTreeDeserializer($locator, $factory);
 
         $this->expectException($expectedClass);
         $this->expectExceptionMessage($expectedMessage);
@@ -119,7 +121,8 @@ class PermissionTreeDeserializerTest extends TestCase
 
     public function testDeserializeParamPermissionsUnregisteredType()
     {
-        $deserializer = new PermissionTreeDeserializer(new PermissionCheckerLocator(), new LogicGateFactory());
+        $factory = new LogicGateNodeFactory(new LogicGateFactory());
+        $deserializer = new PermissionTreeDeserializer(new PermissionCheckerLocator(), $factory);
 
         $permissions = [
             'flag' => 'testflag',

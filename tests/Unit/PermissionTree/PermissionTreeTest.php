@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ordermind\LogicalPermissions\Test\Unit\PermissionTree;
 
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTree;
-use Ordermind\LogicGates\LogicGateInputValueInterface as PermissionTreeNodeInterface;
+use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\PermissionTreeNodeInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 

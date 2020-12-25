@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode;
 
-class PermissionTreeNodeValue
+/**
+ * DTO that holds the evaluated value and debug information of a permission tree node.
+ */
+class PermissionTreeNodeDebugValue
 {
     private bool $internalValue;
 
