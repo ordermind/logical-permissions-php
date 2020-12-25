@@ -19,6 +19,18 @@ use UnexpectedValueException;
 
 class PermissionCheckerLocatorTest extends TestCase
 {
+    // -----------PermissionCheckerLocator::fromIterable()-------------
+
+    public function testFromIterable()
+    {
+        $checker1 = new AlwaysAllowPermissionChecker();
+        $checker2 = new FlagPermissionChecker();
+
+        $locator = new PermissionCheckerLocator($checker1, $checker2);
+        $this->assertSame(['always_allow' => $checker1, 'flag' => $checker2], $locator->all());
+        $this->assertEquals($locator, PermissionCheckerLocator::fromIterable([$checker1, $checker2]));
+    }
+
     // -----------PermissionCheckerLocator::add()-------------
 
     public function testAddWrongNameType()

@@ -28,6 +28,14 @@ class PermissionCheckerLocator implements PermissionCheckerLocatorInterface
     }
 
     /**
+     * @param iterable<PermissionCheckerInterface> $permissionCheckers
+     */
+    public static function fromIterable(iterable $permissionCheckers): self
+    {
+        return new self(...$permissionCheckers);
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function add(
