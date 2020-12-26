@@ -44,4 +44,21 @@ class PermissionTree
     {
         return $this->rootNode->getValue($context);
     }
+
+    /**
+     * Evaluates the permission tree and returns the resulting value, together with debug information for each node.
+     *
+     * @param array|object|null $context
+     *
+     * @return DebugPermissionTreeResult
+     */
+    public function evaluateWithDebug($context = null): DebugPermissionTreeResult
+    {
+        $debugValues = $this->rootNode->getDebugValues($context);
+
+        return new DebugPermissionTreeResult(
+            $debugValues[0]->getResultValue(),
+            ...$debugValues
+        );
+    }
 }

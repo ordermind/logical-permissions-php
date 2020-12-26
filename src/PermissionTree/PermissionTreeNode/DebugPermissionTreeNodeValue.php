@@ -7,27 +7,27 @@ namespace Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode;
 /**
  * DTO that holds the evaluated value and debug information of a permission tree node.
  */
-class PermissionTreeNodeDebugValue
+class DebugPermissionTreeNodeValue
 {
-    private bool $internalValue;
+    protected bool $resultValue;
 
     /**
      * @param array|string|bool $permissions
      */
-    private $permissions;
+    protected $permissions;
 
     /**
      * @param array|string|bool $permissions
      */
-    public function __construct(bool $internalValue, $permissions)
+    public function __construct(bool $resultValue, $permissions)
     {
-        $this->internalValue = $internalValue;
+        $this->resultValue = $resultValue;
         $this->permissions = $permissions;
     }
 
-    public function getInternalValue(): bool
+    public function getResultValue(): bool
     {
-        return $this->internalValue;
+        return $this->resultValue;
     }
 
     /**

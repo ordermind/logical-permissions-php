@@ -13,7 +13,7 @@ interface PermissionTreeNodeInterface extends LogicGateInputValueInterface
      *
      * @param mixed $context
      *
-     * @return PermissionTreeNodeDebugValue[]
+     * @return DebugPermissionTreeNodeValue[]
      */
     public function getDebugValues($context = null): array;
 }

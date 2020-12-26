@@ -14,18 +14,18 @@ class BooleanPermission implements PermissionTreeNodeInterface
     /**
      * @var bool|string
      */
-    private $debugPermissions;
+    private $serializedPermissions;
 
     /**
      * BooleanPermission constructor.
      *
      * @param bool        $value
-     * @param bool|string $debugPermissions
+     * @param bool|string $serializedPermissions
      */
-    public function __construct(bool $value, $debugPermissions)
+    public function __construct(bool $value, $serializedPermissions)
     {
         $this->value = $value;
-        $this->debugPermissions = $debugPermissions;
+        $this->serializedPermissions = $serializedPermissions;
     }
 
     /**
@@ -43,9 +43,9 @@ class BooleanPermission implements PermissionTreeNodeInterface
      */
     public function getDebugValues($context = null): array
     {
-        return [new PermissionTreeNodeDebugValue(
+        return [new DebugPermissionTreeNodeValue(
             $this->getValue($context),
-            $this->debugPermissions
+            $this->serializedPermissions
         )];
     }
 }

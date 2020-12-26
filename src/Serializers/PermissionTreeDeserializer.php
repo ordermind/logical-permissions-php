@@ -86,9 +86,9 @@ class PermissionTreeDeserializer
         }
 
         if (is_string($permissions)) {
-            $debugPermissions = is_numeric($parentKey) ? $permissions : [$parentKey => $permissions];
+            $serializedPermissions = is_numeric($parentKey) ? $permissions : [$parentKey => $permissions];
 
-            return [$this->parseString($permissions, $debugPermissions, $type)];
+            return [$this->parseString($permissions, $serializedPermissions, $type)];
         }
 
         if (is_array($permissions)) {
@@ -107,14 +107,14 @@ class PermissionTreeDeserializer
      * Parses a boolean permission value.
      *
      * @param bool        $permission
-     * @param string|bool $debugPermissions
+     * @param string|bool $serializedPermissions
      * @param string|null $type
      *
      * @return BooleanPermission
      *
      * @throws UnexpectedValueException
      */
-    protected function parseBoolean(bool $permission, $debugPermissions, ?string $type): BooleanPermission
+    protected function parseBoolean(bool $permission, $serializedPermissions, ?string $type): BooleanPermission
     {
         if (!is_null($type)) {
             throw new UnexpectedValueException(
@@ -123,32 +123,32 @@ class PermissionTreeDeserializer
             );
         }
 
-        return new BooleanPermission($permission, $debugPermissions);
+        return new BooleanPermission($permission, $serializedPermissions);
     }
 
     /**
      * Parses a string permission value.
      *
      * @param string       $permission
-     * @param array|string $debugPermissions
+     * @param array|string $serializedPermissions
      * @param string|null  $type
      *
      * @return PermissionTreeNodeInterface
      *
      * @throws UnexpectedValueException
      */
-    protected function parseString(string $permission, $debugPermissions, ?string $type): PermissionTreeNodeInterface
+    protected function parseString(string $permission, $serializedPermissions, ?string $type): PermissionTreeNodeInterface
     {
         if (empty($permission)) {
             throw new UnexpectedValueException('You cannot use an empty string in a permission tree.');
         }
 
         if ('TRUE' === strtoupper($permission)) {
-            return $this->parseBoolean(true, $debugPermissions, $type);
+            return $this->parseBoolean(true, $serializedPermissions, $type);
         }
 
         if ('FALSE' === strtoupper($permission)) {
-            return $this->parseBoolean(false, $debugPermissions, $type);
+            return $this->parseBoolean(false, $serializedPermissions, $type);
         }
 
         if (!$type) {
@@ -252,14 +252,14 @@ class PermissionTreeDeserializer
      *
      * @param string            $logicGateName
      * @param array             $inputValues
-     * @param array|string|bool $debugPermissions
+     * @param array|string|bool $serializedPermissions
      *
      * @return PermissionTreeNodeInterface
      */
     protected function wrapInputValues(
         string $logicGateName,
         array $inputValues,
-        $debugPermissions
+        $serializedPermissions
     ): PermissionTreeNodeInterface {
         $inputValues = Helper::flattenNumericArray($inputValues);
 
@@ -269,7 +269,7 @@ class PermissionTreeDeserializer
 
         return $this->logicGateNodeFactory->createFromEnum(
             new LogicGateEnum($logicGateName),
-            $debugPermissions,
+            $serializedPermissions,
             ...$inputValues
         );
     }

@@ -30,9 +30,7 @@ class AccessChecker implements AccessCheckerInterface
      */
     public function checkAccess(FullPermissionTree $fullPermissionTree, $context = null, bool $allowBypass = true): bool
     {
-        if (!is_null($context) && !is_array($context) && !is_object($context)) {
-            throw new TypeError('The context parameter must be an array or object.');
-        }
+        $this->validateContextParameter($context);
 
         $allowBypass = $this->isBypassAllowed($fullPermissionTree, $context, $allowBypass);
 
@@ -41,6 +39,42 @@ class AccessChecker implements AccessCheckerInterface
         }
 
         return $fullPermissionTree->getMainTree()->evaluate($context);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function checkAccessWithDebug(
+        FullPermissionTree $fullPermissionTree,
+        $context = null,
+        bool $allowBypass = true
+    ): DebugAccessCheckerResult {
+        $this->validateContextParameter($context);
+
+        $mainTreeResult = $fullPermissionTree->getMainTree()->evaluateWithDebug($context);
+        $noBypassTreeResult = $fullPermissionTree->hasNoBypassTree()
+            ? $fullPermissionTree->getNoBypassTree()->evaluateWithDebug($context)
+            : null;
+
+        $allowBypass = $this->isBypassAllowed($fullPermissionTree, $context, $allowBypass);
+
+        if ($allowBypass && $this->checkBypassAccess($context)) {
+            return new DebugAccessCheckerResult(
+                true,
+                $mainTreeResult,
+                $noBypassTreeResult,
+                $fullPermissionTree->getSerializedPermissions(),
+                $context
+            );
+        }
+
+        return new DebugAccessCheckerResult(
+            false,
+            $mainTreeResult,
+            $noBypassTreeResult,
+            $fullPermissionTree->getSerializedPermissions(),
+            $context
+        );
     }
 
     /**
@@ -79,5 +113,12 @@ class AccessChecker implements AccessCheckerInterface
         }
 
         return $this->bypassAccessChecker->checkBypassAccess($context);
+    }
+
+    protected function validateContextParameter($context)
+    {
+        if (!is_null($context) && !is_array($context) && !is_object($context)) {
+            throw new TypeError('The context parameter must be an array or object.');
+        }
     }
 }

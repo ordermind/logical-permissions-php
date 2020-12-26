@@ -21,16 +21,16 @@ class LogicGateNodeFactory
     /**
      * Creates a logic gate node from a logic gate enum.
      *
-     * @param array|string|bool $debugPermissions
+     * @param array|string|bool $serializedPermissions
      */
     public function createFromEnum(
         LogicGateEnum $gateEnum,
-        $debugPermissions,
+        $serializedPermissions,
         PermissionTreeNodeInterface ...$inputValues
     ): LogicGateNode {
         return new LogicGateNode(
             $this->logicGateFactory->createFromEnum($gateEnum, ...$inputValues),
-            $debugPermissions
+            $serializedPermissions
         );
     }
 }

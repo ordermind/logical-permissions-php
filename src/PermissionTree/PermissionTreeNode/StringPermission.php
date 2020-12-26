@@ -62,7 +62,7 @@ class StringPermission implements PermissionTreeNodeInterface
      */
     public function getDebugValues($context = null): array
     {
-        return [new PermissionTreeNodeDebugValue(
+        return [new DebugPermissionTreeNodeValue(
             $this->getValue($context),
             [$this->getPermissionChecker()->getName() => $this->getPermissionValue()]
         )];

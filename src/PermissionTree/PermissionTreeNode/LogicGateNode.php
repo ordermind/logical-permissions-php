@@ -14,15 +14,15 @@ class LogicGateNode implements PermissionTreeNodeInterface, LogicGateInterface
     /**
      * @var array|string|bool
      */
-    private $debugPermissions;
+    private $serializedPermissions;
 
     /**
-     * @param array|string|bool $debugPermissions
+     * @param array|string|bool $serializedPermissions
      */
-    public function __construct(LogicGateInterface $logicGate, $debugPermissions)
+    public function __construct(LogicGateInterface $logicGate, $serializedPermissions)
     {
         $this->logicGate = $logicGate;
-        $this->debugPermissions = $debugPermissions;
+        $this->serializedPermissions = $serializedPermissions;
     }
 
     /**
@@ -62,9 +62,9 @@ class LogicGateNode implements PermissionTreeNodeInterface, LogicGateInterface
      */
     public function getDebugValues($context = null): array
     {
-        $myDebugValue = new PermissionTreeNodeDebugValue(
+        $myDebugValue = new DebugPermissionTreeNodeValue(
             $this->getValue($context),
-            $this->debugPermissions
+            $this->serializedPermissions
         );
 
         $descendantDebugValues = Helper::flattenNumericArray(

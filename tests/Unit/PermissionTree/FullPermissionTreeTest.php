@@ -18,7 +18,7 @@ class FullPermissionTreeTest extends TestCase
         $mockMainTree = $this->prophesize(PermissionTree::class);
         $mainTree = $mockMainTree->reveal();
 
-        $fullTree = new FullPermissionTree($mainTree);
+        $fullTree = new FullPermissionTree([], $mainTree);
         $this->assertSame($mainTree, $fullTree->getMainTree());
     }
 
@@ -30,13 +30,13 @@ class FullPermissionTreeTest extends TestCase
         $mockNoBypassTree = $this->prophesize(PermissionTree::class);
         $noBypassTree = $mockNoBypassTree->reveal();
 
-        $fullTree = new FullPermissionTree($mainTree);
+        $fullTree = new FullPermissionTree([], $mainTree);
         $this->assertFalse($fullTree->hasNoBypassTree());
 
-        $fullTree = new FullPermissionTree($mainTree, null);
+        $fullTree = new FullPermissionTree([], $mainTree, null);
         $this->assertFalse($fullTree->hasNoBypassTree());
 
-        $fullTree = new FullPermissionTree($mainTree, $noBypassTree);
+        $fullTree = new FullPermissionTree([], $mainTree, $noBypassTree);
         $this->assertTrue($fullTree->hasNoBypassTree());
     }
 
@@ -48,13 +48,13 @@ class FullPermissionTreeTest extends TestCase
         $mockNoBypassTree = $this->prophesize(PermissionTree::class);
         $noBypassTree = $mockNoBypassTree->reveal();
 
-        $fullTree = new FullPermissionTree($mainTree);
+        $fullTree = new FullPermissionTree([], $mainTree);
         $this->assertNull($fullTree->getNoBypassTree());
 
-        $fullTree = new FullPermissionTree($mainTree, null);
+        $fullTree = new FullPermissionTree([], $mainTree, null);
         $this->assertNull($fullTree->getNoBypassTree());
 
-        $fullTree = new FullPermissionTree($mainTree, $noBypassTree);
+        $fullTree = new FullPermissionTree([], $mainTree, $noBypassTree);
         $this->assertSame($noBypassTree, $fullTree->getNoBypassTree());
     }
 }
