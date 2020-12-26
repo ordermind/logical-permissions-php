@@ -34,7 +34,7 @@ class PermissionTreeTest extends TestCase
 
         $permissionTree = new PermissionTree($rootNode);
 
-        $this->assertSame(true, $permissionTree->resolve());
-        $this->assertSame(true, $permissionTree->resolve($context));
+        $this->assertSame(true, $permissionTree->evaluate());
+        $this->assertSame(true, $permissionTree->evaluate($context));
     }
 }

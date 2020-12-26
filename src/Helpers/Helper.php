@@ -10,7 +10,7 @@ namespace Ordermind\LogicalPermissions\Helpers;
 class Helper
 {
     /**
-     * Flattens a nested numeric array to a single level.
+     * Flattens a multidimensional numeric array to a single level.
      *
      * @param array $array
      *
@@ -18,16 +18,11 @@ class Helper
      */
     public static function flattenNumericArray(array $array): array
     {
-        $newArray = [];
+        $return = [];
+        array_walk_recursive($array, function ($value) use (&$return) {
+            $return[] = $value;
+        });
 
-        foreach ($array as $value) {
-            if (is_array($value)) {
-                $newArray = array_merge($newArray, self::flattenNumericArray($value));
-            } else {
-                $newArray[] = $value;
-            }
-        }
-
-        return $newArray;
+        return $return;
     }
 }

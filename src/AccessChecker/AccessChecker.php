@@ -40,7 +40,7 @@ class AccessChecker implements AccessCheckerInterface
             return true;
         }
 
-        return $fullPermissionTree->getMainTree()->resolve($context);
+        return $fullPermissionTree->getMainTree()->evaluate($context);
     }
 
     /**
@@ -62,7 +62,7 @@ class AccessChecker implements AccessCheckerInterface
             return $allowBypass;
         }
 
-        return !$fullPermissionTree->getNoBypassTree()->resolve($context);
+        return !$fullPermissionTree->getNoBypassTree()->evaluate($context);
     }
 
     /**

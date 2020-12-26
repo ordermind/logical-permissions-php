@@ -16,29 +16,21 @@ class StringPermission implements PermissionTreeNodeInterface
     private string $permissionValue;
 
     /**
-     * @var array|string
-     */
-    private $debugPermissions;
-
-    /**
      * StringPermission constructor.
      *
      * @param PermissionCheckerInterface $permissionChecker
      * @param string                     $permissionValue
-     * @param array|string               $debugPermissions
      */
     public function __construct(
         PermissionCheckerInterface $permissionChecker,
-        string $permissionValue,
-        $debugPermissions
+        string $permissionValue
     ) {
         $this->permissionChecker = $permissionChecker;
         $this->permissionValue = $permissionValue;
-        $this->debugPermissions = $debugPermissions;
     }
 
     /**
-     * @{inheritDoc}
+     * {@inheritDoc}
      */
     public function getValue($context = null): bool
     {
@@ -68,11 +60,11 @@ class StringPermission implements PermissionTreeNodeInterface
     /**
      * {@inheritDoc}
      */
-    public function getDebugValue($context = null): PermissionTreeNodeDebugValue
+    public function getDebugValues($context = null): array
     {
-        return new PermissionTreeNodeDebugValue(
+        return [new PermissionTreeNodeDebugValue(
             $this->getValue($context),
-            $this->debugPermissions
-        );
+            [$this->getPermissionChecker()->getName() => $this->getPermissionValue()]
+        )];
     }
 }

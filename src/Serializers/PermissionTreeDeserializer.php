@@ -160,7 +160,7 @@ class PermissionTreeDeserializer
 
         $permissionChecker = $this->locator->get($type);
 
-        return new StringPermission($permissionChecker, $permission, $debugPermissions);
+        return new StringPermission($permissionChecker, $permission);
     }
 
     /**

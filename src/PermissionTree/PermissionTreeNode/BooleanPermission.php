@@ -29,7 +29,7 @@ class BooleanPermission implements PermissionTreeNodeInterface
     }
 
     /**
-     * @{inheritDoc}
+     * {@inheritDoc}
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
@@ -41,11 +41,11 @@ class BooleanPermission implements PermissionTreeNodeInterface
     /**
      * {@inheritDoc}
      */
-    public function getDebugValue($context = null): PermissionTreeNodeDebugValue
+    public function getDebugValues($context = null): array
     {
-        return new PermissionTreeNodeDebugValue(
+        return [new PermissionTreeNodeDebugValue(
             $this->getValue($context),
             $this->debugPermissions
-        );
+        )];
     }
 }

@@ -17,18 +17,12 @@ class PermissionTreeNodeDebugValue
     private $permissions;
 
     /**
-     * @var self[]
-     */
-    private array $childValues;
-
-    /**
      * @param array|string|bool $permissions
      */
-    public function __construct(bool $internalValue, $permissions, self ...$childValues)
+    public function __construct(bool $internalValue, $permissions)
     {
         $this->internalValue = $internalValue;
         $this->permissions = $permissions;
-        $this->childValues = $childValues;
     }
 
     public function getInternalValue(): bool
@@ -42,10 +36,5 @@ class PermissionTreeNodeDebugValue
     public function getPermissions()
     {
         return $this->permissions;
-    }
-
-    public function getChildValues(): array
-    {
-        return $this->childValues;
     }
 }

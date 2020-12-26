@@ -30,7 +30,7 @@ class AccessCheckerTest extends TestCase
         }
 
         $mockMainTree = $this->prophesize(PermissionTree::class);
-        $mockMainTree->resolve(Argument::any())->willReturn(true);
+        $mockMainTree->evaluate(Argument::any())->willReturn(true);
         $mainTree = $mockMainTree->reveal();
 
         $mockFullPermissionTree = $this->prophesize(FullPermissionTree::class);

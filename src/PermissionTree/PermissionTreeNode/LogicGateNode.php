@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode;
 
+use Ordermind\LogicalPermissions\Helpers\Helper;
 use Ordermind\LogicGates\LogicGateInterface;
 
 class LogicGateNode implements PermissionTreeNodeInterface, LogicGateInterface
@@ -59,14 +60,22 @@ class LogicGateNode implements PermissionTreeNodeInterface, LogicGateInterface
     /**
      * {@inheritDoc}
      */
-    public function getDebugValue($context = null): PermissionTreeNodeDebugValue
+    public function getDebugValues($context = null): array
     {
-        return new PermissionTreeNodeDebugValue(
+        $myDebugValue = new PermissionTreeNodeDebugValue(
             $this->getValue($context),
-            $this->debugPermissions,
-            ...array_map(function (PermissionTreeNodeInterface $childNode): PermissionTreeNodeDebugValue {
-                return $childNode->getDebugValue();
-            }, $this->logicGate->getInputValues())
+            $this->debugPermissions
         );
+
+        $descendantDebugValues = Helper::flattenNumericArray(
+            array_map(
+                function (PermissionTreeNodeInterface $childNode): array {
+                    return $childNode->getDebugValues();
+                },
+                $this->logicGate->getInputValues()
+            )
+        );
+
+        return array_merge([$myDebugValue], $descendantDebugValues);
     }
 }

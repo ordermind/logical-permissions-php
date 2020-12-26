@@ -34,13 +34,13 @@ class PermissionTree
     }
 
     /**
-     * Resolves the permission tree and returns the resulting value.
+     * Evaluates the permission tree and returns the resulting value.
      *
      * @param array|object|null $context
      *
      * @return bool
      */
-    public function resolve($context = null): bool
+    public function evaluate($context = null): bool
     {
         return $this->rootNode->getValue($context);
     }
