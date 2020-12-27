@@ -15,18 +15,23 @@ class StringPermission implements PermissionTreeNodeInterface
 
     private string $permissionValue;
 
+    private $serializedPermissions;
+
     /**
      * StringPermission constructor.
      *
      * @param PermissionCheckerInterface $permissionChecker
      * @param string                     $permissionValue
+     * @param array|string               $serializedPermissions
      */
     public function __construct(
         PermissionCheckerInterface $permissionChecker,
-        string $permissionValue
+        string $permissionValue,
+        $serializedPermissions
     ) {
         $this->permissionChecker = $permissionChecker;
         $this->permissionValue = $permissionValue;
+        $this->serializedPermissions = $serializedPermissions;
     }
 
     /**
@@ -64,7 +69,7 @@ class StringPermission implements PermissionTreeNodeInterface
     {
         return [new DebugPermissionTreeNodeValue(
             $this->getValue($context),
-            [$this->getPermissionChecker()->getName() => $this->getPermissionValue()]
+            $this->serializedPermissions
         )];
     }
 }

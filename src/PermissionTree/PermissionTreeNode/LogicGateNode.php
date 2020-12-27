@@ -69,8 +69,8 @@ class LogicGateNode implements PermissionTreeNodeInterface, LogicGateInterface
 
         $descendantDebugValues = Helper::flattenNumericArray(
             array_map(
-                function (PermissionTreeNodeInterface $childNode): array {
-                    return $childNode->getDebugValues();
+                function (PermissionTreeNodeInterface $childNode) use ($context): array {
+                    return $childNode->getDebugValues($context);
                 },
                 $this->logicGate->getInputValues()
             )

@@ -19,7 +19,11 @@ class FullPermissionTree
     private ?PermissionTree $noBypassTree;
 
     /**
-     * @param array|string|bool $serializedPermissions
+     * FullPermissionTree constructor.
+     *
+     * @param array|string|bool   $serializedPermissions
+     * @param PermissionTree      $mainTree
+     * @param PermissionTree|null $noBypassTree
      */
     public function __construct($serializedPermissions, PermissionTree $mainTree, ?PermissionTree $noBypassTree = null)
     {

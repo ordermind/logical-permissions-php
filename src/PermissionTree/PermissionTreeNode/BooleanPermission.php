@@ -12,15 +12,15 @@ class BooleanPermission implements PermissionTreeNodeInterface
     private bool $value;
 
     /**
-     * @var bool|string
+     * @var array|string|bool
      */
     private $serializedPermissions;
 
     /**
      * BooleanPermission constructor.
      *
-     * @param bool        $value
-     * @param bool|string $serializedPermissions
+     * @param bool              $value
+     * @param array|string|bool $serializedPermissions
      */
     public function __construct(bool $value, $serializedPermissions)
     {
