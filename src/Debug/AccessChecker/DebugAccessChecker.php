@@ -28,6 +28,9 @@ class DebugAccessChecker implements DebugAccessCheckerInterface
         $this->fullPermissionTreeSerializer = $fullPermissionTreeSerializer;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function checkAccess(
         FullPermissionTree $fullPermissionTree,
         $context = null,
