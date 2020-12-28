@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ordermind\LogicalPermissions\Test\Integration;
 
 use Ordermind\LogicalPermissions\PermissionCheckerLocator;
+use Ordermind\LogicalPermissions\Serializers\PermissionTreeNodeSerializer;
 use Ordermind\LogicalPermissions\Serializers\PermissionTreeSerializer;
 use Ordermind\LogicalPermissions\Test\Fixtures\Factories\PermissionTreeDeserializerFactory;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\RolePermissionChecker;
@@ -19,7 +20,7 @@ class TreeSerializationTest extends TestCase
     {
         $locator = new PermissionCheckerLocator(new RolePermissionChecker());
         $deserializer = PermissionTreeDeserializerFactory::create($locator);
-        $serializer = new PermissionTreeSerializer();
+        $serializer = new PermissionTreeSerializer(new PermissionTreeNodeSerializer());
 
         // 1st pass
         $permissionTree = $deserializer->deserialize($permissions);

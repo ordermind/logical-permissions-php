@@ -56,6 +56,6 @@ class FullPermissionTreeDeserializer
 
         $mainTree = $this->treeDeserializer->deserialize($permissions);
 
-        return new FullPermissionTree($permissions, $mainTree, $noBypassTree);
+        return new FullPermissionTree($mainTree, $noBypassTree);
     }
 }

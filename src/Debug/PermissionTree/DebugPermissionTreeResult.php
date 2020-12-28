@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ordermind\LogicalPermissions\PermissionTree;
-
-use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\DebugPermissionTreeNodeValue;
+namespace Ordermind\LogicalPermissions\Debug\PermissionTree;
 
 /**
  * DTO that holds the evaluated permission tree value together with debug information for all the nodes.

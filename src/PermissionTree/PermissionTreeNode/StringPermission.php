@@ -11,27 +11,16 @@ use Ordermind\LogicalPermissions\PermissionCheckerInterface;
  */
 class StringPermission implements PermissionTreeNodeInterface
 {
-    private PermissionCheckerInterface $permissionChecker;
+    protected PermissionCheckerInterface $permissionChecker;
 
-    private string $permissionValue;
+    protected string $permissionValue;
 
-    private $serializedPermissions;
-
-    /**
-     * StringPermission constructor.
-     *
-     * @param PermissionCheckerInterface $permissionChecker
-     * @param string                     $permissionValue
-     * @param array|string               $serializedPermissions
-     */
     public function __construct(
         PermissionCheckerInterface $permissionChecker,
-        string $permissionValue,
-        $serializedPermissions
+        string $permissionValue
     ) {
         $this->permissionChecker = $permissionChecker;
         $this->permissionValue = $permissionValue;
-        $this->serializedPermissions = $serializedPermissions;
     }
 
     /**
@@ -65,11 +54,8 @@ class StringPermission implements PermissionTreeNodeInterface
     /**
      * {@inheritDoc}
      */
-    public function getDebugValues($context = null): array
+    public function getChildren(): array
     {
-        return [new DebugPermissionTreeNodeValue(
-            $this->getValue($context),
-            $this->serializedPermissions
-        )];
+        return [];
     }
 }

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Ordermind\LogicalPermissions\AccessChecker;
+namespace Ordermind\LogicalPermissions\Debug\AccessChecker;
 
 use Ordermind\LogicalPermissions\PermissionTree\FullPermissionTree;
 
-interface AccessCheckerInterface
+interface DebugAccessCheckerInterface
 {
     /**
-     * Checks access for a permission tree.
+     * Checks access for a permission tree and returns the result together with debug information.
      *
      * @param FullPermissionTree $fullPermissionTree The permission tree to be evaluated
      * @param array|object|null  $context            (optional) A context that could for example contain the evaluated
@@ -17,11 +17,11 @@ interface AccessCheckerInterface
      * @param bool               $allowBypass        (optional) Determines whether bypassing access should be allowed.
      *                                               Default value is TRUE.
      *
-     * @return bool TRUE if access is granted or FALSE if access is denied
+     * @return DebugAccessCheckerResult
      */
     public function checkAccess(
         FullPermissionTree $fullPermissionTree,
         $context = null,
         bool $allowBypass = true
-    ): bool;
+    ): DebugAccessCheckerResult;
 }

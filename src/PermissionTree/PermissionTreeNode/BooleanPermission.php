@@ -9,23 +9,11 @@ namespace Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode;
  */
 class BooleanPermission implements PermissionTreeNodeInterface
 {
-    private bool $value;
+    protected bool $value;
 
-    /**
-     * @var array|string|bool
-     */
-    private $serializedPermissions;
-
-    /**
-     * BooleanPermission constructor.
-     *
-     * @param bool              $value
-     * @param array|string|bool $serializedPermissions
-     */
-    public function __construct(bool $value, $serializedPermissions)
+    public function __construct(bool $value)
     {
         $this->value = $value;
-        $this->serializedPermissions = $serializedPermissions;
     }
 
     /**
@@ -41,11 +29,8 @@ class BooleanPermission implements PermissionTreeNodeInterface
     /**
      * {@inheritDoc}
      */
-    public function getDebugValues($context = null): array
+    public function getChildren(): array
     {
-        return [new DebugPermissionTreeNodeValue(
-            $this->getValue($context),
-            $this->serializedPermissions
-        )];
+        return [];
     }
 }

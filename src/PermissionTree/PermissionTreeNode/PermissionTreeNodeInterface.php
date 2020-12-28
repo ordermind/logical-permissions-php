@@ -9,11 +9,9 @@ use Ordermind\LogicGates\LogicGateInputValueInterface;
 interface PermissionTreeNodeInterface extends LogicGateInputValueInterface
 {
     /**
-     * Gets the evaluated value together with debug information for this node and all of its descendants in the tree.
+     * Gets all children of this node.
      *
-     * @param mixed $context
-     *
-     * @return DebugPermissionTreeNodeValue[]
+     * @return PermissionTreeNodeInterface[]
      */
-    public function getDebugValues($context = null): array;
+    public function getChildren(): array;
 }

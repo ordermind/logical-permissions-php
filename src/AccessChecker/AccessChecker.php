@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions\AccessChecker;
 
-use Ordermind\LogicalPermissions\BypassAccessCheckerInterface;
 use Ordermind\LogicalPermissions\PermissionTree\FullPermissionTree;
 use TypeError;
 
@@ -13,16 +12,11 @@ use TypeError;
  */
 class AccessChecker implements AccessCheckerInterface
 {
-    protected ?BypassAccessCheckerInterface $bypassAccessChecker;
+    protected BypassAccessCheckerDecorator $bypassAccessCheckerDecorator;
 
-    /**
-     * AccessChecker constructor.
-     *
-     * @param BypassAccessCheckerInterface|null $bypassAccessChecker
-     */
-    public function __construct(?BypassAccessCheckerInterface $bypassAccessChecker = null)
+    public function __construct(BypassAccessCheckerDecorator $bypassAccessCheckerDecorator)
     {
-        $this->bypassAccessChecker = $bypassAccessChecker;
+        $this->bypassAccessCheckerDecorator = $bypassAccessCheckerDecorator;
     }
 
     /**
@@ -30,95 +24,20 @@ class AccessChecker implements AccessCheckerInterface
      */
     public function checkAccess(FullPermissionTree $fullPermissionTree, $context = null, bool $allowBypass = true): bool
     {
-        $this->validateContextParameter($context);
+        if (!is_null($context) && !is_array($context) && !is_object($context)) {
+            throw new TypeError('The context parameter must be an array or object.');
+        }
 
-        $allowBypass = $this->isBypassAllowed($fullPermissionTree, $context, $allowBypass);
+        $allowBypass = $this->bypassAccessCheckerDecorator->isBypassAllowed(
+            $fullPermissionTree,
+            $context,
+            $allowBypass
+        );
 
-        if ($allowBypass && $this->checkBypassAccess($context)) {
+        if ($allowBypass && $this->bypassAccessCheckerDecorator->checkBypassAccess($context)) {
             return true;
         }
 
         return $fullPermissionTree->getMainTree()->evaluate($context);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function checkAccessWithDebug(
-        FullPermissionTree $fullPermissionTree,
-        $context = null,
-        bool $allowBypass = true
-    ): DebugAccessCheckerResult {
-        $this->validateContextParameter($context);
-
-        $mainTreeResult = $fullPermissionTree->getMainTree()->evaluateWithDebug($context);
-        $noBypassTreeResult = $fullPermissionTree->hasNoBypassTree()
-            ? $fullPermissionTree->getNoBypassTree()->evaluateWithDebug($context)
-            : null;
-
-        $allowBypass = $this->isBypassAllowed($fullPermissionTree, $context, $allowBypass);
-
-        if ($allowBypass && $this->checkBypassAccess($context)) {
-            return new DebugAccessCheckerResult(
-                true,
-                $mainTreeResult,
-                $noBypassTreeResult,
-                $fullPermissionTree->getSerializedPermissions(),
-                $context
-            );
-        }
-
-        return new DebugAccessCheckerResult(
-            false,
-            $mainTreeResult,
-            $noBypassTreeResult,
-            $fullPermissionTree->getSerializedPermissions(),
-            $context
-        );
-    }
-
-    /**
-     * Checks if bypassing access is allowed.
-     *
-     * @param FullPermissionTree $fullPermissionTree
-     * @param array|object|null  $context
-     * @param bool               $allowBypass
-     *
-     * @return bool
-     */
-    protected function isBypassAllowed(FullPermissionTree $fullPermissionTree, $context, bool $allowBypass): bool
-    {
-        if (!$allowBypass) {
-            return false;
-        }
-
-        if (!$fullPermissionTree->hasNoBypassTree()) {
-            return $allowBypass;
-        }
-
-        return !$fullPermissionTree->getNoBypassTree()->evaluate($context);
-    }
-
-    /**
-     * Checks if access should be bypassed.
-     *
-     * @param array|object|null $context
-     *
-     * @return bool
-     */
-    protected function checkBypassAccess($context): bool
-    {
-        if (is_null($this->bypassAccessChecker)) {
-            return false;
-        }
-
-        return $this->bypassAccessChecker->checkBypassAccess($context);
-    }
-
-    protected function validateContextParameter($context)
-    {
-        if (!is_null($context) && !is_array($context) && !is_object($context)) {
-            throw new TypeError('The context parameter must be an array or object.');
-        }
     }
 }

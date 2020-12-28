@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ordermind\LogicalPermissions\Test\Unit\AccessChecker;
 
 use Ordermind\LogicalPermissions\AccessChecker\AccessChecker;
+use Ordermind\LogicalPermissions\AccessChecker\BypassAccessCheckerDecorator;
 use Ordermind\LogicalPermissions\PermissionTree\FullPermissionTree;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTree;
 use PHPUnit\Framework\TestCase;
@@ -22,7 +23,7 @@ class AccessCheckerTest extends TestCase
      */
     public function testCheckAccessContextType(bool $expectException, $value)
     {
-        $accessChecker = new AccessChecker();
+        $accessChecker = new AccessChecker(new BypassAccessCheckerDecorator());
 
         if ($expectException) {
             $this->expectException(TypeError::class);

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Ordermind\LogicalPermissions\AccessChecker;
+namespace Ordermind\LogicalPermissions\Debug\AccessChecker;
 
-use Ordermind\LogicalPermissions\PermissionTree\DebugPermissionTreeResult;
+use Ordermind\LogicalPermissions\Debug\PermissionTree\DebugPermissionTreeResult;
 
 /**
  * Value object that holds the access checker result together with debug information for both the main tree and the no
@@ -18,10 +18,7 @@ class DebugAccessCheckerResult
 
     protected ?DebugPermissionTreeResult $noBypassTreeResult;
 
-    /**
-     * @var array|string|bool
-     */
-    protected $serializedPermissions;
+    protected array $normalizedPermissions;
 
     /**
      * @var array|object|null
@@ -29,20 +26,19 @@ class DebugAccessCheckerResult
     protected $context;
 
     /**
-     * @param array|string|bool $serializedPermissions
      * @param array|object|null $context
      */
     public function __construct(
         bool $hasBypassedAccess,
         DebugPermissionTreeResult $mainTreeResult,
         ?DebugPermissionTreeResult $noBypassTreeResult,
-        $serializedPermissions,
+        array $normalizedPermissions,
         $context
     ) {
         $this->hasBypassedAccess = $hasBypassedAccess;
         $this->mainTreeResult = $mainTreeResult;
         $this->noBypassTreeResult = $noBypassTreeResult;
-        $this->serializedPermissions = $serializedPermissions;
+        $this->normalizedPermissions = $normalizedPermissions;
         $this->context = $context;
     }
 
@@ -61,12 +57,9 @@ class DebugAccessCheckerResult
         return $this->noBypassTreeResult;
     }
 
-    /**
-     * @return array|string|bool
-     */
-    public function getSerializedPermissions()
+    public function getNormalizedPermissions(): array
     {
-        return $this->serializedPermissions;
+        return $this->normalizedPermissions;
     }
 
     /**

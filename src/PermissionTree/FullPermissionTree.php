@@ -9,35 +9,14 @@ namespace Ordermind\LogicalPermissions\PermissionTree;
  */
 class FullPermissionTree
 {
-    /**
-     * @var array|string|bool
-     */
-    private $serializedPermissions;
+    protected PermissionTree $mainTree;
 
-    private PermissionTree $mainTree;
+    protected ?PermissionTree $noBypassTree;
 
-    private ?PermissionTree $noBypassTree;
-
-    /**
-     * FullPermissionTree constructor.
-     *
-     * @param array|string|bool   $serializedPermissions
-     * @param PermissionTree      $mainTree
-     * @param PermissionTree|null $noBypassTree
-     */
-    public function __construct($serializedPermissions, PermissionTree $mainTree, ?PermissionTree $noBypassTree = null)
+    public function __construct(PermissionTree $mainTree, ?PermissionTree $noBypassTree = null)
     {
-        $this->serializedPermissions = $serializedPermissions;
         $this->mainTree = $mainTree;
         $this->noBypassTree = $noBypassTree;
-    }
-
-    /**
-     * @return array|string|bool
-     */
-    public function getSerializedPermissions()
-    {
-        return $this->serializedPermissions;
     }
 
     public function getMainTree(): PermissionTree

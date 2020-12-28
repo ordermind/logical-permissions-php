@@ -4,25 +4,15 @@ declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode;
 
-use Ordermind\LogicalPermissions\Helpers\Helper;
 use Ordermind\LogicGates\LogicGateInterface;
 
 class LogicGateNode implements PermissionTreeNodeInterface, LogicGateInterface
 {
     private LogicGateInterface $logicGate;
 
-    /**
-     * @var array|string|bool
-     */
-    private $serializedPermissions;
-
-    /**
-     * @param array|string|bool $serializedPermissions
-     */
-    public function __construct(LogicGateInterface $logicGate, $serializedPermissions)
+    public function __construct(LogicGateInterface $logicGate)
     {
         $this->logicGate = $logicGate;
-        $this->serializedPermissions = $serializedPermissions;
     }
 
     /**
@@ -44,6 +34,19 @@ class LogicGateNode implements PermissionTreeNodeInterface, LogicGateInterface
     /**
      * {@inheritDoc}
      */
+    public function getChildren(): array
+    {
+        /**
+         * @var PermissionTreeNodeInterface[] $children
+         */
+        $children = $this->getInputValues();
+
+        return $children;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function execute($context = null): bool
     {
         return $this->logicGate->execute($context);
@@ -55,27 +58,5 @@ class LogicGateNode implements PermissionTreeNodeInterface, LogicGateInterface
     public function getValue($context = null): bool
     {
         return $this->logicGate->getValue($context);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getDebugValues($context = null): array
-    {
-        $myDebugValue = new DebugPermissionTreeNodeValue(
-            $this->getValue($context),
-            $this->serializedPermissions
-        );
-
-        $descendantDebugValues = Helper::flattenNumericArray(
-            array_map(
-                function (PermissionTreeNodeInterface $childNode) use ($context): array {
-                    return $childNode->getDebugValues($context);
-                },
-                $this->logicGate->getInputValues()
-            )
-        );
-
-        return array_merge([$myDebugValue], $descendantDebugValues);
     }
 }
