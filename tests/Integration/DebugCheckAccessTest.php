@@ -9,6 +9,7 @@ use Ordermind\LogicalPermissions\Debug\Factories\DefaultDebugAccessCheckerFactor
 use Ordermind\LogicalPermissions\Debug\PermissionTree\DebugPermissionTreeNodeValue;
 use Ordermind\LogicalPermissions\Debug\PermissionTree\DebugPermissionTreeResult;
 use Ordermind\LogicalPermissions\Factories\DefaultFullPermissionTreeDeserializerFactory;
+use Ordermind\LogicalPermissions\Test\Fixtures\BypassChecker\AlwaysAllowBypassChecker;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\ConditionPermissionChecker;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\FlagPermissionChecker;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\RolePermissionChecker;
@@ -357,5 +358,25 @@ class DebugCheckAccessTest extends TestCase
             $expectedResult,
             $debugAccessChecker->checkAccess($fullPermissionTree, $context, false)
         );
+    }
+
+    public function testBypassAccess()
+    {
+        $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create();
+        $fullPermissionTree = $fullTreeDeserializer->deserialize(false);
+        $debugAccessChecker = $this->debugAccessCheckerFactory->create(new AlwaysAllowBypassChecker());
+
+        $expectedResult = new DebugAccessCheckerResult(
+            true,
+            new DebugPermissionTreeResult(
+                false,
+                new DebugPermissionTreeNodeValue(false, false),
+            ),
+            null,
+            [false],
+            null
+        );
+
+        $this->assertEquals($expectedResult, $debugAccessChecker->checkAccess($fullPermissionTree));
     }
 }
