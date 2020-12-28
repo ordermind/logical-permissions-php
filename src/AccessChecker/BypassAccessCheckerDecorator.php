@@ -35,7 +35,7 @@ class BypassAccessCheckerDecorator implements BypassAccessCheckerInterface
         }
 
         if (!$fullPermissionTree->hasNoBypassTree()) {
-            return $allowBypass;
+            return true;
         }
 
         return !$fullPermissionTree->getNoBypassTree()->evaluate($context);
