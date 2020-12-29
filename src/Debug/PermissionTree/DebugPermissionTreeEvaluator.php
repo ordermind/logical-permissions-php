@@ -37,7 +37,7 @@ class DebugPermissionTreeEvaluator
     {
         return array_merge(
             [new DebugPermissionTreeNodeValue($node->getValue($context), $this->nodeSerializer->serialize($node))],
-            ...array_map(function (PermissionTreeNodeInterface $childNode) use ($context) {
+            ...array_map(function (PermissionTreeNodeInterface $childNode) use ($context): array {
                 return $this->evaluateNodeRecursive($childNode, $context);
             }, $node->getChildren())
         );
