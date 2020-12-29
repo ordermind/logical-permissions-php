@@ -4,37 +4,36 @@ declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions\Debug\PermissionTree;
 
-/**
- * DTO that holds the evaluated value and debug information of a permission tree node.
- */
 class DebugPermissionTreeNodeValue
 {
-    protected bool $resultValue;
+    protected bool $evaluatedValue;
 
     /**
-     * @param array|string|bool $permissions
+     * The serialized and normalized permission tree for the evaluated node and its descendants.
+     *
+     * @var array|bool
      */
-    protected $permissions;
+    protected $normalizedPermissions;
 
     /**
-     * @param array|string|bool $permissions
+     * @param array|bool $normalizedPermissions
      */
-    public function __construct(bool $resultValue, $permissions)
+    public function __construct(bool $evaluatedValue, $normalizedPermissions)
     {
-        $this->resultValue = $resultValue;
-        $this->permissions = $permissions;
+        $this->evaluatedValue = $evaluatedValue;
+        $this->normalizedPermissions = $normalizedPermissions;
     }
 
-    public function getResultValue(): bool
+    public function getEvaluatedValue(): bool
     {
-        return $this->resultValue;
+        return $this->evaluatedValue;
     }
 
     /**
-     * @return array|string|bool $permissions
+     * @return array|bool
      */
-    public function getPermissions()
+    public function getNormalizedPermissions()
     {
-        return $this->permissions;
+        return $this->normalizedPermissions;
     }
 }

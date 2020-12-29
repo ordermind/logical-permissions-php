@@ -6,10 +6,6 @@ namespace Ordermind\LogicalPermissions\Debug\AccessChecker;
 
 use Ordermind\LogicalPermissions\Debug\PermissionTree\DebugPermissionTreeResult;
 
-/**
- * Value object that holds the access checker result together with debug information for both the main tree and the no
- * bypass tree.
- */
 class DebugAccessCheckerResult
 {
     protected bool $hasBypassedAccess;

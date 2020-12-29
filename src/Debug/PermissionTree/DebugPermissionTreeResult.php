@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions\Debug\PermissionTree;
 
-/**
- * DTO that holds the evaluated permission tree value together with debug information for all the nodes.
- */
 class DebugPermissionTreeResult
 {
     protected bool $value;
