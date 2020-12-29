@@ -14,7 +14,7 @@ class BooleanPermissionTest extends TestCase
      */
     public function testGetValue(bool $expectedResult, bool $input)
     {
-        $permission = new BooleanPermission($input, $input);
+        $permission = new BooleanPermission($input);
 
         $this->assertSame($expectedResult, $permission->getValue());
     }
@@ -25,5 +25,12 @@ class BooleanPermissionTest extends TestCase
             [true, true],
             [false, false],
         ];
+    }
+
+    public function testGetChildrenReturnsEmptyArray()
+    {
+        $permission = new BooleanPermission(true);
+
+        $this->assertSame([], $permission->getChildren());
     }
 }

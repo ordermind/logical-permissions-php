@@ -23,18 +23,18 @@ class PermissionTreeTest extends TestCase
         $this->assertSame($rootNode, $permissionTree->getRootNode());
     }
 
-    public function testResolve()
+    public function testEvaluate()
     {
         $context = [];
 
         $mockRootNode = $this->prophesize(PermissionTreeNodeInterface::class);
-        $mockRootNode->getValue(null)->willReturn(true);
+        $mockRootNode->getValue(null)->willReturn(false);
         $mockRootNode->getValue($context)->willReturn(true);
         $rootNode = $mockRootNode->reveal();
 
         $permissionTree = new PermissionTree($rootNode);
 
-        $this->assertSame(true, $permissionTree->evaluate());
+        $this->assertSame(false, $permissionTree->evaluate());
         $this->assertSame(true, $permissionTree->evaluate($context));
     }
 }

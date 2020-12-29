@@ -14,7 +14,7 @@ class StringPermissionTest extends TestCase
     public function testGetPermissionType()
     {
         $permissionChecker = new AlwaysAllowPermissionChecker();
-        $permission = new StringPermission($permissionChecker, '', '');
+        $permission = new StringPermission($permissionChecker, '');
 
         $this->assertSame($permissionChecker, $permission->getPermissionChecker());
     }
@@ -22,7 +22,7 @@ class StringPermissionTest extends TestCase
     public function testGetPermission()
     {
         $permissionChecker = new AlwaysAllowPermissionChecker();
-        $permission = new StringPermission($permissionChecker, 'test', 'test');
+        $permission = new StringPermission($permissionChecker, 'test');
 
         $this->assertSame('test', $permission->getPermissionValue());
     }
@@ -30,7 +30,7 @@ class StringPermissionTest extends TestCase
     public function testGetValue()
     {
         $permissionChecker = new AlwaysAllowPermissionChecker();
-        $permission = new StringPermission($permissionChecker, '', '');
+        $permission = new StringPermission($permissionChecker, '');
 
         $this->assertSame(true, $permission->getValue());
     }
@@ -41,7 +41,7 @@ class StringPermissionTest extends TestCase
     public function testGetValueWithContext(bool $expectedResult, bool $context)
     {
         $permissionChecker = new ContextPermissionChecker();
-        $permission = new StringPermission($permissionChecker, '', '');
+        $permission = new StringPermission($permissionChecker, '');
 
         $this->assertSame($expectedResult, $permission->getValue($context));
     }
@@ -52,5 +52,13 @@ class StringPermissionTest extends TestCase
             [true, true],
             [false, false],
         ];
+    }
+
+    public function testGetChildrenReturnsEmptyArray()
+    {
+        $permissionChecker = new AlwaysAllowPermissionChecker();
+        $permission = new StringPermission($permissionChecker, '');
+
+        $this->assertSame([], $permission->getChildren());
     }
 }
