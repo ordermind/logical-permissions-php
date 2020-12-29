@@ -20,7 +20,6 @@ class FullPermissionTreeSerializerTest extends TestCase
      */
     public function testSerialize(
         array $expectedResult,
-        bool $hasNoBypassTree,
         array $serializedMainTree,
         ?array $serializedNoBypassTree
     ) {
@@ -32,7 +31,7 @@ class FullPermissionTreeSerializerTest extends TestCase
 
         $mockFullPermissionTree = $this->prophesize(FullPermissionTree::class);
         $mockFullPermissionTree->getMainTree()->willReturn($mainTree);
-        $mockFullPermissionTree->hasNoBypassTree()->willReturn($hasNoBypassTree);
+        $mockFullPermissionTree->hasNoBypassTree()->willReturn($serializedNoBypassTree ? true : false);
         $mockFullPermissionTree->getNoBypassTree()->willReturn($noBypassTree);
         $fullPermissionTree = $mockFullPermissionTree->reveal();
 
@@ -50,8 +49,8 @@ class FullPermissionTreeSerializerTest extends TestCase
     public function provideTestSerialize()
     {
         return [
-            [[true], false, [true], null],
-            [['role' => 'admin', 'NO_BYPASS' => [true]], true, ['role' => 'admin'], [true]],
+            [[true], [true], null],
+            [['role' => 'admin', 'NO_BYPASS' => [true]], ['role' => 'admin'], [true]],
         ];
     }
 }
