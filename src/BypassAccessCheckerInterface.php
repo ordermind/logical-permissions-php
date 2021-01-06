@@ -9,7 +9,7 @@ interface BypassAccessCheckerInterface
     /**
      * Determines if access checks should be bypassed in the current context.
      *
-     * @param array|object|null $context
+     * @param mixed $context
      *
      * @return bool TRUE if access checks should be bypassed or FALSE if they should not be bypassed
      */

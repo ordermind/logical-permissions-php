@@ -17,12 +17,12 @@ class DebugAccessCheckerResult
     protected array $normalizedPermissions;
 
     /**
-     * @var array|object|null
+     * @var mixed
      */
     protected $context;
 
     /**
-     * @param array|object|null $context
+     * @param mixed $context
      */
     public function __construct(
         bool $hasBypassedAccess,
@@ -59,7 +59,7 @@ class DebugAccessCheckerResult
     }
 
     /**
-     * @return array|object|null
+     * @return mixed
      */
     public function getContext()
     {

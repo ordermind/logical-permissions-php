@@ -36,7 +36,7 @@ class PermissionTree
     /**
      * Evaluates the permission tree and returns the resulting value.
      *
-     * @param array|object|null $context
+     * @param mixed $context
      *
      * @return bool
      */

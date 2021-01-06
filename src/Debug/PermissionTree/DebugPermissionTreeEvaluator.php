@@ -20,7 +20,7 @@ class DebugPermissionTreeEvaluator
     /**
      * Evaluates the permission tree and returns the resulting value, together with debug information for each node.
      *
-     * @param array|object|null $context
+     * @param mixed $context
      */
     public function evaluate(PermissionTree $permissionTree, $context = null): DebugPermissionTreeResult
     {

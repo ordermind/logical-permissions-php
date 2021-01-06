@@ -23,7 +23,7 @@ class BypassAccessCheckerDecorator implements BypassAccessCheckerInterface
      * Checks if bypassing access is allowed.
      *
      * @param FullPermissionTree $fullPermissionTree
-     * @param array|object|null  $context
+     * @param mixed              $context
      * @param bool               $allowBypass
      *
      * @return bool
