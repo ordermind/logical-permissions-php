@@ -13,63 +13,11 @@ use Ordermind\LogicalPermissions\PermissionTree\FullPermissionTree;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTree;
 use Ordermind\LogicalPermissions\Serializers\FullPermissionTreeSerializer;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
-use stdClass;
-use TypeError;
 
 class DebugAccessCheckerTest extends TestCase
 {
     use ProphecyTrait;
-
-    /**
-     * @dataProvider checkAccessContextTypeProvider
-     */
-    public function testCheckAccessContextType(bool $expectException, $context)
-    {
-        if ($expectException) {
-            $this->expectException(TypeError::class);
-            $this->expectExceptionMessage('The context parameter must be an array or object');
-        }
-
-        $mainTree = $this->prophesize(PermissionTree::class)->reveal();
-
-        $mockFullPermissionTree = $this->prophesize(FullPermissionTree::class);
-        $mockFullPermissionTree->getMainTree()->willReturn($mainTree);
-        $mockFullPermissionTree->hasNoBypassTree()->willReturn(false);
-        $fullPermissionTree = $mockFullPermissionTree->reveal();
-
-        $bypassAccessCheckerDecorator = new BypassAccessCheckerDecorator();
-
-        $mockDebugTreeEvaluator = $this->prophesize(DebugPermissionTreeEvaluator::class);
-        $mockDebugTreeEvaluator->evaluate(Argument::cetera())->willReturn(new DebugPermissionTreeResult(true));
-        $debugTreeEvaluator = $mockDebugTreeEvaluator->reveal();
-
-        $mockFullPermissionTreeSerializer = $this->prophesize(FullPermissionTreeSerializer::class);
-        $mockFullPermissionTreeSerializer->serialize($fullPermissionTree)->willReturn([]);
-        $fullPermissionTreeSerializer = $mockFullPermissionTreeSerializer->reveal();
-
-        $debugAccessChecker = new DebugAccessChecker(
-            $bypassAccessCheckerDecorator,
-            $debugTreeEvaluator,
-            $fullPermissionTreeSerializer
-        );
-
-        $debugAccessChecker->checkAccess($fullPermissionTree, $context);
-
-        $this->addToAssertionCount(1);
-    }
-
-    public function checkAccessContextTypeProvider()
-    {
-        return [
-            [false, null],
-            [false, []],
-            [false, new stdClass()],
-            [true, 'string'],
-            [true, 0],
-        ];
-    }
 
     /**
      * @dataProvider provideTestCheckAccess

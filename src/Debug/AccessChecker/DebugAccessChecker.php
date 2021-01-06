@@ -8,7 +8,6 @@ use Ordermind\LogicalPermissions\AccessChecker\BypassAccessCheckerDecorator;
 use Ordermind\LogicalPermissions\Debug\PermissionTree\DebugPermissionTreeEvaluator;
 use Ordermind\LogicalPermissions\PermissionTree\FullPermissionTree;
 use Ordermind\LogicalPermissions\Serializers\FullPermissionTreeSerializer;
-use TypeError;
 
 class DebugAccessChecker implements DebugAccessCheckerInterface
 {
@@ -36,10 +35,6 @@ class DebugAccessChecker implements DebugAccessCheckerInterface
         $context = null,
         bool $allowBypass = true
     ): DebugAccessCheckerResult {
-        if (!is_null($context) && !is_array($context) && !is_object($context)) {
-            throw new TypeError('The context parameter must be an array or object.');
-        }
-
         $mainTreeResult = $this->debugTreeEvaluator->evaluate($fullPermissionTree->getMainTree(), $context);
         $noBypassTreeResult = null;
         if ($fullPermissionTree->hasNoBypassTree()) {

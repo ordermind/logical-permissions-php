@@ -46,7 +46,7 @@ class BypassAccessCheckerDecorator implements BypassAccessCheckerInterface
      */
     public function checkBypassAccess($context): bool
     {
-        if (is_null($this->bypassAccessChecker)) {
+        if (null === $this->bypassAccessChecker) {
             return false;
         }
 

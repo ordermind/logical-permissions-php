@@ -26,7 +26,7 @@ class FullPermissionTree
 
     public function hasNoBypassTree(): bool
     {
-        return !is_null($this->getNoBypassTree());
+        return null !== $this->getNoBypassTree();
     }
 
     public function getNoBypassTree(): ?PermissionTree

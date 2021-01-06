@@ -113,7 +113,7 @@ class PermissionTreeDeserializer
      */
     protected function parseBoolean(bool $permission, ?string $type): BooleanPermission
     {
-        if (!is_null($type)) {
+        if (null !== $type) {
             throw new UnexpectedValueException(
                 'You cannot put a boolean permission as a descendant to a permission type. '
                     . "Existing type: \"$type\". Evaluated permission: $permission"
@@ -226,7 +226,7 @@ class PermissionTreeDeserializer
             );
         }
 
-        if (!is_null($type)) {
+        if (null !== $type) {
             throw new UnexpectedValueException(
                 sprintf(
                     'You cannot put a permission type as a descendant to another permission type. '

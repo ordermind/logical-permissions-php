@@ -22,7 +22,7 @@ class PermissionTreeDeserializerFactory
      */
     public static function create(?PermissionCheckerLocatorInterface $locator = null): PermissionTreeDeserializer
     {
-        if (is_null($locator)) {
+        if (null === $locator) {
             $locator = new PermissionCheckerLocator();
         }
 
