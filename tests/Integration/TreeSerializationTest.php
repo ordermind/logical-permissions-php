@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions\Test\Integration;
 
-use Ordermind\LogicalPermissions\PermissionCheckerLocator;
+use Ordermind\LogicalPermissions\Locators\PermissionCheckerLocator;
 use Ordermind\LogicalPermissions\Serializers\PermissionTreeNodeSerializer;
 use Ordermind\LogicalPermissions\Serializers\PermissionTreeSerializer;
 use Ordermind\LogicalPermissions\Test\Fixtures\Factories\PermissionTreeDeserializerFactory;

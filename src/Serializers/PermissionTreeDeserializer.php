@@ -7,7 +7,7 @@ namespace Ordermind\LogicalPermissions\Serializers;
 use Ordermind\LogicalPermissions\Exceptions\PermissionTypeNotRegisteredException;
 use Ordermind\LogicalPermissions\Factories\LogicGateNodeFactory;
 use Ordermind\LogicalPermissions\Helpers\Helper;
-use Ordermind\LogicalPermissions\PermissionCheckerLocatorInterface;
+use Ordermind\LogicalPermissions\Locators\PermissionCheckerLocator;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTree;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\BooleanPermission;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\PermissionTreeNodeInterface;
@@ -17,21 +17,15 @@ use TypeError;
 use UnexpectedValueException;
 
 /**
- * @internal
+ * Normalizes and deserializes a native permission tree structure into a permission tree object.
  */
 class PermissionTreeDeserializer
 {
-    protected PermissionCheckerLocatorInterface $locator;
+    protected PermissionCheckerLocator $locator;
     protected LogicGateNodeFactory $logicGateNodeFactory;
 
-    /**
-     * PermissionTreeDeserializer constructor.
-     *
-     * @param PermissionCheckerLocatorInterface $locator
-     * @param LogicGateNodeFactory              $logicGateNodeFactory
-     */
     public function __construct(
-        PermissionCheckerLocatorInterface $locator,
+        PermissionCheckerLocator $locator,
         LogicGateNodeFactory $logicGateNodeFactory
     ) {
         $this->locator = $locator;
@@ -39,11 +33,7 @@ class PermissionTreeDeserializer
     }
 
     /**
-     * Normalizes and deserializes a native permission tree structure into a permission tree object.
-     *
      * @param array|string|bool $permissions
-     *
-     * @return PermissionTree
      *
      * @throws TypeError
      */
@@ -69,11 +59,8 @@ class PermissionTreeDeserializer
     }
 
     /**
-     * Parses a permission value.
-     *
-     * @param mixed             $parentKey
+     * @param string|int        $parentKey
      * @param array|string|bool $permissions
-     * @param string|null       $type
      *
      * @return PermissionTreeNodeInterface[]
      *
@@ -102,13 +89,6 @@ class PermissionTreeDeserializer
     }
 
     /**
-     * Parses a boolean permission value.
-     *
-     * @param bool        $permission
-     * @param string|null $type
-     *
-     * @return BooleanPermission
-     *
      * @throws UnexpectedValueException
      */
     protected function parseBoolean(bool $permission, ?string $type): BooleanPermission
@@ -124,13 +104,6 @@ class PermissionTreeDeserializer
     }
 
     /**
-     * Parses a string permission value.
-     *
-     * @param string      $permission
-     * @param string|null $type
-     *
-     * @return PermissionTreeNodeInterface
-     *
      * @throws UnexpectedValueException
      */
     protected function parseString(string $permission, ?string $type): PermissionTreeNodeInterface
@@ -160,11 +133,7 @@ class PermissionTreeDeserializer
     }
 
     /**
-     * Parses an array permission value.
-     *
-     * @param string|int  $parentKey
-     * @param array       $permissions
-     * @param string|null $type
+     * @param string|int $parentKey
      *
      * @return PermissionTreeNodeInterface[]
      */
@@ -182,11 +151,8 @@ class PermissionTreeDeserializer
     }
 
     /**
-     * Parses one element within an array permission value.
-     *
      * @param string|int        $key
      * @param array|string|bool $value
-     * @param string|null       $type
      *
      * @return PermissionTreeNodeInterface[]
      *
@@ -243,14 +209,6 @@ class PermissionTreeDeserializer
         return $this->parseValue($key, $value, $key);
     }
 
-    /**
-     * Optimizes input values and wraps them in a logic gate if appropriate.
-     *
-     * @param string $logicGateName
-     * @param array  $inputValues
-     *
-     * @return PermissionTreeNodeInterface
-     */
     protected function wrapInputValues(
         string $logicGateName,
         array $inputValues

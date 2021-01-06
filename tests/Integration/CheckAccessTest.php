@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions\Test\Integration;
 
-use Ordermind\LogicalPermissions\AccessChecker\AccessChecker;
-use Ordermind\LogicalPermissions\AccessChecker\BypassAccessCheckerDecorator;
-use Ordermind\LogicalPermissions\Factories\DefaultFullPermissionTreeDeserializerFactory;
+use Ordermind\LogicalPermissions\DefaultAccessCheckerFactory;
+use Ordermind\LogicalPermissions\DefaultFullPermissionTreeDeserializerFactory;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\FlagPermissionChecker;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\MiscPermissionChecker;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\RolePermissionChecker;
@@ -15,26 +14,28 @@ use PHPUnit\Framework\TestCase;
 class CheckAccessTest extends TestCase
 {
     private DefaultFullPermissionTreeDeserializerFactory $fullTreeDeserializerFactory;
+    private DefaultAccessCheckerFactory $accessCheckerFactory;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->fullTreeDeserializerFactory = new DefaultFullPermissionTreeDeserializerFactory();
+        $this->accessCheckerFactory = new DefaultAccessCheckerFactory();
     }
 
     public function testEmptyArrayAllow()
     {
         $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create();
         $fullPermissionTree = $fullTreeDeserializer->deserialize([]);
-        $accessChecker = new AccessChecker(new BypassAccessCheckerDecorator());
+        $accessChecker = $this->accessCheckerFactory->create();
         $this->assertTrue($accessChecker->checkAccess($fullPermissionTree));
     }
 
     public function testSingleItemAllow()
     {
         $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create(new FlagPermissionChecker());
-        $accessChecker = new AccessChecker(new BypassAccessCheckerDecorator());
+        $accessChecker = $this->accessCheckerFactory->create();
 
         $permissions = [
             'flag' => 'testflag',
@@ -52,7 +53,7 @@ class CheckAccessTest extends TestCase
     public function testSingleItemDeny()
     {
         $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create(new FlagPermissionChecker());
-        $accessChecker = new AccessChecker(new BypassAccessCheckerDecorator());
+        $accessChecker = $this->accessCheckerFactory->create();
 
         $permissions = [
             'flag' => 'testflag',
@@ -72,7 +73,7 @@ class CheckAccessTest extends TestCase
     public function testSingleItemNOT(bool $expectedResult, array $user)
     {
         $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create(new RolePermissionChecker());
-        $accessChecker = new AccessChecker(new BypassAccessCheckerDecorator());
+        $accessChecker = $this->accessCheckerFactory->create();
 
         $permissions = [
             'role' => [
@@ -120,7 +121,7 @@ class CheckAccessTest extends TestCase
             new RolePermissionChecker(),
             new MiscPermissionChecker()
         );
-        $accessChecker = new AccessChecker(new BypassAccessCheckerDecorator());
+        $accessChecker = $this->accessCheckerFactory->create();
 
         $permissions = [
             'flag' => 'testflag',
@@ -155,7 +156,7 @@ class CheckAccessTest extends TestCase
     public function testMultipleItems(bool $expectedResult, array $permissions, array $user)
     {
         $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create(new RolePermissionChecker());
-        $accessChecker = new AccessChecker(new BypassAccessCheckerDecorator());
+        $accessChecker = $this->accessCheckerFactory->create();
         $fullPermissionTree = $fullTreeDeserializer->deserialize($permissions);
 
         $this->assertSame(
@@ -228,7 +229,7 @@ class CheckAccessTest extends TestCase
     public function testBooleanPermissions(bool $expectedResult, $permissions)
     {
         $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create();
-        $accessChecker = new AccessChecker(new BypassAccessCheckerDecorator());
+        $accessChecker = $this->accessCheckerFactory->create();
         $fullPermissionTree = $fullTreeDeserializer->deserialize($permissions);
 
         $this->assertSame($expectedResult, $accessChecker->checkAccess($fullPermissionTree));
@@ -258,7 +259,7 @@ class CheckAccessTest extends TestCase
     public function testMixedBooleans(bool $expectedResult, $permissions)
     {
         $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create();
-        $accessChecker = new AccessChecker(new BypassAccessCheckerDecorator());
+        $accessChecker = $this->accessCheckerFactory->create();
         $fullPermissionTree = $fullTreeDeserializer->deserialize($permissions);
 
         $this->assertSame($expectedResult, $accessChecker->checkAccess($fullPermissionTree));
@@ -276,7 +277,7 @@ class CheckAccessTest extends TestCase
     public function testNestedLogic()
     {
         $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create(new RolePermissionChecker());
-        $accessChecker = new AccessChecker(new BypassAccessCheckerDecorator());
+        $accessChecker = $this->accessCheckerFactory->create();
 
         $permissions = [
             'role' => [
@@ -309,7 +310,7 @@ class CheckAccessTest extends TestCase
     public function testLogicGateFirst()
     {
         $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create(new RolePermissionChecker());
-        $accessChecker = new AccessChecker(new BypassAccessCheckerDecorator());
+        $accessChecker = $this->accessCheckerFactory->create();
 
         $permissions = [
             'AND' => [
@@ -344,7 +345,7 @@ class CheckAccessTest extends TestCase
     public function testImplicitORMixedNumericStringKeys()
     {
         $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create(new RolePermissionChecker());
-        $accessChecker = new AccessChecker(new BypassAccessCheckerDecorator());
+        $accessChecker = $this->accessCheckerFactory->create();
 
         $permissions = [
             'role' => [

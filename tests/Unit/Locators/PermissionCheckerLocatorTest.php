@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Ordermind\LogicalPermissions\Test\Unit;
+namespace Ordermind\LogicalPermissions\Test\Unit\Locators;
 
+use InvalidArgumentException;
 use Ordermind\LogicalPermissions\Exceptions\InvalidPermissionTypeException;
 use Ordermind\LogicalPermissions\Exceptions\PermissionTypeAlreadyRegisteredException;
 use Ordermind\LogicalPermissions\Exceptions\PermissionTypeNotRegisteredException;
-use Ordermind\LogicalPermissions\PermissionCheckerLocator;
+use Ordermind\LogicalPermissions\Locators\PermissionCheckerLocator;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\AlwaysAllowPermissionChecker;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\EmptyNamePermissionChecker;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\ErroneousNameTypePermissionChecker;
@@ -15,7 +16,6 @@ use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\FlagPermissionC
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\IllegalNamePermissionChecker;
 use PHPUnit\Framework\TestCase;
 use TypeError;
-use UnexpectedValueException;
 
 class PermissionCheckerLocatorTest extends TestCase
 {
@@ -107,7 +107,7 @@ class PermissionCheckerLocatorTest extends TestCase
     {
         $locator = new PermissionCheckerLocator();
 
-        $this->expectException(UnexpectedValueException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The name must not be empty');
         $locator->remove('');
     }
@@ -133,7 +133,7 @@ class PermissionCheckerLocatorTest extends TestCase
     {
         $locator = new PermissionCheckerLocator();
 
-        $this->expectException(UnexpectedValueException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The name must not be empty');
         $locator->has('');
     }
@@ -152,7 +152,7 @@ class PermissionCheckerLocatorTest extends TestCase
     {
         $locator = new PermissionCheckerLocator();
 
-        $this->expectException(UnexpectedValueException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The name must not be empty');
         $locator->get('');
     }

@@ -9,8 +9,6 @@ use Ordermind\LogicGates\LogicGateInputValueInterface;
 interface PermissionTreeNodeInterface extends LogicGateInputValueInterface
 {
     /**
-     * Gets all children of this node.
-     *
      * @return PermissionTreeNodeInterface[]
      */
     public function getChildren(): array;

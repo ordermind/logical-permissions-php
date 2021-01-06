@@ -7,9 +7,6 @@ namespace Ordermind\LogicalPermissions\AccessChecker;
 use Ordermind\LogicalPermissions\BypassAccessCheckerInterface;
 use Ordermind\LogicalPermissions\PermissionTree\FullPermissionTree;
 
-/**
- * @internal
- */
 class BypassAccessCheckerDecorator implements BypassAccessCheckerInterface
 {
     protected ?BypassAccessCheckerInterface $bypassAccessChecker;
@@ -19,15 +16,6 @@ class BypassAccessCheckerDecorator implements BypassAccessCheckerInterface
         $this->bypassAccessChecker = $bypassAccessChecker;
     }
 
-    /**
-     * Checks if bypassing access is allowed.
-     *
-     * @param FullPermissionTree $fullPermissionTree
-     * @param mixed              $context
-     * @param bool               $allowBypass
-     *
-     * @return bool
-     */
     public function isBypassAllowed(FullPermissionTree $fullPermissionTree, $context, bool $allowBypass): bool
     {
         if (!$allowBypass) {

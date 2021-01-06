@@ -6,9 +6,6 @@ namespace Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode;
 
 use Ordermind\LogicalPermissions\PermissionCheckerInterface;
 
-/**
- * @internal
- */
 class StringPermission implements PermissionTreeNodeInterface
 {
     protected PermissionCheckerInterface $permissionChecker;
@@ -32,30 +29,20 @@ class StringPermission implements PermissionTreeNodeInterface
     }
 
     /**
-     * Gets the permission checker.
-     *
-     * @return PermissionCheckerInterface
-     */
-    public function getPermissionChecker(): PermissionCheckerInterface
-    {
-        return $this->permissionChecker;
-    }
-
-    /**
-     * Gets the permission value.
-     *
-     * @return string
-     */
-    public function getPermissionValue(): string
-    {
-        return $this->permissionValue;
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function getChildren(): array
     {
         return [];
+    }
+
+    public function getPermissionChecker(): PermissionCheckerInterface
+    {
+        return $this->permissionChecker;
+    }
+
+    public function getPermissionValue(): string
+    {
+        return $this->permissionValue;
     }
 }

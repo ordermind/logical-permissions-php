@@ -7,7 +7,7 @@ namespace Ordermind\LogicalPermissions\Test\Unit\Serializers;
 use Generator;
 use Ordermind\LogicalPermissions\Exceptions\PermissionTypeNotRegisteredException;
 use Ordermind\LogicalPermissions\Factories\LogicGateNodeFactory;
-use Ordermind\LogicalPermissions\PermissionCheckerLocator;
+use Ordermind\LogicalPermissions\Locators\PermissionCheckerLocator;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTree;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\BooleanPermission;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\LogicGateNode;

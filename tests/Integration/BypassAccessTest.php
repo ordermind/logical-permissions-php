@@ -7,7 +7,8 @@ namespace Ordermind\LogicalPermissions\Test\Integration;
 use Ordermind\LogicalPermissions\AccessChecker\AccessChecker;
 use Ordermind\LogicalPermissions\AccessChecker\BypassAccessCheckerDecorator;
 use Ordermind\LogicalPermissions\BypassAccessCheckerInterface;
-use Ordermind\LogicalPermissions\Factories\DefaultFullPermissionTreeDeserializerFactory;
+use Ordermind\LogicalPermissions\DefaultAccessCheckerFactory;
+use Ordermind\LogicalPermissions\DefaultFullPermissionTreeDeserializerFactory;
 use Ordermind\LogicalPermissions\Test\Fixtures\BypassChecker\AlwaysAllowBypassChecker;
 use Ordermind\LogicalPermissions\Test\Fixtures\BypassChecker\AlwaysDenyBypassChecker;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\FlagPermissionChecker;
@@ -17,12 +18,14 @@ use stdClass;
 class BypassAccessTest extends TestCase
 {
     private DefaultFullPermissionTreeDeserializerFactory $fullTreeDeserializerFactory;
+    private DefaultAccessCheckerFactory $accessCheckerFactory;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->fullTreeDeserializerFactory = new DefaultFullPermissionTreeDeserializerFactory();
+        $this->accessCheckerFactory = new DefaultAccessCheckerFactory();
     }
 
     /**
@@ -88,7 +91,7 @@ class BypassAccessTest extends TestCase
 
     public function testNoBypassArrayAllow()
     {
-        $accessChecker = new AccessChecker(new BypassAccessCheckerDecorator(new AlwaysAllowBypassChecker()));
+        $accessChecker = $this->accessCheckerFactory->create(new AlwaysAllowBypassChecker());
         $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create(new FlagPermissionChecker());
 
         $permissions = [
@@ -107,7 +110,7 @@ class BypassAccessTest extends TestCase
 
     public function testNoBypassArrayDeny()
     {
-        $accessChecker = new AccessChecker(new BypassAccessCheckerDecorator(new AlwaysAllowBypassChecker()));
+        $accessChecker = $this->accessCheckerFactory->create(new AlwaysAllowBypassChecker());
         $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create(new FlagPermissionChecker());
 
         $permissions = [
@@ -137,7 +140,7 @@ class BypassAccessTest extends TestCase
             }
         };
 
-        $accessChecker = new AccessChecker(new BypassAccessCheckerDecorator($bypassAccessChecker));
+        $accessChecker = $this->accessCheckerFactory->create($bypassAccessChecker);
         $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create();
         $fullPermissionTree = $fullTreeDeserializer->deserialize(false);
 
@@ -157,7 +160,7 @@ class BypassAccessTest extends TestCase
             }
         };
 
-        $accessChecker = new AccessChecker(new BypassAccessCheckerDecorator($bypassAccessChecker));
+        $accessChecker = $this->accessCheckerFactory->create($bypassAccessChecker);
         $fullTreeDeserializer = $this->fullTreeDeserializerFactory->create();
         $fullPermissionTree = $fullTreeDeserializer->deserialize(false);
 

@@ -4,15 +4,10 @@ declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions;
 
-/**
- * Definition of a permission checker.
- */
 interface PermissionCheckerInterface
 {
     /**
      * Gets the name of the permission that this class checks, for example "role".
-     *
-     * @return string
      */
     public function getName(): string;
 

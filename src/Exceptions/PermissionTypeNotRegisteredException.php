@@ -6,9 +6,6 @@ namespace Ordermind\LogicalPermissions\Exceptions;
 
 use InvalidArgumentException;
 
-/**
- * @internal
- */
 class PermissionTypeNotRegisteredException extends InvalidArgumentException
 {
 }

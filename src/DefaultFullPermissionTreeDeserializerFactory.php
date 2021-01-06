@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Ordermind\LogicalPermissions\Factories;
+namespace Ordermind\LogicalPermissions;
 
-use Ordermind\LogicalPermissions\PermissionCheckerInterface;
-use Ordermind\LogicalPermissions\PermissionCheckerLocator;
+use Ordermind\LogicalPermissions\Factories\LogicGateNodeFactory;
+use Ordermind\LogicalPermissions\Locators\PermissionCheckerLocator;
 use Ordermind\LogicalPermissions\Serializers\FullPermissionTreeDeserializer;
 use Ordermind\LogicalPermissions\Serializers\PermissionTreeDeserializer;
 use Ordermind\LogicGates\LogicGateFactory;

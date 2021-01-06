@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions\Test\Unit\Serializers;
 
+use InvalidArgumentException;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\BooleanPermission;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\LogicGateNode;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\StringPermission;
@@ -12,7 +13,6 @@ use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\RolePermissionC
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionTree\UnknownNodeType;
 use Ordermind\LogicGates\AndGate;
 use PHPUnit\Framework\TestCase;
-use UnexpectedValueException;
 
 class PermissionTreeNodeSerializerTest extends TestCase
 {
@@ -60,7 +60,7 @@ class PermissionTreeNodeSerializerTest extends TestCase
         $node = new UnknownNodeType();
         $serializer = new PermissionTreeNodeSerializer();
 
-        $this->expectException(UnexpectedValueException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The serializer does not yet support the node type ' . UnknownNodeType::class);
         $serializer->serialize($node);
     }

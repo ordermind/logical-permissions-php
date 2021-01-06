@@ -8,7 +8,8 @@ use Ordermind\LogicalPermissions\PermissionTree\FullPermissionTree;
 use TypeError;
 
 /**
- * Converts a native permission tree including NO_BYPASS part into a validated and typed permission tree.
+ * Converts a native permission tree including NO_BYPASS part into a validated and typed permission tree. These parts
+ * are also normalized for optimal processing.
  */
 class FullPermissionTreeDeserializer
 {
@@ -20,11 +21,7 @@ class FullPermissionTreeDeserializer
     }
 
     /**
-     * Deserializes a native permission tree into a permission tree object.
-     *
      * @param array|string|bool $permissions
-     *
-     * @return FullPermissionTree
      *
      * @throws TypeError
      */

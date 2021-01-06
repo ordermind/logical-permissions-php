@@ -6,10 +6,7 @@ namespace Ordermind\LogicalPermissions\AccessChecker;
 
 use Ordermind\LogicalPermissions\PermissionTree\FullPermissionTree;
 
-/**
- * @internal
- */
-class AccessChecker implements AccessCheckerInterface
+class AccessChecker
 {
     protected BypassAccessCheckerDecorator $bypassAccessCheckerDecorator;
 
@@ -19,7 +16,15 @@ class AccessChecker implements AccessCheckerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Checks access for a permission tree.
+     *
+     * @param FullPermissionTree $fullPermissionTree The permission tree to be evaluated
+     * @param mixed              $context            (optional) A context that could for example contain the evaluated
+     *                                               user and model. Default value is `null`.
+     * @param bool               $allowBypass        (optional) Determines whether bypassing access should be allowed.
+     *                                               Default value is `true`.
+     *
+     * @return bool `true` if access is granted or `false` if access is denied
      */
     public function checkAccess(FullPermissionTree $fullPermissionTree, $context = null, bool $allowBypass = true): bool
     {

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Ordermind\LogicalPermissions\Test\Unit\Factories;
+namespace Ordermind\LogicalPermissions\Test\Unit;
 
-use Ordermind\LogicalPermissions\Factories\DefaultFullPermissionTreeDeserializerFactory;
+use Ordermind\LogicalPermissions\DefaultFullPermissionTreeDeserializerFactory;
 use Ordermind\LogicalPermissions\Factories\LogicGateNodeFactory;
-use Ordermind\LogicalPermissions\PermissionCheckerLocator;
+use Ordermind\LogicalPermissions\Locators\PermissionCheckerLocator;
 use Ordermind\LogicalPermissions\Serializers\FullPermissionTreeDeserializer;
 use Ordermind\LogicalPermissions\Serializers\PermissionTreeDeserializer;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\FlagPermissionChecker;

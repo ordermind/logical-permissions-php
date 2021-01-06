@@ -4,22 +4,21 @@ declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions\Serializers;
 
+use InvalidArgumentException;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\BooleanPermission;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\LogicGateNode;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\PermissionTreeNodeInterface;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\StringPermission;
-use UnexpectedValueException;
 
+/**
+ * Serializes a permission tree node and its descendants recursively.
+ */
 class PermissionTreeNodeSerializer
 {
     /**
-     * Serializes a permission tree node and its descendants recursively.
-     *
-     * @param PermissionTreeNodeInterface $node
-     *
      * @return array|bool
      *
-     * @throws UnexpectedValueException
+     * @throws InvalidArgumentException
      */
     public function serialize(PermissionTreeNodeInterface $node)
     {
@@ -35,6 +34,6 @@ class PermissionTreeNodeSerializer
             return $node->getValue();
         }
 
-        throw new UnexpectedValueException('The serializer does not yet support the node type ' . get_class($node));
+        throw new InvalidArgumentException('The serializer does not yet support the node type ' . get_class($node));
     }
 }

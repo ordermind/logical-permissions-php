@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode;
 
-/**
- * @internal
- */
 class BooleanPermission implements PermissionTreeNodeInterface
 {
     protected bool $value;

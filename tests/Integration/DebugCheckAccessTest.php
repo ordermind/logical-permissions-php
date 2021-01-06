@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Ordermind\LogicalPermissions\Test\Integration;
 
 use Ordermind\LogicalPermissions\Debug\AccessChecker\DebugAccessCheckerResult;
-use Ordermind\LogicalPermissions\Debug\Factories\DefaultDebugAccessCheckerFactory;
 use Ordermind\LogicalPermissions\Debug\PermissionTree\DebugPermissionTreeNodeValue;
 use Ordermind\LogicalPermissions\Debug\PermissionTree\DebugPermissionTreeResult;
-use Ordermind\LogicalPermissions\Factories\DefaultFullPermissionTreeDeserializerFactory;
+use Ordermind\LogicalPermissions\DefaultDebugAccessCheckerFactory;
+use Ordermind\LogicalPermissions\DefaultFullPermissionTreeDeserializerFactory;
 use Ordermind\LogicalPermissions\Test\Fixtures\BypassChecker\AlwaysAllowBypassChecker;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\ConditionPermissionChecker;
 use Ordermind\LogicalPermissions\Test\Fixtures\PermissionChecker\FlagPermissionChecker;

@@ -7,7 +7,7 @@ namespace Ordermind\LogicalPermissions\Serializers;
 use Ordermind\LogicalPermissions\PermissionTree\PermissionTree;
 
 /**
- * @internal
+ * Serializes a permission tree into an array structure.
  */
 class PermissionTreeSerializer
 {
@@ -18,9 +18,6 @@ class PermissionTreeSerializer
         $this->nodeSerializer = $nodeSerializer;
     }
 
-    /**
-     * Serializes a permission tree into an array structure.
-     */
     public function serialize(PermissionTree $permissionTree): array
     {
         return (array) $this->nodeSerializer->serialize($permissionTree->getRootNode());

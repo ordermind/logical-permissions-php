@@ -2,18 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Ordermind\LogicalPermissions;
+namespace Ordermind\LogicalPermissions\Locators;
 
+use InvalidArgumentException;
 use Ordermind\LogicalPermissions\Exceptions\InvalidPermissionTypeException;
 use Ordermind\LogicalPermissions\Exceptions\PermissionTypeAlreadyRegisteredException;
 use Ordermind\LogicalPermissions\Exceptions\PermissionTypeNotRegisteredException;
+use Ordermind\LogicalPermissions\PermissionCheckerInterface;
 use Ordermind\LogicGates\LogicGateEnum;
-use UnexpectedValueException;
 
-/**
- * Service locator for permission checkers.
- */
-class PermissionCheckerLocator implements PermissionCheckerLocatorInterface
+class PermissionCheckerLocator
 {
     /**
      * @var PermissionCheckerInterface[]
@@ -36,47 +34,57 @@ class PermissionCheckerLocator implements PermissionCheckerLocatorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Registers a permission checker.
+     *
+     * @param PermissionCheckerInterface $permissionChecker
+     * @param bool                       $overwriteIfExists (optional) If the permission checker is already registered,
+     *                                                      it will be overwritten if this parameter is set to `true`.
+     *                                                      If it is set to `false`,
+     *                                                      PermissionTypeAlreadyRegisteredException will be thrown.
+     *                                                      Default value is `false`.
      */
     public function add(
         PermissionCheckerInterface $permissionChecker,
         bool $overwriteIfExists = false
-    ): PermissionCheckerLocatorInterface {
+    ): void {
         $this->validatePermissionType($permissionChecker, $overwriteIfExists);
 
         $this->permissionCheckers[$permissionChecker->getName()] = $permissionChecker;
-
-        return $this;
     }
 
     /**
-     * {@inheritDoc}
+     * Unregisters a permission checker by name. If the permission checker cannot be found, nothing happens.
+     *
+     * @throws InvalidArgumentException
      */
-    public function remove(string $name): PermissionCheckerLocatorInterface
+    public function remove(string $name): void
     {
         if (!$name) {
-            throw new UnexpectedValueException('The name must not be empty.');
+            throw new InvalidArgumentException('The name must not be empty.');
         }
 
         unset($this->permissionCheckers[$name]);
-
-        return $this;
     }
 
     /**
-     * {@inheritDoc}
+     * Checks if a permission checker name is registered.
+     *
+     * @throws InvalidArgumentException
      */
     public function has(string $name): bool
     {
         if (!$name) {
-            throw new UnexpectedValueException('The name must not be empty.');
+            throw new InvalidArgumentException('The name must not be empty.');
         }
 
         return isset($this->permissionCheckers[$name]);
     }
 
     /**
-     * {@inheritDoc}
+     * Gets a permission checker by name. If the permission checker is not registered,
+     * PermissionTypeNotRegisteredException is thrown.
+     *
+     * @throws PermissionTypeNotRegisteredException
      */
     public function get(string $name): PermissionCheckerInterface
     {
@@ -88,7 +96,9 @@ class PermissionCheckerLocator implements PermissionCheckerLocatorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Gets all registered permission checkers as an array, keyed by permission type.
+     *
+     * @return PermissionCheckerInterface[]
      */
     public function all(): array
     {
@@ -96,24 +106,19 @@ class PermissionCheckerLocator implements PermissionCheckerLocatorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Gets all keys that may be used in a permission tree.
+     *
+     * @return string[]
      */
     public function getValidPermissionTreeKeys(): array
     {
         return array_merge(
             $this->getReservedKeys(),
-            $this->getKeys()
+            $this->getRegisteredKeys()
         );
     }
 
     /**
-     * Validates a permission checker.
-     *
-     * @internal
-     *
-     * @param PermissionCheckerInterface $permissionChecker
-     * @param bool                       $allowExisting
-     *
      * @throws InvalidPermissionTypeException
      * @throws PermissionTypeAlreadyRegisteredException
      */
@@ -143,26 +148,12 @@ class PermissionCheckerLocator implements PermissionCheckerLocatorInterface
         }
     }
 
-    /**
-     * Gets reserved permission keys.
-     *
-     * @internal
-     *
-     * @return array
-     */
     protected function getReservedKeys(): array
     {
         return array_merge(LogicGateEnum::keys(), ['NO_BYPASS', 'TRUE', 'FALSE']);
     }
 
-    /**
-     * Gets all keys within the collection.
-     *
-     * @internal
-     *
-     * @return array
-     */
-    protected function getKeys(): array
+    protected function getRegisteredKeys(): array
     {
         return array_keys($this->permissionCheckers);
     }
