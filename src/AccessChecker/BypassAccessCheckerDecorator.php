@@ -12,7 +12,7 @@ use Ordermind\LogicalPermissions\PermissionTree\FullPermissionTree;
  */
 class BypassAccessCheckerDecorator implements BypassAccessCheckerInterface
 {
-    private ?BypassAccessCheckerInterface $bypassAccessChecker;
+    protected ?BypassAccessCheckerInterface $bypassAccessChecker;
 
     public function __construct(?BypassAccessCheckerInterface $bypassAccessChecker = null)
     {

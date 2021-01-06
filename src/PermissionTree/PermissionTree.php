@@ -11,7 +11,7 @@ use Ordermind\LogicalPermissions\PermissionTree\PermissionTreeNode\PermissionTre
  */
 class PermissionTree
 {
-    private PermissionTreeNodeInterface $rootNode;
+    protected PermissionTreeNodeInterface $rootNode;
 
     /**
      * PermissionTree constructor.

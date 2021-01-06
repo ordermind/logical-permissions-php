@@ -8,7 +8,7 @@ use Ordermind\LogicGates\LogicGateInterface;
 
 class LogicGateNode implements PermissionTreeNodeInterface, LogicGateInterface
 {
-    private LogicGateInterface $logicGate;
+    protected LogicGateInterface $logicGate;
 
     public function __construct(LogicGateInterface $logicGate)
     {

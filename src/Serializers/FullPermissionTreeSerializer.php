@@ -11,7 +11,7 @@ use Ordermind\LogicalPermissions\PermissionTree\FullPermissionTree;
  */
 class FullPermissionTreeSerializer
 {
-    private PermissionTreeSerializer $treeSerializer;
+    protected PermissionTreeSerializer $treeSerializer;
 
     public function __construct(PermissionTreeSerializer $treeSerializer)
     {

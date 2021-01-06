@@ -11,7 +11,7 @@ use Ordermind\LogicGates\LogicGateFactory;
 
 class LogicGateNodeFactory
 {
-    private LogicGateFactory $logicGateFactory;
+    protected LogicGateFactory $logicGateFactory;
 
     public function __construct(LogicGateFactory $logicGateFactory)
     {
