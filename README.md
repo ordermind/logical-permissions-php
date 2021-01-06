@@ -1,7 +1,7 @@
 <a href="https://travis-ci.org/ordermind/logical-permissions-php" target="_blank"><img src="https://travis-ci.org/ordermind/logical-permissions-php.svg?branch=3.x" /></a>
 # logical-permissions
 
-This is a generic library that provides support for array-based permissions with logic gates such as AND and OR. You can register permission checkers for any kind of permission types such as roles and flags. The idea with this library is to be an ultra-flexible foundation that can be used by any framework.
+This is a generic library that provides support for array-based permissions with logic gates such as AND and OR. You can register permission checkers for any kind of permission types such as roles and conditions. The idea with this library is to be an ultra-flexible foundation that can be used by any framework.
 
 ## Getting started
 
@@ -11,9 +11,25 @@ This is a generic library that provides support for array-based permissions with
 
 ### Usage
 
+#### Permission trees
+A central concept within this library is the **permission tree**. A permission tree is a hierarchical combination of permissions following a certain syntax that is evaluated in order to determine access for a specific action.
+
+Let's say for example that you want to restrict access for updating a user. You'd like only users with the role "admin" to be able to update any user, but users should also be able to update their own user data (or at least some of it). With the format that this library provides, these conditions could be expressed elegantly in a permission tree as such:
+
+```php
+[
+    'OR' => [
+        'role' => 'admin',
+        'condition' => 'is_author',
+    ],
+]
+```
+
+In this example `role` and `condition` are the evaluated permission types. For this example to work you will need to register the permission types 'role' and 'condition'. Read on to find out how you can do that.
+
 #### Register permission checkers
 
-Permission checkers are used to check different kinds of conditions for access control, and the first thing to do is to create one of these and register it. Let's say, for example, that we want to determine access using the current user's roles. First you create a class that implements ```Ordermind\LogicalPermissions\PermissionCheckerInterface``` like this:
+Permission checkers are used to evaluate parts of the permission tree, and the first thing to do is to create one of these and register it. Let's say, for example, that we want to determine access using the current user's roles. First you create a class that implements ```Ordermind\LogicalPermissions\PermissionCheckerInterface``` like this:
 
 ```php
 use Ordermind\LogicalPermissions\PermissionCheckerInterface;
@@ -40,8 +56,7 @@ Now we have implemented the two required methods - getName() and checkPermission
 Once you have created a permission checker you can register it like this:
 
 ```php
-use Ordermind\LogicalPermissions\AccessChecker\AccessChecker;
-use Ordermind\LogicalPermissions\Factories\DefaultFullPermissionTreeDeserializerFactory;
+use Ordermind\LogicalPermissions\DefaultFullPermissionTreeDeserializerFactory;
 
 $fullTreeDeserializerFactory = new DefaultFullPermissionTreeDeserializerFactory();
 $fullTreeDeserializer = $fullTreeDeserializerFactory->create(new MyPermissionChecker());
@@ -50,39 +65,21 @@ $fullTreeDeserializer = $fullTreeDeserializerFactory->create(new MyPermissionChe
 
 Now everything is set and you can check the access for a user based on their roles:
 ```php
+use Ordermind\LogicalPermissions\DefaultAccessCheckerFactory;
+
 $permissions = [
-    'role' => 'admin', // The key 'role' here is the permission type that you return the getName() method of your permission checker
+    'role' => 'admin', // The key 'role' here is the value that you return in the getName() method of your permission checker
 ];
 $fullPermissionTree = $fullTreeDeserializer->deserialize($permissions);
 
 $user = ['roles' => ['admin', 'sales']];
 
-$accessChecker = new AccessChecker();
-$access = $accessChecker->checkAccess($fullPermissionTree, ['user' => $user]);
-// true
+$accessCheckerFactory = new DefaultAccessCheckerFactory();
+$accessChecker = $accessCheckerFactory->create();
+$access = $accessChecker->checkAccess($fullPermissionTree, ['user' => $user]); // true
 ```
 
-### Permission trees
-In the previous example, we had a variable called ```$permissions``` that looked like this:
-```php
-$permissions = [
-    'role' => 'admin',
-];
-```
-This is an example of a **permission tree**. A permission tree is a hierarchical combination of permissions that is evaluated in order to determine access for a specific action. Let's say for example that you want to restrict access for updating a user. You'd like only users with the role "admin" to be able to update any user, but users should also be able to update their own user data (or at least some of it). With the format that this library provides, these conditions could be expressed elegantly in a permission tree as such:
-
-```php
-[
-    'OR' => [
-        'role' => 'admin',
-        'flag' => 'is_author',
-    ],
-]
-```
-
-In this example `role` and `flag` are the evaluated permission types. For this example to work you will need to register the permission types 'role' and 'flag' according to the previous guide.
-
-### Bypassing access checks
+#### Bypassing access checks
 This library also supports rules for bypassing access checks completely for superusers. In order to use this functionality you first need to create a class that implements ```Ordermind\LogicalPermissions\BypassAccessCheckerInterface``` like this:
 
 ```php
@@ -100,20 +97,23 @@ class MyBypassAccessChecker implements BypassAccessCheckerInterface
     }
 }
 ```
+
 Then you can register it like this:
 ```php
-use Ordermind\LogicalPermissions\AccessChecker\AccessChecker;
+use Ordermind\LogicalPermissions\DefaultAccessCheckerFactory;
 
-$accessChecker = new AccessChecker(new MyBypassAccessChecker());
+$accessCheckerFactory = new DefaultAccessCheckerFactory();
+$accessChecker = $accessCheckerFactory->create(new MyBypassAccessChecker());
 ```
-From now on, every time you call ```$accessChecker->checkAccess()``` the user with the id 1 will be exempted so that no matter what the permissions are, they will always be granted access. If you want to make exceptions, you can do so by adding `'no_bypass' => true` to the first level of a permission tree. You can even use permissions as conditions for `no_bypass`.
+
+From now on, every time you call ```$accessChecker->checkAccess()``` the user with the id 1 will be exempted so that no matter what the permissions are, they will always be granted access. If you want to make exceptions, you can do so by adding `'NO_BYPASS' => true` to the first level of a permission tree. You can even use permissions as conditions for `NO_BYPASS`.
 
 Examples:
 
 ```php
 //Disallow access bypassing
 [
-    'no_bypass' => true,
+    'NO_BYPASS' => true,
     'role' => 'editor',
 ]
 ```
@@ -121,11 +121,30 @@ Examples:
 ```php
 //Disallow access bypassing only if the user is an admin
 [
-    'no_bypass' => [
+    'NO_BYPASS' => [
         'role' => 'admin',
     ],
     'role' => 'editor',
 ]
+```
+
+#### Debugging access checks
+
+This library also provides a way to get information about every part of the permission tree during the access check, for easier debugging. In order to do that, you need to use the `DebugAccessChecker` instead of `AccessChecker` like so:
+
+```php
+use Ordermind\LogicalPermissions\DefaultDebugAccessCheckerFactory;
+
+$permissions = [
+    'role' => 'admin', // The key 'role' here is the value that you return in the getName() method of your permission checker
+];
+$fullPermissionTree = $fullTreeDeserializer->deserialize($permissions);
+
+$user = ['roles' => ['admin', 'sales']];
+
+$debugAccessCheckerFactory = new DefaultDebugAccessCheckerFactory();
+$debugAccessChecker = $debugAccessCheckerFactory->create();
+$result = $debugAccessChecker->checkAccess($fullPermissionTree, ['user' => $user]);
 ```
 
 ## Logic gates
@@ -152,7 +171,7 @@ Examples:
 [
     'AND' => [
         'role' => 'sales',
-        'flag' => 'is_author',
+        'condition' => 'is_author',
     ],
 ]
 ```
@@ -177,7 +196,7 @@ Examples:
 [
     'NAND' => [
         'role' => 'sales',
-        'flag' => 'is_author',
+        'condition' => 'is_author',
     ],
 ]
 ```
@@ -202,7 +221,7 @@ Examples:
 [
     'OR' => [
         'role' => 'sales',
-        'flag' => 'is_author',
+        'condition' => 'is_author',
     ],
 ]
 ```
@@ -248,7 +267,7 @@ Examples:
 [
     'NOR' => [
         'role' => 'sales',
-        'flag' => 'is_author',
+        'condition' => 'is_author',
     ],
 ]
 ```
@@ -274,7 +293,7 @@ Examples:
 [
     'XOR' => [
         'role' => 'sales',
-        'flag' => 'is_author',
+        'condition' => 'is_author',
     ],
 ]
 ```
@@ -298,7 +317,7 @@ Examples:
 //Allow access for anyone except the author of the document
 [
     'NOT' => [
-        'flag' => 'is_author',
+        'condition' => 'is_author',
     ],
 ]
 ```
@@ -353,6 +372,6 @@ false
 //Deny access for everyone including those with bypass access
 [
     false,
-    'no_bypass' => true,
+    'NO_BYPASS' => true,
 ]
 ```
