@@ -5,6 +5,8 @@ install: composer install
 jobs:
   include:
     - script: ./ci/run_linters.sh
+      name: Linters
     - script: ./ci/run_tests.sh
+      name: Unit tests
 notifications:
   email: false
